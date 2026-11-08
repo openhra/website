@@ -4,4 +4,6 @@ Removed unused imports and an unused publication parameter. Kept only the closed
 
 No existing site code can absorb public inventory reconciliation without mixing responsibilities; contact and site gate code remain untouched. No dependencies, copied OpenPlans implementation, network client or site build step were introduced.
 
-Tests after simplification: 20 tests pass. Source-file review is complete. Final repeat scan, full gate and static-data commit remain on the TODO list.
+Tests after simplification: 21 tests pass. Source-file review is complete. Final repeat scan, full gate and static-data commit remain on the TODO list.
+
+Final source review tightened the SBE declaration adapter to parse its enumerated state table and cross-check URL, issuer, plan and row counts. Narrative wording alone cannot establish state membership. Its fixture negative controls reject missing/duplicate scopes and precedence contradictions.

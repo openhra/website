@@ -122,7 +122,8 @@ formats are closed, versioned adapters, not guessed shapes:
   `counts.rate` and `rates_checked`. Both row counts must match public file bytes.
 - `sbe-declaration-v1`: the reviewed finalized serving-scope declaration used in
   this release. Its adapter is specifically limited to the 19 2026 serving SBE
-  states, excludes NY/VT supplemental bundles and Oregon SHOP, and cannot establish
+  states, checks each table row's state, public URL and catalog counts, excludes
+  NY/VT supplemental bundles and Oregon SHOP, and cannot establish
   federal serving pointers. New declaration formats need a reviewed adapter.
 - `issuer-v1`: `state`, `year`, `kind` (`providers` or `formulary`), `running: false`,
   and unique `issuers` entries containing `issuer`, `state`, `year`, `snapshot_id`,

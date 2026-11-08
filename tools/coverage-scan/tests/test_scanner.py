@@ -14,7 +14,7 @@ from unittest.mock import patch
 TOOLS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLS))
 from check import check_record, check_release, check_scope, schemas, validate
-from inputs import Bundle, inventory, relative_file
+from inputs import Bundle, inventory, relative_file, sbe_declaration
 from model import Invalid, encoded, loads, percentage, sha, timestamp
 from scan import publish, release, table
 
@@ -404,6 +404,23 @@ class ScannerTests(unittest.TestCase):
             z.writestr("plans.csv", fixture.read_bytes().rsplit(b",", 1)[0])
         with self.assertRaisesRegex(Invalid, "malformed/truncated CSV row"):
             inventory(archive, "plans.csv", 2026, "plans")
+
+    def test_serving_declaration_checks_actual_state_membership(self):
+        states = "CA CO CT DC GA ID IL KY MA MD ME MN NJ NM NV PA RI VA WA".split()
+        text = "Nineteen individual-exchange state catalogs serve. Oregon is SHOP-only. NY/VT bundles are validated supplemental.\n"
+        for state in states + ["NY", "VT", "OR"]:
+            basis = "Federal individual preserved" if state == "OR" else "P8 preserved" if state in ("NY", "VT") else "SBE"
+            text += f"| [{state}](https://example.com/{state}.zip) | {basis} | 2 | 2 | 2 | 2 | 0 | 0 | 0 | 0 |\n"
+        parsed = sbe_declaration(text)
+        self.assertEqual(len(parsed), 22)
+        self.assertEqual(parsed["CA"]["basis"], "SBE")
+        self.assertNotIn("TX", parsed)
+        with self.assertRaisesRegex(Invalid, "duplicate or invalid SBE scope"):
+            sbe_declaration(text + text.splitlines()[1] + "\n")
+        with self.assertRaisesRegex(Invalid, "22 scopes and 19 serving"):
+            sbe_declaration("\n".join(line for line in text.splitlines() if "[CA]" not in line))
+        with self.assertRaisesRegex(Invalid, "scope precedence contradiction"):
+            sbe_declaration(text.replace("Federal individual preserved", "P8 preserved"))
 
     def test_audited_filesystem_and_network_boundary(self):
         selection = self.root / "selection.json"

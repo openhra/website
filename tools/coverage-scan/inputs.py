@@ -40,6 +40,29 @@ def csv_key(value):
     return re.sub(r"[^a-z0-9]", "", value.lower())
 
 
+def sbe_declaration(text):
+    require("Nineteen individual-exchange state catalogs serve" in text and "Oregon is SHOP-only" in text and "NY/VT bundles are validated supplemental" in text, "serving: unsupported SBE declaration")
+    scopes = {}
+    for line in text.splitlines():
+        if not line.startswith("| ["):
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        match = re.fullmatch(r"\[([A-Z]{2})\]\((https://[^)]+)\)", cells[0])
+        require(match and len(cells) == 10, "serving: malformed SBE scope row")
+        state, url = match.groups()
+        require(state in STATES and state not in scopes, "serving: duplicate or invalid SBE scope")
+        require(cells[1] in ("SBE", "SBE; partial geography", "P8 preserved", "Federal individual preserved"), "serving: unsupported SBE scope basis")
+        require(all(re.fullmatch(r"\d{1,3}(?:,\d{3})*|\d+", cell) for cell in cells[2:]), "serving: malformed SBE scope counts")
+        counts = [int(cell.replace(",", "")) for cell in cells[2:]]
+        scopes[state] = dict(url=public_url(url), basis=cells[1], issuers=counts[0], base_plans=counts[1],
+                             attribute_rows=counts[2], rate_rows=counts[3])
+    require(len(scopes) == 22 and sum(v["basis"].startswith("SBE") for v in scopes.values()) == 19,
+            "serving: SBE declaration must enumerate 22 scopes and 19 serving catalogs")
+    require(all(scopes.get(s, {}).get("basis") == "P8 preserved" for s in ("NY", "VT")) and
+            scopes.get("OR", {}).get("basis") == "Federal individual preserved", "serving: SBE scope precedence contradiction")
+    return scopes
+
+
 def inventory(path, member, year, kind):
     """Hash every member byte; retain public row identity digests, never row data."""
     require(kind in ("plans", "rates"), "inventory: unsupported member kind")
@@ -102,8 +125,7 @@ class Bundle:
             require(len(data) <= 16 * 1024**2, "report: input budget exceeded")
             require(sha(data) == spec["sha256"], "report: hash mismatch")
             if spec["format"] == "sbe-declaration-v1":
-                value = data.decode("utf-8")
-                require("Nineteen individual-exchange state catalogs serve" in value and "Oregon is SHOP-only" in value and "NY/VT bundles are validated supplemental" in value, "serving: unsupported SBE declaration")
+                value = sbe_declaration(data.decode("utf-8"))
             else:
                 value = loads(data)
                 require(isinstance(value, dict), "report: expected object")
@@ -194,8 +216,13 @@ class Bundle:
         serving_id = spec["serving_report"]
         if serving_id is not None:
             if self.reports.get(serving_id, (None,))[0] == "sbe-declaration-v1":
-                self.report(serving_id, "sbe-declaration-v1")
+                declaration = self.report(serving_id, "sbe-declaration-v1")
                 require(fmt == "sbe-v1" and y == 2026 and s not in ("NY", "VT", "OR"), "serving: supplemental or SHOP catalog cannot replace serving catalog")
+                require(s in declaration and declaration[s]["basis"].startswith("SBE"), "serving: state absent from serving declaration")
+                declared = declaration[s]
+                require(declared["url"] == self.provenance[sid]["url"] and declared["rate_rows"] == rate["rows"] and
+                        declared["issuers"] == len(plans["issuers"]) and declared["base_plans"] == plans["base_plans"] and
+                        declared["attribute_rows"] == plans["rows"], "serving: declaration/public catalog scope mismatch")
                 result["serving"] = dict(catalog_sha256=sha(import_id.encode()), basis="active_catalog", report_id=serving_id)
             else:
                 serving = self.report(serving_id, "serving-v1")
