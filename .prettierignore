@@ -1,0 +1,59 @@
+# Installed tools, output and local state.
+**/node_modules/
+**/dist/
+**/coverage/
+**/.git/
+**/.venv/
+**/venv/
+**/__pycache__/
+**/.ruff_cache/
+**/.vercel/
+**/.lanes/
+**/.claude-plan/
+**/.env
+**/.env.*
+**/package-lock.json
+release-manifest.json
+
+# Generated evidence, tables, maps and imported artwork stay byte-identical.
+plans/data/coverage/**
+tools/coverage-scan/default-*.html
+plans/coverage-table.html
+tests/reference/**
+**/*.svg
+**/fixtures/**/*
+!**/fixtures/**/
+!**/fixtures/**/*.js
+!**/fixtures/**/*.mjs
+!**/fixtures/**/*.cjs
+!**/fixtures/**/*.py
+**/__snapshots__/**
+**/*.snap
+
+# Private plans and captures are outside the public formatter migration.
+docs/**
+**/work-notes/**
+
+# Legal documents and mixed pages have no tested region exclusion yet.
+**/LICENSE*
+**/NOTICE*
+**/COPYING*
+**/privacy*
+**/terms*
+**/legal/**
+plans/index.html
+plans/availability.html
+openhra/index.html
+plans/brand/openhra/index.html
+
+# Existing UI byte guards freeze contact, headers and brand tokens.
+plans/contact.js
+plans/api/contact.js
+plans/brand/tokens.css
+openhra/vercel.json
+openhra/contact.js
+openhra/api/contact.js
+openhra/brand/tokens.css
+
+# Functional exemptions: see DEVELOPMENT.md and check:format-budgets.
+plans/style.css

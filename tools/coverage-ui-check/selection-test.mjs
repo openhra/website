@@ -43,7 +43,7 @@ async function fixture(search, native = false) {
   const context = {document: {querySelector: () => component, createElement: () => new Element(), createDocumentFragment: () => new Element(), createTextNode: text => new Element(text)}, location, navigator,
     history: {replaceState(a, b, url) { location.href = String(url); location.search = new URL(url).search; }},
     window: {addEventListener: (key, fn) => { events[key] = fn; }},
-    fetch: async name => { const bytes = fs.readFileSync(path.join(dataRoot, name.replace('data/coverage/', ''))); return {ok: true, arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)}; },
+    fetch: async name => { assert(/^data\/coverage\/(?:index|(?:providers|prescriptions|premiums)-[0-9]{4})\.json$/.test(name), 'unexpected fetch path'); const bytes = fs.readFileSync(path.join(dataRoot, name.replace('data/coverage/', ''))); return {ok: true, arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)}; },
     URL, URLSearchParams, TextDecoder, AbortController, crypto: webcrypto, Date, console};
   vm.runInNewContext(source, context);
   async function wait(predicate) { for (let i = 0; i < 150; i++) { if (predicate()) return; await new Promise(r => setTimeout(r, 5)); } throw Error('selection did not render: ' + ids.message.textContent); }

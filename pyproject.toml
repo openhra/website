@@ -1,0 +1,11 @@
+[tool.ruff]
+required-version = "==0.17.4"
+target-version = "py39"
+extend-exclude = [
+  "docs",
+  "**/work-notes",
+  "plans/data/coverage",
+  "tests/reference",
+  ".vercel",
+  ".lanes",
+]

@@ -66,6 +66,14 @@ def replace(root, filename, old, new):
     path.write_text(source.replace(old, new))
 
 
+def replace_pattern(root, filename, pattern, replacement):
+    path = root / filename
+    source = path.read_text()
+    changed, count = re.subn(pattern, replacement, source)
+    assert count and changed != source, 'mutation did not find target: ' + filename
+    path.write_text(changed)
+
+
 def promote(root, state):
     def serving(ledger, scope):
         scope['serving'] = dict(basis='active_catalog', catalog_sha256=scope['reconciliation']['catalog_sha256'],
@@ -201,9 +209,9 @@ def cases():
     yield 'dataset year mismatched', ds(lambda d: d.update(year=2027)), 'dataset: scope or timestamp mismatch'
     yield 'coverage heading wrong year', lambda r: replace(r, 'plans/index.html', 'Coverage for plan year 2026', 'Coverage for plan year 2027'), 'year reference: coverage heading differs'
     yield 'fallback page title wrong year', lambda r: replace(r, 'plans/coverage-table.html', 'Providers / plan year 2026 —', 'Providers / plan year 2027 —'), 'year reference: fallback page title differs'
-    yield 'caption wrong year', lambda r: replace(r, 'plans/index.html', '<caption>Premiums · 2026', '<caption>Premiums · 2027'), 'year reference: table caption differs'
+    yield 'caption wrong year', lambda r: replace_pattern(r, 'plans/index.html', r'(<caption>\s*Premiums · )2026', r'\g<1>2027'), 'year reference: table caption differs'
     yield 'reader heading frozen year', lambda r: replace(r, 'plans/coverage.js', 'Coverage for plan year ${year}', 'Coverage for plan year 2026'), 'year reference: reader title/caption must bind'
-    yield 'reader caption frozen year', lambda r: replace(r, 'plans/coverage.js', 'caption.textContent = `${labels[layer]} · Plan year ${year}', 'caption.textContent = `${labels[layer]} · Plan year 2026'), 'year reference: reader title/caption must bind'
+    yield 'reader caption frozen year', lambda r: replace_pattern(r, 'plans/coverage.js', r'(caption\.textContent\s*=\s*`\$\{labels\[layer\]\} · Plan year )\$\{year\}', r'\g<1>2026'), 'year reference: reader title/caption must bind'
     yield 'scanner version migration absent', ix(lambda i: i['scanner'].update(version='2.0.0')), 'index.scanner.version: unsupported enum value'
     yield 'selected scanner commit altered', ix(lambda i: i['scanner'].update(source_commit='0'*40)), 'scanner: selected source commit mismatch'
     yield 'selected input digest altered', ix(lambda i: i['scanner'].update(inputs_digest='0'*64)), 'scanner: selected input digest mismatch'

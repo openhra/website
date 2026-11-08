@@ -77,11 +77,11 @@ def years(root, index):
     # Check the reader's actual assignments, not just a year string elsewhere in it.
     # Runtime/browser behavior remains B's separate optional browser suite.
     reader = (root / 'plans/coverage.js').read_text()
-    require("const {layer, year} = d;" in reader and
-            "$('title').textContent = `Coverage for plan year ${year}`;" in reader and
-            'caption.textContent = `${labels[layer]} · Plan year ${year} · Figures as of ${date(d.as_of)}.' in reader,
+    require(re.search(r'const\s*\{\s*layer\s*,\s*year\s*,?\s*\}\s*=\s*d\s*;', reader) and
+            re.search(r"\$\(['\"]title['\"]\)\.textContent\s*=\s*`Coverage for plan year \$\{year\}`\s*;", reader) and
+            re.search(r'caption\.textContent\s*=\s*`\$\{labels\[layer\]\} · Plan year \$\{year\} · Figures as of \$\{date\(d\.as_of\)\}\.', reader),
             'year reference: reader title/caption must bind the selected dataset year')
-    require('d.year === entry.year' in reader, 'year reference: reader must reject mismatched dataset year')
+    require(re.search(r'\bd\.year\s*===\s*entry\.year\b', reader), 'year reference: reader must reject mismatched dataset year')
     require(all(type(d['year']) is int for d in index['datasets']), 'year reference: dataset year required')
 
 

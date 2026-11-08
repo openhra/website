@@ -86,5 +86,8 @@ sed 's/--bg: #ffffff/--bg: #101010/' "$TMP/repo/plans/brand/tokens.css" > "$TMP/
 cp "$TMP/tokens" "$TMP/repo/plans/brand/tokens.css"
 check_fail background 'FAIL: plans/brand/tokens.css must keep --bg: #ffffff'
 cp "$TMP/original.css" "$TMP/repo/plans/brand/tokens.css"
+mv "$TMP/repo/plans/api/contact.js" "$TMP/contact-handler.js"
+check_fail missing-contact 'FAIL: missing contact handler: plans/api/contact.js'
+mv "$TMP/contact-handler.js" "$TMP/repo/plans/api/contact.js"
 check_pass
-printf 'selftest: PASS (clean and restored copies; 7 diagnostic-checked negative controls)\n'
+printf 'selftest: PASS (clean and restored copies; 8 diagnostic-checked negative controls)\n'

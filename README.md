@@ -28,6 +28,10 @@ See [AGENTS.md](AGENTS.md).
 
 ## Checks
 
+See [DEVELOPMENT.md](DEVELOPMENT.md) for the pinned formatter and lint tools,
+protected paths and migration checks. Tool setup leaves existing source formatting
+unchanged; gate enforcement follows the formatting pass.
+
 Run `tools/gate.sh` for the offline site checks. The full gate includes the
 negative-control suites and requires `OPENPLANS_DENYLIST_FILE` to point to an
 external, nonempty regex policy. No policy is bundled with the site.
