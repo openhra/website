@@ -4,21 +4,25 @@ The public repository is the project's home. The website explains what the proje
 
 ## Page hierarchy
 
-- OpenPlans leads its navigation and hero actions with `https://github.com/openhra/openplans`. The secondary hero action opens the README. Keep "In development · no release yet" beside the main action.
+- OpenPlans leads its navigation and hero actions with `https://github.com/openhra/openplans`. The secondary hero action opens the README. Keep "Source available · no release yet" beside the main action.
 - OpenHRA leads with `https://github.com/openhra`. Its first project is OpenPlans, whose name and filled action open the project repository. The project website is a secondary text link.
 - Home logos and keyboard skip links remain navigation utilities. The first content action in a navigation menu, hero or project entry goes to GitHub. Document order matches visual order on phones.
 - Name GitHub directly. Use descriptive actions such as "Open on GitHub", "Read the README" and "Follow on GitHub". Open links in the same tab.
 - Repository cards show code, docs, issues and releases. A release link must say "No release yet" until the owner confirms a release.
 
-The November 8, 2026 owner direction adds GitHub naming, planned MCP tools and setup snippets to the websites. It supersedes the earlier instruction to omit the hosting service's name and keep all commands off the website. See the website's `docs/redesign-2026-11/DESIGN.md` for the current information architecture.
+The November 8, 2026 owner direction adds GitHub naming, MCP tools and setup snippets to the websites. It supersedes the earlier instruction to omit the hosting service's name and keep all commands off the website. The design notes are in `docs/redesign-2026-11/`. The `w10/` review records the public preview update.
 
-## MCP is in development
+## MCP is a public preview
 
-MCP is the main planned feature on the project site. Describe the read-only Model Context Protocol server, stateless Streamable HTTP, provenance and explicit unknowns. Show the planned tool names and a clearly labelled illustrative agent exchange. Never invent a price, coverage result, user, client endorsement or usage count.
+MCP is the main feature on the project site. The live endpoint is `https://openplans.openhra.com/mcp`. Label it "Public preview" wherever MCP appears. It serves the public catalog only, for Texas and Florida in 2026–2027. The 11 public tools are read-only and anonymous, over stateless Streamable HTTP.
 
-Connection blocks are previews. Each block must say "In development" and "planned". The public endpoint is not hosted. The local HTTP URL and stdio command are not released. Do not turn those previews into a working-service claim or offer a live request button.
+List the 11 public tools separately from `estimate_premiums`. Household quotes require self-hosting with credentials; that tool is not offered on the public endpoint. Provider and drug results may be `unknown`. Missing evidence never means "not covered".
 
-OpenHRA introduces the planned agent support and links to OpenPlans for the full tool list and connection details. Keep the technical reference in the repository as implementation evolves.
+Show the live URL as selectable text with a local copy button and an accessible "Copied" announcement. Include the live client configuration, HTTP headers and self-hosted stdio option. Protocol 2026-07-28 and 2025-11-25 clients are served. Browser clients can connect through CORS from the allowed origin. Keep the detailed setup instructions in the repository.
+
+Coverage is limited and an outside acceptance run is pending. There is no tagged OpenPlans release yet. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
+
+OpenHRA introduces the public preview, shows the endpoint and its limits, and links to OpenPlans for the full tool list and connection details.
 
 ## What stays on the websites
 
@@ -42,6 +46,6 @@ See `repo/README.md` for the image snippet and upload guidance. The proof page i
 
 ## Site copies and checks
 
-The deployed page sources are `plans/index.html` and `openhra/index.html`. Keep shared tokens and `brand/site.css` aligned between the sites. The nested `plans/brand/openhra/` files are handoff copies of the organisation page and styles, with its [H] favicon. They are not a third project site.
+The deployed page sources are `plans/index.html` and `openhra/index.html`. Keep shared tokens, `brand/site.css` and `mcp-copy.js` aligned between the sites. The nested `plans/brand/openhra/` files are handoff copies of the organisation page and styles, with its [H] favicon. They are not a third project site.
 
 Review both pages at desktop and phone widths, including 320px. Check repository action order, images, links, headings, visible focus, no horizontal page overflow and white ground under dark OS preference. Preserve protected content byte for byte. The November redesign captures and browser report live in `docs/redesign-2026-11/`. Publication remains a separate owner action.

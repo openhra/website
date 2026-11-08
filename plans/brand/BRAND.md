@@ -23,7 +23,7 @@ Calm, precise and useful. Write for people evaluating an integration, operating 
 | Respect publishers | "It downloads only files you publish for the public." | "We break through the barriers." |
 | Prefer facts to competition | "Built from public sources." | "Taking on the insurers." |
 | Keep invitations practical | "Open the repository." | "Transform your business today." |
-| Keep status visible | "In development." | "Production-ready." |
+| Keep status visible | "Public preview." | "Production-ready." |
 
 Use sentence case for headings, short paragraphs and descriptive links. Keep identifiers, flags and API paths exact; set them in monospace. Explain ICHRA before using it with a general audience. Numbers need a source and date. Never invent adoption, performance, endorsements or road-map commitments. Never publish contact addresses in source or docs; retain the existing contact verification flow.
 
@@ -149,7 +149,7 @@ Illustrations explain real relationships. The OpenPlans diagram shows public sou
 
 ## Implementation and sister-site handoff
 
-`tokens.css` owns colour, type families, spacing and radii. `site.css` owns shared components. Each site's root `style.css` imports those two files, then applies its own layout rules. All requests stay local except the already-existing contact verification script and frame. There is no build step, new dependency, font request, tracking or additional application script.
+`tokens.css` owns colour, type families, spacing and radii. `site.css` owns shared components. Each site's root `style.css` imports those two files, then applies its own layout rules. All requests stay local except the existing contact verification script and frame. The local `mcp-copy.js` handles endpoint copying on both pages and makes no network requests. There is no frontend build step, new dependency, font request or tracking.
 
 For the sister-site handoff, copy these files into that site's existing checkout:
 
@@ -157,5 +157,6 @@ For the sister-site handoff, copy these files into that site's existing checkout
 2. `brand/openhra/style.css` → root `style.css`.
 3. `brand/tokens.css`, `brand/site.css` and all `brand/*.svg` → the same paths under `brand/`.
 4. `brand/openhra/favicon.svg` → root `favicon.svg` (the [H] favicon; the plans root favicon is [P]).
+5. `mcp-copy.js` → root `mcp-copy.js`.
 
 Keep the sister site's existing `contact.js`, `api/contact.js` and hosting configuration. The HTML uses root-relative asset paths for this handoff. Opening the nested HTML as a file does not reproduce the intended deployment. Preview it with the handoff files mapped to a local site root. The current page sources are `plans/index.html` and `openhra/index.html` in the website tree. Keep the handoff copies aligned with the organisation page and styles.

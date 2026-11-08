@@ -50,7 +50,7 @@
 .projects .repo-status { font-size: 13px; margin-top: 12px; }
 .projects .actions { gap: 12px 24px; }
 
-/* The organisation introduces the repository and the planned agent workflow. */
+/* The organisation introduces the repository and the public preview agent workflow. */
 .umbrella-site .hero { padding-block: 64px 72px; gap: 72px; }
 .brand-figure figcaption { font-size: 24px; }
 .brand-figure figcaption a { text-decoration: none; }

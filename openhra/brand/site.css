@@ -168,7 +168,7 @@ nav li a.nav-repo { color: var(--accent); font-weight: 650; gap: 12px; }
 .footer-identity { display: inline-flex; align-items: center; gap: 12px; }
 .footer-identity img { display: block; flex: 0 0 auto; }
 
-/* November redesign: repository home and explicitly planned agent interfaces. */
+/* November redesign: repository home and public preview agent interfaces. */
 nav li a small { display: block; font-size: 9px; font-weight: 400; color: var(--muted); }
 nav li a:has(small) { flex-direction: column; justify-content: center; align-items: flex-start; line-height: 1.45; }
 .hero-preview { margin: 24px 0 0; max-width: 54ch; padding-left: 16px; border-left: 2px solid var(--accent); font-size: 14px; color: var(--muted); }
@@ -264,4 +264,32 @@ h4 { font-size: 18px; line-height: 1.35; font-weight: 600; margin: 0 0 8px; }
 @media (max-width: 480px) {
   .plans-site nav ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 0 12px; }
   .umbrella-site nav ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 0 24px; }
+}
+
+/* Public preview status and the copyable catalog endpoint. */
+nav li a small.nav-preview { color: var(--accent); font-size: 10px; }
+.mcp-badge { display: inline-block; border: 1px solid var(--accent); border-radius: var(--radius-sm); padding: 4px 8px; color: var(--accent); font: 600 11px/1.5 var(--body); }
+.self-host-badge { color: var(--muted); border-color: var(--line-strong); }
+.endpoint-card { min-width: 0; padding: 24px; border: 1px solid var(--line-strong); border-top: 3px solid var(--accent); border-radius: var(--radius-md); background: var(--bg); }
+.endpoint-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-bottom: 20px; }
+.endpoint-access { font: 11px/1.6 var(--mono); color: var(--muted); }
+.endpoint-card h3, .endpoint-card h4 { font-size: 20px; margin-bottom: 16px; font-weight: 600; }
+.endpoint-address { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.endpoint-address code { display: block; min-width: 0; flex: 1 1 240px; padding: 10px 12px; font-size: 13px; overflow-wrap: anywhere; user-select: all; }
+.copy-endpoint { min-height: 44px; padding: 10px 14px; border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--accent); background: var(--bg); font: 600 13px/1.5 var(--body); cursor: pointer; }
+.copy-endpoint:hover { background: var(--accent-soft); }
+.copy-endpoint:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+.copy-endpoint[hidden] { display: none; }
+.copy-endpoint:disabled { cursor: wait; }
+.endpoint-card .copy-feedback { min-height: 1.65em; margin: 6px 0 12px; font-size: 12px; color: var(--accent); }
+.endpoint-card .endpoint-scope { margin-bottom: 0; font-size: 13px; line-height: 1.8; color: var(--muted); }
+.connection-panel:has(.endpoint-card) { border-top: 0; padding-top: 0; }
+.connection-panel > .endpoint-card { margin-bottom: 24px; }
+.tool-directory .self-host-tool dt { flex-direction: column; align-items: flex-start; gap: 10px; }
+.self-host-note { margin-top: 16px; color: var(--muted); font-size: 13px; }
+.agent-route:has(.endpoint-card) { border-top: 0; padding-top: 0; }
+@media (max-width: 480px) {
+  .endpoint-card { padding: 20px 16px; }
+  .endpoint-card h3, .endpoint-card h4 { font-size: 19px; }
+  .endpoint-address code { font-size: 12px; }
 }

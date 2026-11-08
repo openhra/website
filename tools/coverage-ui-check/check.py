@@ -63,6 +63,49 @@ def coverage_css(css):
     assert backgrounds and all(value.strip().lower() == '#ffffff' for value in backgrounds), 'missing white coverage ground'
 
 
+MCP_COPY_SCRIPT = '<script src="/mcp-copy.js" defer></script>'
+
+
+def scripts_with_mcp(source):
+    scripts = re.findall(r'<script\b[^>]*>.*?</script>', source, re.S)
+    if MCP_COPY_SCRIPT not in scripts:
+        scripts.insert(1, MCP_COPY_SCRIPT)
+    return scripts
+
+
+def check_scripts(source, baseline, diagnostic='page scripts changed'):
+    # Preserve every existing tag and its order; allow only the exact local addition.
+    assert re.findall(r'<script\b[^>]*>.*?</script>', source, re.S) == scripts_with_mcp(baseline), diagnostic
+
+
+def script_negatives(root):
+    mutations = {
+        'different MCP script': lambda s: s.replace(MCP_COPY_SCRIPT, '<script src="/different.js" defer></script>'),
+        'extra script': lambda s: s + '<script src="/extra.js" defer></script>',
+        'duplicate MCP script': lambda s: s + MCP_COPY_SCRIPT,
+        'missing MCP script': lambda s: s.replace(MCP_COPY_SCRIPT, ''),
+        'MCP defer removed': lambda s: s.replace(MCP_COPY_SCRIPT, '<script src="/mcp-copy.js"></script>'),
+        'MCP inline payload': lambda s: s.replace(MCP_COPY_SCRIPT, '<script src="/mcp-copy.js" defer>unexpected()</script>'),
+        'contact script removed': lambda s: s.replace('<script src="/contact.js" defer></script>', ''),
+        'contact script changed': lambda s: s.replace('/contact.js', '/different-contact.js'),
+    }
+    for site in ('plans', 'openhra'):
+        source = (root / site / 'index.html').read_text()
+        assert source.count(MCP_COPY_SCRIPT) == 1, 'expected one MCP script per page'
+        for label, baseline in (('before MCP', source.replace(MCP_COPY_SCRIPT, '')), ('with MCP', source)):
+            check_scripts(source, baseline)
+            for name, mutate in mutations.items():
+                mutant = mutate(source)
+                assert mutant != source, 'script mutation was a no-op: ' + name
+                try:
+                    check_scripts(mutant, baseline)
+                except AssertionError as exc:
+                    assert str(exc) == 'page scripts changed', 'wrong script mutation diagnostic'
+                    print('negative control: PASS (' + site + ', ' + label + ', ' + name + ')')
+                else:
+                    raise AssertionError('script mutation was accepted: ' + name)
+
+
 def check(root):
     for layer, pages in (('providers', ('coverage-table.html',)), ('premiums', ('index.html', 'availability.html'))):
         fragment = (root / f'tools/coverage-scan/default-{layer}-2026.html').read_text().strip()
@@ -141,15 +184,13 @@ def check(root):
             before = re.search(pattern, baseline_page, re.S)
             after = re.search(pattern, page, re.S)
             assert before and after and before[0] == after[0], 'protected page block changed: ' + pattern
-        assert re.findall(r'<script\b[^>]*>.*?</script>', page, re.S) == re.findall(
-            r'<script\b[^>]*>.*?</script>', baseline_page, re.S), 'page scripts changed'
+        check_scripts(page, baseline_page)
         assert css.startswith(original('plans/style.css')), 'existing styles changed'
         organisation = (root / 'openhra/index.html').read_text()
         original_organisation = original('openhra/index.html')
         for pattern in (r'<section class="band alt" id="contact">.*?</section>', r'<footer>.*?</footer>'):
             assert re.search(pattern, organisation, re.S)[0] == re.search(pattern, original_organisation, re.S)[0], 'organisation protected block changed'
-        assert re.findall(r'<script\b[^>]*>.*?</script>', organisation, re.S) == re.findall(
-            r'<script\b[^>]*>.*?</script>', original_organisation, re.S), 'organisation scripts changed'
+        check_scripts(organisation, original_organisation, 'organisation scripts changed')
         assert config['headers'] == json.loads(original('plans/vercel.json'))['headers'], 'protected hosting headers changed'
         for name in ('plans/contact.js','plans/api/contact.js','plans/brand/tokens.css',
                      'openhra/vercel.json','openhra/contact.js','openhra/api/contact.js','openhra/brand/tokens.css'):
@@ -160,6 +201,7 @@ def check(root):
 
 
 def negatives(root=ROOT):
+    script_negatives(root)
     mutations = {
         'table row removed': lambda s: re.sub(r'<tr>\s*<th\s+scope=["\']row["\']>Alaska</th>.*?</tr>\s*', '', s, flags=re.S),
         'default value changed': lambda s: s.replace('203592/203592 (100.0%)','203591/203592 (100.0%)'),
