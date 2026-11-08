@@ -20,7 +20,7 @@ value must never go into a file or a commit. Paths in a selection are relative t
 that root. The checked-in `selection.example.json` is the exact, safe allowlist used
 for this release, with public archive hashes and finalized report hashes; it is an
 example of the operator interface, not a discovery rule or machine configuration.
-It selects 25 public archives, 14 finalized reports, 80 premium source scopes and
+It selects 25 public archives, 15 evidence selections from 14 finalized reports, 80 premium source scopes and
 8 provider/formulary scopes. Historical attempts, synthetic mutants and logs are
 excluded. It does not authorize ingesting other files in those directories.
 
@@ -74,16 +74,75 @@ classification until a reviewed adapter can attest an assessed, valid unimported
 source; unknown and quarantined units cannot be relabelled to imply that evidence.
 
 Premium evidence reconciles the 49 comparable 2026 source scopes and 29 federal
-2027 scopes against the public archives. **The committed release measures only the
-19 2026 SBE serving scopes.** The federal reports do not export an explicit serving
-pointer: 30 federal 2026 and 29 federal 2027 scopes retain their source denominators,
-null numerators/percentages and `serving_evidence_absent`. Passing comparisons alone
-are not promoted to serving evidence. This is a deliberate unresolved evidence gap
-relative to the brief's 49-measured-state target. Supplying audited `serving-v1`
-records below can resolve it without changing the metric or contacting a database
-from this scanner. NY/VT supplemental checks remain supporting evidence with null
-denominators. Oregon uses only its federal 2026 scope; its SHOP-only SBE bundle is
-not added. No 2027 record borrows 2026 sources.
+2027 scopes against the public archives. **The committed release measures 49 2026
+serving scopes:** 19 SBE declarations plus 30 federal pointer-derived oracle results.
+The source review below establishes the latter's serving lineage independently of
+their passing comparisons. The 29 federal 2027 scopes retain source denominators,
+null numerators/percentages and `serving_evidence_absent`; this review and adapter
+approval are scoped to the lane's 2026 task. Supplying audited `serving-v1` records
+below or separately reviewing the 2027 artifact can resolve that remaining gap.
+NY/VT supplemental checks remain supporting evidence with null denominators.
+Oregon uses only its federal 2026 scope; its SHOP-only SBE bundle is not added.
+No 2027 record borrows 2026 sources.
+
+### Reviewed federal 2026 serving lineage
+
+The finalized `p6d-all-states-2026.json` is selected twice, with the same SHA-256:
+`federal_oracle_2026` supplies independent reconciliation and
+`federal_pointer_2026` supplies serving lineage through `p6d-pointer-v1`. Its
+reviewed artifact hash is
+`d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795`.
+This explicit second selection is required; ordinary `federal-v1` reports never
+become serving evidence automatically.
+
+Read-only review of the OpenPlans producer established these paths:
+
+1. `scripts/oracle/all-states.mjs` selects `import_id` from `puf_active_catalog`
+   for the requested state/year. It checks the selected import's file hashes
+   against the acquired inputs before reusing that pointer. The result's
+   `import_id` is assigned from this selected pointer.
+2. If no matching pointer exists, that script awaits `importPufs` with publication
+   enabled (no `publish: false`), requires a passing import, and uses the returned
+   import ID. `src/ingest/puf/import.ts` commits the snapshot activation and
+   `puf_active_catalog` upsert in one transaction before returning or writing its
+   report. This was unconditional in the original federal producer; the later
+   SBE change guards it with `options.publish !== false`, which this caller meets.
+3. The script then compares the selected catalog's identities and rate rows and
+   writes the state result. Thus the selected report identifies a serving catalog
+   in each validation run. A generic import report's `status: ACTIVE` is
+   insufficient: historical ACTIVE snapshots survive pointer replacement, and
+   supplemental imports can be ACTIVE without publication.
+
+The oracle was introduced at OpenPlans commit
+`c5fee4f6d58f5fe12bda5321c0a73c4f49b40417`; the SBE publication guard was reviewed
+at `38caf7b3ca43bf0a30435eb97e6af997fed56c51`. Reviewed file SHA-256s at source
+commit `9129518013046d50df283f5c0564fc8c37d9da51`:
+
+| Producer file | SHA-256 |
+| --- | --- |
+| `scripts/oracle/all-states.mjs` | `68be82ce8f20b29fb93562bf8a6e6dd9ba5b4c62ee558d7dbb3fed87c0be34d5` |
+| `src/ingest/puf/import.ts` | `0188df4007611173e80a9a67dfcc00fb2eec2a33271c93318e8d773b99434729` |
+
+Every 2026 oracle import ID also has a matching finalized PUF import JSON with
+`passed: true`, `status: ACTIVE`, six file reconciliations and matching state/year.
+Those corroborate activation but are not selected as a substitute for pointer
+lineage. Batch summaries, reconciliation-only results, logs, interrupted runs and
+synthetic mutants are not serving evidence.
+
+The new adapter accepts only the exact reviewed 2026 artifact hash, requires the
+same artifact for reconciliation, checks state membership, catalog identity and
+observation cutoff, and retains the original oracle observation dates. It does not
+read OpenPlans source at scan time. Changed or future artifacts fail closed until
+their producer lineage is reviewed or an audited `serving-v1` export is supplied.
+The committed ledger records the pointer input hash and a digest of the selected
+catalog ID alongside reconciliation and public source bytes. No import IDs or raw
+logs are exported. These are **separate validated runs**, not evidence of one
+currently deployed database or a live service.
+
+The scopes changed from Unknown to a checked numerator in 2026 are:
+AK, AL, AR, AZ, DE, FL, HI, IA, IN, KS, LA, MI, MO, MS, MT, NC, ND, NE, NH, OH,
+OK, OR, SC, SD, TN, TX, UT, WI, WV, WY. Each numerator equals its unchanged source
+row denominator, for 100.0%. Issuer figures and all 2027 values are unchanged.
 
 The legacy TX recovered audit corroborates the source report's ACTIVE snapshot IDs
 against its final manifest pointers, and also repeats provider source validation.
@@ -120,6 +179,11 @@ formats are closed, versioned adapters, not guessed shapes:
 - `federal-v1`: independent oracle `year`, aggregate `passed`, and state `results`.
   State results require `state`, `year`, `import_id`, `passed`, exact `base_ids` and
   `variant_ids`, and `premiums` with passing raw/stored counts and zero mismatches.
+- `p6d-pointer-v1`: the exact reviewed 2026 federal oracle artifact above, selected
+  separately as a premium scope's `serving_report`. Its hash must equal the scope's
+  `federal-v1` reconciliation report hash. Only this reviewed producer's pointer
+  lineage grants serving eligibility; the adapter rejects arbitrary passing
+  federal-shaped reports and unreviewed years or changed artifacts.
 - `sbe-v1`: `year`, `status: PASS`, state `states` with `state`, `year`, `import_id`,
   public bundle `sha256`, `status: PASS`, zero `mismatches`, `issuers`, `base_plans`,
   `counts.rate` and `rates_checked`. Both row counts must match public file bytes.
@@ -201,3 +265,7 @@ negative controls, missing-report unknown behavior, retained ACTIVE refresh poin
 byte-identical repeated runs, read-only inputs, no network socket usage, and failed
 staging preserving the preceding release. No new runtime dependency or site gate
 modification is introduced by this lane.
+The serving controls also retain a known denominator with null numerator/percentage
+when every row reconciles but no pointer evidence is selected, reject a forged
+measured record without that lineage, reject unreviewed P6d artifacts even with
+updated selection hashes, and bind pointer evidence to the reconciliation artifact.

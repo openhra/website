@@ -102,7 +102,7 @@ def safe_text(value):
             safe_text(v)
     elif isinstance(value, str):
         require(not (value.startswith("/") or re.search(r"(?:^|\s)/(?:private|var|opt|etc|mnt|Volumes|Users|home|tmp)/", value)), "privacy: private absolute path")
-        require(not re.search(r"[\w.+%-]+@[\w.-]+\.[A-Za-z]{2,}|(?:/Volumes/|/Users/|/home/|/tmp/|[A-Za-z]:\\)|(?:postgres(?:ql)?|mysql|mongodb)://|(?:api[_-]?key|password|secret|token)=", value, re.I), "privacy: private path, address or secret")
+        require(not re.search(r"[\w.+%-]+@[\w.-]+\.[A-Za-z]{2,}|(?:/(?:Volumes|Users|home|tmp)/|[A-Za-z]:\\)|(?:postgres(?:ql)?|mysql|mongodb)://|(?:api[_-]?key|password|secret|token)=", value, re.I), "privacy: private path, address or secret")
 
 
 def blank_state(reason="denominator_unverified"):

@@ -238,6 +238,70 @@ class ScannerTests(unittest.TestCase):
         self.assertIsNone(r["numerator"])
         self.assertEqual(r["reason_codes"], ["serving_evidence_absent"])
 
+    def test_reconciled_premium_without_serving_evidence_stays_null(self):
+        self.e.premium(serving=False)
+        files, _ = self.build()
+        record = loads(files["premiums-2026.json"])["states"]["OR"]
+        ledger = loads(files[record["evidence"]["path"]])
+        scope = ledger["scopes"]["OR"]
+        self.assertEqual(scope["reconciliation"]["verified"], 2)
+        self.assertIsNone(scope["serving"])
+        self.assertEqual(record["denominator"], 2)
+        self.assertEqual(record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0))
+        self.assertEqual(record["status"], "unknown")
+        self.assertEqual(record["serving_basis"], "unverified")
+        self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
+        self.assertIsNone(record["numerator"])
+        self.assertIsNone(record["percent_tenths"])
+        # Even a self-consistent 2/2 record cannot replace absent pointer lineage.
+        record.update(numerator=2, percent_tenths=1000, status="measured",
+                      counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
+                      reason_codes=[], serving_basis="active_catalog")
+        with self.assertRaisesRegex(Invalid, "independent reconciliation and ACTIVE serving evidence"):
+            check_scope(scope, record, loads(files["index.json"]), "premiums", 2026, "OR", ledger)
+
+    def p6d_pointer_fixture(self):
+        spec = self.e.premium(serving=False)
+        rid = spec["report"]
+        self.e.mutate_report(rid, lambda r: r.update(states=["OR"]))
+        report = loads((self.root / self.e.selection["reports"][rid]["path"]).read_bytes())
+        self.e.report("p6d_pointer", report, "p6d-pointer-v1")
+        spec["serving_report"] = "p6d_pointer"
+        return spec, self.e.selection["reports"][rid]["sha256"]
+
+    def test_reviewed_p6d_pointer_and_reconciliation_bind_same_artifact(self):
+        spec, digest = self.p6d_pointer_fixture()
+        # Substitute the handwritten artifact only inside this test. Production
+        # accepts the separately reviewed historical artifact, never these bytes.
+        with patch("inputs.P6D_POINTER_REPORTS", {2026: digest}):
+            files, _ = self.build()
+            record = loads(files["premiums-2026.json"])["states"]["OR"]
+            self.assertEqual((record["numerator"], record["denominator"], record["percent_tenths"]), (2, 2, 1000))
+            ledger = loads(files[record["evidence"]["path"]])
+            self.assertEqual(ledger["scopes"]["OR"]["serving"]["report_id"], "p6d_pointer")
+            target = self.base / "p6d-release"
+            publish(target, files)
+            self.assertTrue(check_release(target))
+            self.e.mutate_report(spec["report"], lambda r: r.update(extra="different reconciliation artifact"))
+            with self.assertRaisesRegex(Invalid, "pointer/reconciliation artifact mismatch"):
+                self.build()
+
+    def test_unreviewed_p6d_pointer_artifact_is_rejected(self):
+        self.p6d_pointer_fixture()
+        # A passing federal-shaped report is insufficient even when the operator
+        # opts into serving evidence and updates the selection to its real hash.
+        with self.assertRaisesRegex(Invalid, "unreviewed P6d pointer artifact"):
+            self.build()
+
+    def test_p6d_pointer_requires_explicit_selection(self):
+        spec, digest = self.p6d_pointer_fixture()
+        self.e.selection["reports"].pop("p6d_pointer")
+        spec["serving_report"] = None
+        with patch("inputs.P6D_POINTER_REPORTS", {2026: digest}):
+            record = loads(self.build()[0]["premiums-2026.json"])["states"]["OR"]
+        self.assertIsNone(record["numerator"])
+        self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
+
     def test_premium_scope_negative_controls(self):
         spec = self.e.premium()
         with self.subTest("OR double counting"):

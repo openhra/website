@@ -40,6 +40,15 @@ def csv_key(value):
     return re.sub(r"[^a-z0-9]", "", value.lower())
 
 
+# Reviewed historical oracle output whose import_id comes from puf_active_catalog,
+# or from importPufs after its serving-pointer transaction commits. See README.md.
+# New reports need source/producer review; a matching reconciliation shape is not
+# serving evidence. Keep this separate from the general federal-v1 adapter.
+P6D_POINTER_REPORTS = {
+    2026: "d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795",
+}
+
+
 def sbe_declaration(text):
     require("Nineteen individual-exchange state catalogs serve" in text and "Oregon is SHOP-only" in text and "NY/VT bundles are validated supplemental" in text, "serving: unsupported SBE declaration")
     scopes = {}
@@ -120,7 +129,7 @@ class Bundle:
             exact_keys(spec, "path sha256 format finalized", "report")
             require(spec["finalized"] is True, "report: only finalized selections allowed")
             require(not re.search(r"mutant|before-recovery|interrupted|checkpoint|synthetic", spec["path"], re.I), "report: historical or synthetic evidence rejected")
-            require(spec["format"] in ("federal-v1", "sbe-v1", "issuer-v1", "audit-v1", "sbe-declaration-v1", "serving-v1"), "report: unsupported format")
+            require(spec["format"] in ("federal-v1", "sbe-v1", "issuer-v1", "audit-v1", "sbe-declaration-v1", "serving-v1", "p6d-pointer-v1"), "report: unsupported format")
             data = relative_file(self.root, spec["path"]).read_bytes()
             require(len(data) <= 16 * 1024**2, "report: input budget exceeded")
             require(sha(data) == spec["sha256"], "report: hash mismatch")
@@ -129,6 +138,10 @@ class Bundle:
             else:
                 value = loads(data)
                 require(isinstance(value, dict), "report: expected object")
+                if spec["format"] == "p6d-pointer-v1":
+                    require(type(value.get("year")) is int and
+                            P6D_POINTER_REPORTS.get(value["year"]) == spec["sha256"],
+                            "serving: unreviewed P6d pointer artifact")
             self.reports[rid] = (spec["format"], value)
             self.input_hashes[rid] = spec["sha256"]
         for sid, spec in sorted(selection["sources"].items()):
@@ -215,7 +228,22 @@ class Bundle:
                                          digest=sha(encoded(row)), report_id=rid)
         serving_id = spec["serving_report"]
         if serving_id is not None:
-            if self.reports.get(serving_id, (None,))[0] == "sbe-declaration-v1":
+            serving_format = self.reports.get(serving_id, (None,))[0]
+            if serving_format == "p6d-pointer-v1":
+                pointer_report = self.report(serving_id, "p6d-pointer-v1")
+                require(fmt == "federal-v1" and pointer_report["year"] == y and
+                        self.input_hashes[serving_id] == self.input_hashes[rid],
+                        "serving: P6d pointer/reconciliation artifact mismatch")
+                require(pointer_report["passed"] is True and
+                        sorted(pointer_report["states"]) == sorted(r["state"] for r in pointer_report["results"]),
+                        "serving: P6d pointer scope membership mismatch")
+                pointers = [r for r in pointer_report["results"] if r["state"] == s and r["year"] == y]
+                require(len(pointers) == 1 and pointers[0]["import_id"] == import_id,
+                        "serving: P6d active catalog pointer mismatch")
+                self.observed(pointers[0]["generated_at"])
+                require(s not in ("NY", "VT"), "serving: supplemental catalog forbidden")
+                result["serving"] = dict(catalog_sha256=sha(import_id.encode()), basis="active_catalog", report_id=serving_id)
+            elif serving_format == "sbe-declaration-v1":
                 declaration = self.report(serving_id, "sbe-declaration-v1")
                 require(fmt == "sbe-v1" and y == 2026 and s not in ("NY", "VT", "OR"), "serving: supplemental or SHOP catalog cannot replace serving catalog")
                 require(s in declaration and declaration[s]["basis"].startswith("SBE"), "serving: state absent from serving declaration")
