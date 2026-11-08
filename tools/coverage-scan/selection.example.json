@@ -431,7 +431,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "AK",
       "year": 2027
@@ -442,7 +442,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "AL",
       "year": 2027
@@ -453,7 +453,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "AR",
       "year": 2027
@@ -464,7 +464,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "AZ",
       "year": 2027
@@ -475,7 +475,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "DE",
       "year": 2027
@@ -486,7 +486,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "FL",
       "year": 2027
@@ -497,7 +497,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "HI",
       "year": 2027
@@ -508,7 +508,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "IA",
       "year": 2027
@@ -519,7 +519,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "IN",
       "year": 2027
@@ -530,7 +530,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "KS",
       "year": 2027
@@ -541,7 +541,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "LA",
       "year": 2027
@@ -552,7 +552,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "MI",
       "year": 2027
@@ -563,7 +563,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "MO",
       "year": 2027
@@ -574,7 +574,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "MS",
       "year": 2027
@@ -585,7 +585,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "MT",
       "year": 2027
@@ -596,7 +596,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "NC",
       "year": 2027
@@ -607,7 +607,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "ND",
       "year": 2027
@@ -618,7 +618,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "NE",
       "year": 2027
@@ -629,7 +629,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "NH",
       "year": 2027
@@ -640,7 +640,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "OH",
       "year": 2027
@@ -651,7 +651,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "OK",
       "year": 2027
@@ -662,7 +662,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "SC",
       "year": 2027
@@ -673,7 +673,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "SD",
       "year": 2027
@@ -684,7 +684,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "TN",
       "year": 2027
@@ -695,7 +695,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "TX",
       "year": 2027
@@ -706,7 +706,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "UT",
       "year": 2027
@@ -717,7 +717,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "WI",
       "year": 2027
@@ -728,7 +728,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "WV",
       "year": 2027
@@ -739,7 +739,7 @@
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
       "report": "federal_oracle_2027",
-      "serving_report": null,
+      "serving_report": "federal_pointer_2027",
       "source": "federal_rates_2027",
       "state": "WY",
       "year": 2027
@@ -995,6 +995,12 @@
       "path": "reports/p6d-all-states-2026.json",
       "sha256": "d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795"
     },
+    "federal_pointer_2027": {
+      "finalized": true,
+      "format": "p6d-pointer-v1",
+      "path": "reports/p6d-all-states-2027.json",
+      "sha256": "2442b9f54ffd357d5f86cc05f39a10a4de571eac5f761bcc6f2890a1f48fc69e"
+    },
     "p6c_audit": {
       "finalized": true,
       "format": "audit-v1",
@@ -1069,7 +1075,7 @@
     }
   },
   "schema_version": 1,
-  "source_commit": "7aa575dfc32d08429ad414f24e069b8bcc8d8103",
+  "source_commit": "d8e87b52d492026a38f1faf9c2024ea7ff347924",
   "sources": {
     "federal_plans_2026": {
       "members": [
