@@ -1,0 +1,50 @@
+{
+  "name": "Public edge watchdog",
+  "on": {
+    "schedule": [
+      {
+        "cron": "7,37 * * * *"
+      }
+    ],
+    "workflow_dispatch": {
+      "inputs": {
+        "synthetic_drill": {
+          "description": "Send one signed synthetic warning and recovery",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "permissions": {
+    "contents": "read",
+    "actions": "read"
+  },
+  "concurrency": {
+    "group": "public-edge-watchdog",
+    "cancel-in-progress": false
+  },
+  "jobs": {
+    "probe": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 5,
+      "steps": [
+        {
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Check public edge and signed alert delivery",
+          "env": {
+            "OPENHRA_ALERT_SECRET": "${{ secrets.OPENHRA_ALERT_SECRET }}",
+            "GITHUB_TOKEN": "${{ github.token }}",
+            "SYNTHETIC_DRILL": "${{ inputs.synthetic_drill }}"
+          },
+          "run": "python3 - <<'PY'\nimport datetime, http.client, json, os, socket, ssl, sys, time, urllib.request, uuid\nsys.path.insert(0, 'tools/alerts')\nfrom send import sign, NoRedirect\nname = 'openplans.openhra.com'\nchecks = dict.fromkeys(('tls', 'lifetime', 'health', 'redirect'), 'unknown')\ntry:\n    with socket.create_connection((name, 443), timeout=10) as raw:\n        with ssl.create_default_context().wrap_socket(raw, server_hostname=name) as tls:\n            cert = tls.getpeercert()\n            checks['tls'] = 'pass' if cert.get('subjectAltName') == (('DNS', name),) else 'fail'\n            reserve = ssl.cert_time_to_seconds(cert['notAfter']) - time.time()\n            checks['lifetime'] = 'pass' if reserve > 20*86400 else 'fail'\n            tls.sendall(('HEAD /healthz HTTP/1.1\\r\\nHost: ' + name + '\\r\\nConnection: close\\r\\n\\r\\n').encode())\n            response = http.client.HTTPResponse(tls)\n            response.begin()\n            checks['health'] = 'pass' if response.status == 200 or (response.status == 503 and response.getheader('Retry-After') == '300') else 'fail'\n    conn = http.client.HTTPConnection(name, 80, timeout=10)\n    try:\n        conn.request('HEAD', '/healthz', headers={'Host': name})\n        response = conn.getresponse()\n        checks['redirect'] = 'pass' if response.status == 308 and response.getheader('Location') == 'https://' + name + '/healthz' else 'fail'\n    finally:\n        conn.close()\nexcept Exception:\n    pass\n# Read only the previous workflow conclusion. No local-host dependency.\nprevious = None\ntry:\n    request = urllib.request.Request('https://api.github.com/repos/' + os.environ['GITHUB_REPOSITORY'] + '/actions/workflows/edge-watchdog.yml/runs?per_page=10', headers={'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN']})\n    with urllib.request.urlopen(request, timeout=10) as response:\n        runs = json.load(response)['workflow_runs']\n    previous = next((r['conclusion'] for r in runs if str(r['id']) != os.environ['GITHUB_RUN_ID'] and r['status'] == 'completed'), None)\nexcept Exception:\n    pass\nhealthy = all(value == 'pass' for value in checks.values())\nsecret = os.environ['OPENHRA_ALERT_SECRET'].encode()\nif not secret:\n    raise SystemExit('watchdog: secret is missing')\ndef post(severity, status, summary, check='edge-watchdog.public'):\n    event = {'event_id': str(uuid.uuid4()), 'source': 'watchdog', 'check': check,\n             'severity': severity, 'status': status, 'at': datetime.datetime.now(datetime.timezone.utc).isoformat(),\n             'summary': summary}\n    body = json.dumps(event, separators=(',', ':'), sort_keys=True).encode()\n    stamp = str(int(time.time()))\n    request = urllib.request.Request('https://plans.openhra.com/api/alerts', data=body, method='POST', headers={\n        'Content-Type': 'application/json', 'X-OpenHRA-Timestamp': stamp,\n        'X-OpenHRA-Signature': sign(body, stamp, secret)})\n    try:\n        with urllib.request.build_opener(NoRedirect()).open(request, timeout=10) as response:\n            if response.status != 204:\n                raise ValueError()\n    except Exception:\n        raise SystemExit('watchdog: receiver did not accept the event')\nif os.environ.get('SYNTHETIC_DRILL') == 'true':\n    post('warning', 'fail', 'Synthetic outside watchdog warning', 'edge-watchdog.synthetic')\n    post('recovery', 'ok', 'Synthetic outside watchdog recovery', 'edge-watchdog.synthetic')\n    print('watchdog: synthetic warning and recovery accepted with HTTP 204')\nif not healthy:\n    post('warning', 'fail', 'Public edge check needs attention')\n    raise SystemExit('watchdog: public check failed')\npost('recovery' if previous in ('failure', 'timed_out') else 'info', 'ok',\n     'Public edge check recovered' if previous in ('failure', 'timed_out') else 'Public edge check passed')\nprint('watchdog: TLS, expiry, health, redirect and signed receiver acceptance passed')\nPY\n"
+        }
+      ]
+    }
+  }
+}

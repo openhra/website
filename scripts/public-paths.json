@@ -3,6 +3,7 @@
   "files": [
     ".editorconfig",
     ".github/workflows/ci.yml",
+    ".github/workflows/edge-watchdog.yml",
     ".gitignore",
     ".node-version",
     ".prettierignore",
