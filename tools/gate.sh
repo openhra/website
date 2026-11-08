@@ -120,6 +120,7 @@ fi
 
 python3 "$ROOT/tools/check-private-paths.py" "$ROOT"
 python3 "$ROOT/tools/check-neutral.py" "$ROOT"
+python3 "$ROOT/tools/check-mcp.py" "$ROOT"
 
 python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"
 if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
@@ -130,6 +131,7 @@ else
 fi
 
 if [ "$FULL" -eq 1 ]; then
+  python3 "$ROOT/tools/check-mcp.py" "$ROOT" --selftest
   "$ROOT/tools/gate-selftest.sh"
   python3 "$ROOT/tools/coverage-gate/selftest.py"
   python3 -m unittest discover -s "$ROOT/tools/coverage-scan/tests"

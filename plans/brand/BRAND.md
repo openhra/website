@@ -158,4 +158,4 @@ For the sister-site handoff, copy these files into that site's existing checkout
 3. `brand/tokens.css`, `brand/site.css` and all `brand/*.svg` → the same paths under `brand/`.
 4. `brand/openhra/favicon.svg` → root `favicon.svg` (the [H] favicon; the plans root favicon is [P]).
 
-Keep the sister site's existing `contact.js`, `api/contact.js` and hosting configuration. The HTML uses root-relative asset paths for this handoff. Opening the nested HTML as a file does not reproduce the intended deployment. Preview it with the handoff files mapped to a local site root. No files in the sister checkout were edited during this redesign.
+Keep the sister site's existing `contact.js`, `api/contact.js` and hosting configuration. The HTML uses root-relative asset paths for this handoff. Opening the nested HTML as a file does not reproduce the intended deployment. Preview it with the handoff files mapped to a local site root. The current page sources are `plans/index.html` and `openhra/index.html` in the website tree. Keep the handoff copies aligned with the organisation page and styles.

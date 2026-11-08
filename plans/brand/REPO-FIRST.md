@@ -1,63 +1,47 @@
 # Repository first
 
-The public repository is the project's main page. The website explains what the project does, states its limits and points to the source. Keep code, the README, operational documentation, issues and any future releases together in the repository.
+The public repository is the project's home. The website explains what the project does, states its limits and points to the source. Code, complete documentation, issues and releases belong together on GitHub.
 
 ## Page hierarchy
 
-- OpenPlans: the first navigation action and filled hero action open `https://github.com/openhra/openplans`. Put the name and purpose before the action, with the publication status beside it. The site's secondary action opens the repository README.
-- OpenHRA: the first navigation action and filled hero action open `https://github.com/openhra`. The project directory leads with OpenPlans. Its name and primary action open its repository; the project website is a secondary text link.
-- Home logos and the keyboard skip link remain navigation utilities. "First call to action" means the first action in the navigation menu, hero and project entry. Document order must match visual order, including on phones.
-- Use descriptive labels: "Repository", "Browse repositories", "Read the README", "Project website". Avoid naming the hosting service. Open links in the same tab so visitors choose when to open another.
+- OpenPlans leads its navigation and hero actions with `https://github.com/openhra/openplans`. The secondary hero action opens the README. Keep "In development · no release yet" beside the main action.
+- OpenHRA leads with `https://github.com/openhra`. Its first project is OpenPlans, whose name and filled action open the project repository. The project website is a secondary text link.
+- Home logos and keyboard skip links remain navigation utilities. The first content action in a navigation menu, hero or project entry goes to GitHub. Document order matches visual order on phones.
+- Name GitHub directly. Use descriptive actions such as "Open on GitHub", "Read the README" and "Follow on GitHub". Open links in the same tab.
+- Repository cards show code, docs, issues and releases. A release link must say "No release yet" until the owner confirms a release.
+
+The November 8, 2026 owner direction adds GitHub naming, planned MCP tools and setup snippets to the websites. It supersedes the earlier instruction to omit the hosting service's name and keep all commands off the website. See the website's `docs/redesign-2026-11/DESIGN.md` for the current information architecture.
+
+## MCP is in development
+
+MCP is the main planned feature on the project site. Describe the read-only Model Context Protocol server, stateless Streamable HTTP, provenance and explicit unknowns. Show the planned tool names and a clearly labelled illustrative agent exchange. Never invent a price, coverage result, user, client endorsement or usage count.
+
+Connection blocks are previews. Each block must say "In development" and "planned". The public endpoint is not hosted. The local HTTP URL and stdio command are not released. Do not turn those previews into a working-service claim or offer a live request button.
+
+OpenHRA introduces the planned agent support and links to OpenPlans for the full tool list and connection details. Keep the technical reference in the repository as implementation evolves.
 
 ## What stays on the websites
 
-Keep a short purpose statement, current development status, capabilities, known coverage limits and source provenance. State that unknown data stays unknown. Give the native and compatibility APIs, container operation and data sources a sentence each. Link each summary to the repository README. Keep the reference manual there.
+Keep the purpose, current status, public sources, coverage limits and unknown-data rule. Give the native and compatibility APIs a short explanation. Show the public clone command and a run command copied from the README, with prerequisites and a link to the complete setup steps. A source bootstrap command does not establish a release or hosted MCP availability.
 
-On OpenPlans, keep these inherited blocks verbatim apart from the owner-approved display-name casing: the validation section (including its dated table), the publisher section (including the exact User-Agent), the NLM and GeoNames attribution, Contact and the footer notices. They are useful to someone who never visits the repository. Preserve the contact IDs, scripts and verification behaviour on both pages. Keep publisher and Contact links in the navigation; a data publisher should not have to browse source to understand a request.
+OpenPlans preserves the Verification section and dated table, the coverage section and saved data, the publisher section and exact User-Agent, NLM and GeoNames attribution, Contact and footer notices. Preserve the contact IDs, scripts, handlers and verification behavior on both pages. Publisher and Contact links stay in navigation.
 
-OpenHRA keeps a brief explanation of individual coverage HRAs, the repository directory, working principles and Contact. It does not duplicate project setup or API documentation.
+OpenHRA keeps an explanation of individual coverage HRAs, the repository directory, working principles and Contact. Avoid duplicating the full project manual.
 
-## What belongs in the repository
+## Repository documentation
 
-The README should explain the project's purpose, development status, supported coverage and first successful local run, with links to deeper documentation. Detailed endpoint lists, authentication, configuration, bootstrap commands, storage needs, source inventories and parser behaviour belong in version-controlled documentation beside the code. Keep executable examples there so reviewers can check code and instruction changes together.
+The README owns the first successful local run, supported data and links to operational guides. Authentication, configuration, bootstrap options, storage needs, parser behavior and source inventories stay beside the code. Check website command excerpts when the README changes.
 
-This lane removes the duplicated endpoint list, command block and source table from the website. It does not publish or modify the separate source repository. Copy those details into its README/docs during repository preparation. Until then, use the existing site revision as their source.
+The owner supplied the public repository destinations. Before publication, verify links as an anonymous visitor, including issues, releases and any deeper documentation URLs. Do not infer a release from a User-Agent version, licence label or successful validation run.
 
-## Links now and later
+## Brand assets
 
-The owner supplied the public repository destination. The repository is still being prepared. Do not invent a default branch, file path or heading. Current documentation links use the repository root's `#readme` fragment, without assuming a branch or document filename. It may have no content yet. Keep the status note beside the link to explain that. The project name and main action always use the repository root without a fragment.
+`repo/readme-header-light.svg` uses the [P] lock-up and white ground. Important README content stays as searchable text below it. `repo/social-preview.svg` is the editable source for its PNG export. Neither asset has metrics, badges or availability claims. No remote fonts or images.
 
-When documentation is public, replace each summary link with its specific verified destination:
+See `repo/README.md` for the image snippet and upload guidance. The proof page in `repo/index.html` shows the exports. Assets stay white under both OS settings. Do not introduce decorative popularity or certification badges.
 
-| Site summary | Destination to confirm in the source repository |
-| --- | --- |
-| Two APIs, same answers | API reference document or README API heading |
-| Run it yourself | Installation/quickstart document or README setup heading |
-| Data sources | Source inventory and provenance document |
-| Current coverage | Supported datasets and limitations document |
+## Site copies and checks
 
-Follow links as an anonymous visitor before publishing them. Use the actual default branch and existing heading anchors. Prefer a stable README heading as the entry to a changing document tree. Check those destinations when documentation moves. Match link labels to their targets. Until deeper paths are verified, say "Read the README", not "API reference".
+The deployed page sources are `plans/index.html` and `openhra/index.html`. Keep shared tokens and `brand/site.css` aligned between the sites. The nested `plans/brand/openhra/` files are handoff copies of the organisation page and styles, with its [H] favicon. They are not a third project site.
 
-Add issue and release links once those destinations are public and useful. Do not fill their absence with placeholders or fabricated release numbers. The inherited User-Agent version identifies the fetcher. It does not establish a software release.
-
-## Honest status
-
-Keep "In development" and "Public repository being prepared" visible. Do not infer public availability from the source URL, validation figures or the licence label. No stars, contributor counts, downloads, versions, release badges, adoption claims or readiness claims. Retain the date attached to validation evidence; it describes that run, not a certification or a promise about future data.
-
-When the repository becomes public and populated, remove the preparation note only after checking it. The development status remains until the project owner changes it.
-
-## Brand inside the repository
-
-`repo/readme-header-light.svg` reuses the shared path-drawn OpenPlans lock-up, [P] letter mark and semantic colours. The hand-authored SVG includes its own white background, title and description. There are no remote fonts or linked images. A compact header names the project and its purpose; important README content stays as searchable text below it.
-
-`repo/social-preview.svg` is the editable 1280 × 640 source for `repo/social-preview.png`. It uses a fixed white palette, generous margins that allow cropping and the existing OpenPlans purpose line. It carries no metrics, badges or claims of availability. The PNG is a delivery asset. The site does not request it.
-
-See `repo/README.md` for the single-image snippet and upload guidance. The proof page in `repo/index.html` shows the fixed-white header and social image. The page and artwork stay white under both OS settings; the dark header is retired.
-
-No badges by default. If a real, useful build or licence badge is later proposed, it must reflect a verifiable current fact and have a text equivalent. Do not introduce third-party badge requests into these websites. Never use decorative badges that imply popularity, endorsement, security certification or quality.
-
-## Verification and handoff
-
-Keep B1's root-relative sister-site handoff: copy `brand/openhra/index.html` and `brand/openhra/style.css` to that site's root, with the shared `brand/` assets and styles. Copy `brand/openhra/favicon.svg` to its root `favicon.svg` so the organisation uses [H], while OpenPlans uses [P]. Do not alter its contact implementation or security policy. No deployment is part of this lane.
-
-Check both pages at 1280 px and 390 px, under light and dark OS settings, with both pages staying white. Verify repository actions occur first, all local images load, nothing overflows, keyboard focus remains visible, and protected content matches the previous revision byte for byte. Check source files for address patterns without printing any matched values. Keep captures and the short evidence report outside the repository in `_reports/brand3/`.
+Review both pages at desktop and phone widths, including 320px. Check repository action order, images, links, headings, visible focus, no horizontal page overflow and white ground under dark OS preference. Preserve protected content byte for byte. The November redesign captures and browser report live in `docs/redesign-2026-11/`. Publication remains a separate owner action.

@@ -167,3 +167,101 @@ nav li a.nav-repo { color: var(--accent); font-weight: 650; gap: 12px; }
 
 .footer-identity { display: inline-flex; align-items: center; gap: 12px; }
 .footer-identity img { display: block; flex: 0 0 auto; }
+
+/* November redesign: repository home and explicitly planned agent interfaces. */
+nav li a small { display: block; font-size: 9px; font-weight: 400; color: var(--muted); }
+nav li a:has(small) { flex-direction: column; justify-content: center; align-items: flex-start; line-height: 1.45; }
+.hero-preview { margin: 24px 0 0; max-width: 54ch; padding-left: 16px; border-left: 2px solid var(--accent); font-size: 14px; color: var(--muted); }
+.hero-preview strong { display: block; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+.plans-site .repo-hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 72px; align-items: center; padding-block: 64px 72px; }
+.plans-site .repo-hero h1 { font-size: clamp(42px, 4.8vw, 64px); }
+.project-home .repo-home-top { margin-bottom: 40px; }
+.project-home h2 { font-size: 40px; }
+.repo-directory { list-style: none; margin: 24px 0 0; padding: 0; }
+.repo-directory li { border-top: 1px solid var(--line); }
+.repo-directory a { display: flex; justify-content: space-between; gap: 12px; align-items: center; min-height: 52px; padding-block: 12px; font-size: 14px; text-decoration: none; }
+.repo-directory a:hover { text-decoration: underline; }
+.repo-directory a span:first-child { font-weight: 600; }
+.repo-directory a span:last-child { color: var(--muted); font-size: 12px; text-align: right; }
+.project-home .repo-home-bottom { margin-top: 10px; }
+.feature-intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: start; }
+.feature-intro h2 { font-size: clamp(32px, 3.8vw, 48px); line-height: 1.08; }
+.feature-lede { font-size: 19px; color: var(--accent); }
+.development-note { font-size: 14px; color: var(--muted); }
+.development-note strong { color: var(--accent); font-weight: 600; }
+.protocol-facts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 24px 0 12px; padding: 14px 0; border-block: 1px solid var(--line); list-style: none; font-family: var(--mono); font-size: 11px; color: var(--accent); }
+.agent-example { margin: 0; border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-md); padding: 26px; min-width: 0; background: var(--bg); }
+.agent-example figcaption { display: grid; gap: 4px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.agent-example figcaption > span:last-child { font-size: 12px; color: var(--muted); }
+.exchange-turn { padding-top: 20px; }
+.speaker { display: block; font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 6px; }
+.exchange-turn p { margin-bottom: 10px; font-size: 15px; }
+.exchange-turn code { display: block; font-size: 11px; padding: 10px; }
+.exchange-turn .example-evidence { font-size: 13px; color: var(--muted); }
+.example-disclaimer { font-size: 11px; color: var(--muted); margin: 18px 0 0; border-top: 1px solid var(--line); padding-top: 14px; }
+.tool-heading { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 20px; margin-top: 56px; }
+.tool-heading h3 { font-size: 24px; font-weight: 550; margin: 0; }
+.tool-heading p { color: var(--muted); font-size: 12px; margin: 0; }
+.tool-directory { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 24px 0 0; }
+.tool-directory > div { border-top: 1px solid var(--line); padding: 24px 24px 24px 0; min-width: 0; }
+.tool-directory > div:not(:nth-child(3n + 1)) { padding-left: 24px; border-left: 1px solid var(--line); }
+.tool-directory dt { display: flex; flex-wrap: wrap; gap: 4px 8px; align-content: start; min-height: 60px; margin-bottom: 10px; }
+.tool-directory dt code { font-size: 12px; background: none; padding: 0; color: var(--accent); }
+.tool-directory dd { font-size: 14px; color: var(--muted); margin: 0; }
+.connect-heading { margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--line); }
+.connect-heading h3 { font-size: 30px; font-weight: 550; }
+.connect-heading p { color: var(--muted); font-size: 15px; max-width: 80ch; }
+.connection-grid, .setup-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin-top: 28px; }
+.connection-panel { min-width: 0; border-top: 2px solid var(--accent); padding-top: 22px; }
+h4 { font-size: 18px; line-height: 1.35; font-weight: 600; margin: 0 0 8px; }
+.connection-panel p, .setup-grid p { font-size: 14px; color: var(--muted); }
+.connection-panel .note { font-size: 12px; }
+.connection-panel .connection-label { margin-bottom: 0; font-size: 12px; }
+.connection-panel pre { margin: 12px 0 20px; }
+.connection-panel pre, .setup-grid pre { font-size: 12px; }
+.setup-grid > div { min-width: 0; }
+.setup-grid h3 { font-weight: 600; }
+#contact .contact { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+#contact-status { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 1040px) {
+  .plans-site nav { gap: 24px; }
+  .plans-site nav ul { gap: 4px 16px; justify-content: flex-end; }
+  .plans-site .repo-hero { gap: 40px; }
+  .feature-intro { gap: 32px; }
+}
+@media (max-width: 760px) {
+  .plans-site nav ul { justify-content: flex-start; }
+  .plans-site .repo-hero, .feature-intro, .connection-grid, .setup-grid { grid-template-columns: 1fr; }
+  .plans-site .repo-hero { padding-block: 44px 48px; gap: 32px; }
+  .plans-site .repo-hero h1 { font-size: clamp(40px, 7.8vw, 58px); }
+  .feature-intro { gap: 32px; }
+  .tool-directory { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tool-directory > div, .tool-directory > div:not(:nth-child(3n + 1)) { padding: 20px 16px 20px 0; border-left: 0; }
+  .tool-directory > div:nth-child(2n) { padding-inline: 16px 0; border-left: 1px solid var(--line); }
+  .tool-directory dt { min-height: auto; }
+  .tool-heading { margin-top: 36px; }
+  .connection-grid, .setup-grid { gap: 20px; }
+  .connection-panel { padding-top: 20px; }
+}
+@media (max-width: 480px) {
+  .agent-example { padding: 20px; }
+  .tool-directory { grid-template-columns: 1fr; }
+  .tool-directory > div, .tool-directory > div:not(:nth-child(3n + 1)), .tool-directory > div:nth-child(2n) { padding: 18px 0; border-left: 0; }
+  .tool-directory dt { margin-bottom: 6px; }
+  .tool-directory dt code { font-size: 13px; }
+  .connect-heading { margin-top: 24px; padding-top: 32px; }
+  .project-home h2 { font-size: 32px; }
+  .repo-directory a { flex-wrap: wrap; gap: 4px 12px; }
+  .repo-directory a span:last-child { text-align: left; }
+  .connection-panel pre, .setup-grid pre { padding: 16px; font-size: 11px; }
+}
+@media (max-width: 360px) {
+  #contact .contact { margin-inline: -20px; }
+  #contact-captcha { justify-self: center; }
+  #contact .contact > p { padding-inline: 20px; }
+}
+
+@media (max-width: 480px) {
+  .plans-site nav ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 0 12px; }
+  .umbrella-site nav ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 0 24px; }
+}

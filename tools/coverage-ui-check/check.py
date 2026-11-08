@@ -55,10 +55,32 @@ def check(root):
             ['git', '-C', str(ROOT), 'cat-file', '-e', 'main:' + prefix + 'plans/index.html'],
             capture_output=True).returncode == 0 else 'HEAD'
         original = lambda name: subprocess.check_output(['git', '-C', str(ROOT), 'show', baseline + ':' + prefix + name]).decode()
-        strip = lambda text: re.sub(r'<section class="band coverage"[^>]*>.*?</section>', '', text, flags=re.S).replace('<script src="/coverage.js" defer></script>\n','')
-        assert strip(page) == strip(original('plans/index.html')), 'page changed outside section 06/script reference'
+        # A page redesign is authorised. Keep the evidence, legal and contact
+        # blocks byte-identical instead of freezing unrelated presentation copy.
+        baseline_page = original('plans/index.html')
+        protected_sections = (
+            r'<section class="band alt verification">.*?</section>',
+            r'<section class="band coverage"[^>]*>.*?</section>',
+            r'<section class="band" id="publishers">.*?</section>',
+            r'<section class="band alt" id="contact">.*?</section>',
+            r'<footer>.*?</footer>',
+            r'<p>This product uses publicly available data.*?</p>',
+        )
+        for pattern in protected_sections:
+            before = re.search(pattern, baseline_page, re.S)
+            after = re.search(pattern, page, re.S)
+            assert before and after and before[0] == after[0], 'protected page block changed: ' + pattern
+        assert re.findall(r'<script\b[^>]*>.*?</script>', page, re.S) == re.findall(
+            r'<script\b[^>]*>.*?</script>', baseline_page, re.S), 'page scripts changed'
         assert css.startswith(original('plans/style.css')), 'existing styles changed'
-        for name in ('plans/vercel.json','plans/contact.js','plans/api/contact.js','plans/brand/tokens.css'):
+        organisation = (root / 'openhra/index.html').read_text()
+        original_organisation = original('openhra/index.html')
+        for pattern in (r'<section class="band alt" id="contact">.*?</section>', r'<footer>.*?</footer>'):
+            assert re.search(pattern, organisation, re.S)[0] == re.search(pattern, original_organisation, re.S)[0], 'organisation protected block changed'
+        assert re.findall(r'<script\b[^>]*>.*?</script>', organisation, re.S) == re.findall(
+            r'<script\b[^>]*>.*?</script>', original_organisation, re.S), 'organisation scripts changed'
+        for name in ('plans/vercel.json','plans/contact.js','plans/api/contact.js','plans/brand/tokens.css',
+                     'openhra/vercel.json','openhra/contact.js','openhra/api/contact.js','openhra/brand/tokens.css'):
             assert (root/name).read_text() == original(name), 'protected file changed: '+name
 
 

@@ -49,3 +49,25 @@
 
 .projects .repo-status { font-size: 13px; margin-top: 12px; }
 .projects .actions { gap: 12px 24px; }
+
+/* The organisation introduces the repository and the planned agent workflow. */
+.umbrella-site .hero { padding-block: 64px 72px; gap: 72px; }
+.brand-figure figcaption { font-size: 24px; }
+.brand-figure figcaption a { text-decoration: none; }
+.brand-figure figcaption a:hover { text-decoration: underline; }
+.projects .repo-directory { margin-top: 24px; }
+.projects .repo-directory a { min-height: 48px; }
+.projects pre { font-size: 12px; }
+.projects .project-org { margin-top: 28px; font-size: 13px; }
+.agent-route { border-top: 3px solid var(--accent); padding-top: 24px; }
+.agent-route ol { list-style: none; padding: 0; margin: 20px 0 0; }
+.agent-route li { display: flex; gap: 20px; padding: 22px 0; border-top: 1px solid var(--line); }
+.route-index { font: 12px var(--mono); color: var(--accent); padding-top: 4px; }
+.agent-route h3 { font-weight: 600; }
+.agent-route li p { color: var(--muted); font-size: 14px; margin: 0; }
+@media (max-width: 1040px) {
+  .umbrella-site .hero { gap: 40px; }
+}
+@media (max-width: 760px) {
+  .umbrella-site .hero { padding-block: 44px 48px; gap: 32px; }
+}
