@@ -23,3 +23,66 @@
 }
 
 #sources .text-link { margin-bottom: 24px; }
+
+/* Static coverage reader: section 06 and its saved table. */
+.coverage { background: #ffffff; color: var(--ink); color-scheme: light; }
+.coverage .coverage-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 24px; padding: 20px 0; border-block: 1px solid var(--line); }
+.coverage .coverage-layers { display: flex; flex-wrap: wrap; gap: 8px; }
+.coverage .coverage-controls label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 0; }
+.coverage button, .coverage select { min-height: 44px; max-width: 100%; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); padding: 8px 12px; font: inherit; color: var(--ink); background: #ffffff; }
+.coverage button { cursor: pointer; }
+.coverage button:disabled { cursor: default; }
+.coverage button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.coverage :focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+.coverage #coverage-scope { font-size: 14px; margin-top: 18px; }
+.coverage .coverage-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 28px; margin: 28px 0; align-items: start; }
+.coverage .coverage-map { min-width: 0; background: #ffffff; }
+.coverage .coverage-map svg { display: block; width: 100%; height: auto; background: #ffffff; }
+.coverage .state-shapes path { stroke: var(--line-strong); stroke-width: .9; vector-effect: non-scaling-stroke; }
+.coverage .state-shapes path[data-selected="true"] { stroke: var(--teal-950); stroke-width: 2.5; }
+.coverage .state-labels text { font: 15px var(--mono); font-weight: 600; text-anchor: middle; fill: var(--ink); paint-order: stroke; stroke: white; stroke-width: 4; stroke-linejoin: round; }
+.coverage .state-labels .callout rect { stroke: var(--line-strong); }
+.coverage .coverage-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 12px; }
+.coverage .coverage-legend span { display: inline-flex; gap: 6px; align-items: center; }
+.coverage .coverage-swatch { display: inline-block; width: 18px; height: 18px; flex-shrink: 0; border: 1px solid var(--line-strong); }
+.coverage .coverage-zero { background: white; }
+.coverage .coverage-low { background: var(--teal-100); }
+.coverage .coverage-mid { background: var(--teal-300); }
+.coverage .coverage-high { background: var(--teal-600); }
+.coverage .coverage-full { background: var(--teal-800); }
+.coverage .coverage-unknown { background: radial-gradient(var(--line-strong) .7px, transparent .9px) 0 0 / 5px 5px; }
+.coverage .coverage-quarantine { background: repeating-linear-gradient(135deg, white 0 4px, var(--line-strong) 4px 5px); }
+.coverage .coverage-detail { border-top: 3px solid var(--accent); padding-top: 16px; min-width: 0; }
+.coverage #coverage-metric { font-size: 36px; line-height: 1.2; letter-spacing: -.035em; margin: 16px 0 8px; }
+.coverage .coverage-detail p, .coverage .coverage-note, .coverage-downloads, #coverage-message { overflow-wrap: anywhere; font-size: 13px; }
+.coverage .coverage-note { color: var(--muted); }
+.coverage #coverage-date, .coverage #coverage-legend-title { font-size: 13px; }
+.coverage #coverage-table { margin-top: 24px; }
+.coverage table { table-layout: fixed; width: 100%; }
+.coverage caption { text-align: left; font-size: 13px; color: var(--muted); padding-bottom: 12px; }
+.coverage th, .coverage td { vertical-align: top; overflow-wrap: anywhere; white-space: normal; padding: 14px 10px; }
+.coverage th:first-child { width: 25%; }
+.coverage th:nth-child(2) { width: 25%; }
+.coverage td { font-variant-numeric: tabular-nums; }
+.coverage tbody th { font-family: var(--body); font-size: 14px; letter-spacing: normal; text-transform: none; }
+.coverage thead th { font-size: 11px; letter-spacing: .02em; }
+@media (max-width: 760px) {
+  .coverage .wrap { padding-inline: 16px; }
+  .coverage .coverage-workspace { grid-template-columns: 1fr; gap: 20px; }
+  .coverage .coverage-layers { width: 100%; gap: 6px; }
+  .coverage .coverage-layers button { flex: 1; font-size: 13px; padding: 8px 6px; }
+  .coverage .coverage-controls { gap: 16px; }
+  .coverage .coverage-controls label:last-child { flex: 1; }
+  .coverage .state-labels text { font-size: 28px; stroke-width: 5; }
+  .coverage th, .coverage td { padding: 12px 5px; font-size: 13px; }
+  .coverage tbody th { font-size: 13px; }
+  .coverage thead th { font-size: 10px; }
+  .coverage th:first-child, .coverage th:nth-child(2) { width: 30%; }
+}
+@media (forced-colors: active) {
+  .coverage { forced-color-adjust: none; }
+  .coverage button, .coverage select { forced-color-adjust: auto; }
+  .coverage .coverage-map svg { forced-color-adjust: none; }
+  .coverage .coverage-swatch { forced-color-adjust: none; }
+  .coverage button[aria-pressed="true"] { border: 3px solid ButtonText; text-decoration: underline; }
+}

@@ -1,0 +1,190 @@
+[
+  {
+    "selectionParity": 306
+  },
+  {
+    "shareURLRestored": true,
+    "unpublishedStatesRemainUnknown": true
+  },
+  {
+    "width": 320,
+    "client": 305,
+    "scroll": 324,
+    "white": "rgb(255, 255, 255)",
+    "mapWhite": "rgb(255, 255, 255)",
+    "states": 51,
+    "controls": true,
+    "gutter": 16,
+    "coverageRight": 305,
+    "coverageOverflow": false,
+    "baselineScroll": 324,
+    "pageNoOverflow": false
+  },
+  {
+    "width": 360,
+    "client": 345,
+    "scroll": 345,
+    "white": "rgb(255, 255, 255)",
+    "mapWhite": "rgb(255, 255, 255)",
+    "states": 51,
+    "controls": true,
+    "gutter": 16,
+    "coverageRight": 345,
+    "coverageOverflow": false,
+    "baselineScroll": 345,
+    "pageNoOverflow": true
+  },
+  {
+    "width": 390,
+    "client": 375,
+    "scroll": 375,
+    "white": "rgb(255, 255, 255)",
+    "mapWhite": "rgb(255, 255, 255)",
+    "states": 51,
+    "controls": true,
+    "gutter": 16,
+    "coverageRight": 375,
+    "coverageOverflow": false,
+    "baselineScroll": 375,
+    "pageNoOverflow": true
+  },
+  {
+    "width": 768,
+    "client": 753,
+    "scroll": 753,
+    "white": "rgb(255, 255, 255)",
+    "mapWhite": "rgb(255, 255, 255)",
+    "states": 51,
+    "controls": true,
+    "gutter": 32,
+    "coverageRight": 753,
+    "coverageOverflow": false,
+    "baselineScroll": 753,
+    "pageNoOverflow": true
+  },
+  {
+    "width": 1440,
+    "client": 1425,
+    "scroll": 1425,
+    "white": "rgb(255, 255, 255)",
+    "mapWhite": "rgb(255, 255, 255)",
+    "states": 51,
+    "controls": true,
+    "gutter": 32,
+    "coverageRight": 1425,
+    "coverageOverflow": false,
+    "baselineScroll": 1425,
+    "pageNoOverflow": true
+  },
+  {
+    "media": "prefers-color-scheme",
+    "pass": true
+  },
+  {
+    "media": "prefers-reduced-motion",
+    "pass": true
+  },
+  {
+    "media": "forced-colors",
+    "pass": true
+  },
+  {
+    "zoom200": {
+      "physicalWidth": 1440,
+      "cssWidth": 720,
+      "pass": true
+    }
+  },
+  {
+    "keyboard": {
+      "button": true,
+      "yearPopupKeystrokesChangedSelection": false,
+      "nativePopupManualVerificationRequired": true,
+      "stateChangeAndFocus": [
+        "AK",
+        "DC",
+        "HI"
+      ],
+      "focusPreserved": true
+    }
+  },
+  {
+    "negative": "impossible percent",
+    "rejected": true
+  },
+  {
+    "negative": "omitted state",
+    "rejected": true
+  },
+  {
+    "negative": "HTML reason",
+    "rejected": true
+  },
+  {
+    "negative": "wrong year",
+    "rejected": true
+  },
+  {
+    "negative": "wrong schema",
+    "rejected": true
+  },
+  {
+    "negative": "unknown replaced by numeric zero",
+    "rejected": true
+  },
+  {
+    "negative": "corrupt dataset hash",
+    "rejected": true
+  },
+  {
+    "negative": "dataset 404",
+    "rejected": true
+  },
+  {
+    "negative": "invalid JSON",
+    "rejected": true
+  },
+  {
+    "negative": "index schema",
+    "rejected": true
+  },
+  {
+    "negative": "index 404",
+    "rejected": true
+  },
+  {
+    "negative": "later selection 404",
+    "retainedLastValid": true
+  },
+  {
+    "negative": "delayed old fetch ignores abort",
+    "newestWon": true
+  },
+  {
+    "negative": "scripts disabled with nondefault URL",
+    "datedDefaultRetained": true
+  },
+  {
+    "negative": "white ground and rendered year absent/mismatched",
+    "detected": true
+  },
+  {
+    "zeroQuarantineUnknownDistinct": true
+  },
+  {
+    "snapshotAgeOver7DaysLabelled": true
+  },
+  {
+    "coverageRequests": [
+      "http://127.0.0.1:8779/coverage.js",
+      "http://127.0.0.1:8779/data/coverage/index.json",
+      "http://127.0.0.1:8779/data/coverage/providers-2026.json",
+      "http://127.0.0.1:8779/data/coverage/prescriptions-2026.json",
+      "http://127.0.0.1:8779/data/coverage/premiums-2026.json",
+      "http://127.0.0.1:8779/data/coverage/premiums-2027.json",
+      "http://127.0.0.1:8779/data/coverage/providers-2027.json",
+      "http://127.0.0.1:8779/data/coverage/prescriptions-2027.json"
+    ],
+    "coverageRequestsSameOrigin": true
+  }
+]
