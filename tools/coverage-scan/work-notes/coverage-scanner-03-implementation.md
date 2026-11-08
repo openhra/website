@@ -10,4 +10,4 @@ A changed selected federal report was rejected on its pinned hash. The replaceme
 
 Atomic directory exchange uses the standard-library ctypes interface to platform rename primitives. Unsupported replacement platforms fail closed. Tooling table replacement is separate from static data publication.
 
-TODO: implementation complete; final full-input reproduction and gate in progress; simplification review pending.
+TODO: implementation, two full-input reproductions, semantic validation and simplification complete. Full site gate passed; static data is included in the local handoff commit. The external federal serving-pointer evidence target remains open.

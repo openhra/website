@@ -1063,7 +1063,7 @@
     }
   },
   "schema_version": 1,
-  "source_commit": "0403baddeafab59a0a2e23f48179af0be2036bdb",
+  "source_commit": "a1dc8b9cc8b88be27f94aec3b40a612d45baa78e",
   "sources": {
     "federal_plans_2026": {
       "members": [
