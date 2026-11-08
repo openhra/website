@@ -27,8 +27,8 @@ excluded. It does not authorize ingesting other files in those directories.
 ```sh
 python3 tools/coverage-scan/scan.py \
   --selection tools/coverage-scan/selection.example.json \
-  --as-of 2026-11-08T13:00:00Z \
-  --generated-at 2026-11-08T13:00:00Z \
+  --as-of 2026-11-08T16:33:27Z \
+  --generated-at 2026-11-08T16:33:27Z \
   --output plans/data/coverage
 python3 tools/coverage-scan/check.py plans/data/coverage
 python3 -m unittest discover -s tools/coverage-scan/tests
@@ -302,3 +302,32 @@ The serving controls also retain a known denominator with null numerator/percent
 when every row reconciles but no pointer evidence is selected, reject a forged
 measured record without that lineage, reject unreviewed P6d artifacts even with
 updated selection hashes, and bind pointer evidence to the reconciliation artifact.
+
+## November 8 afternoon refresh
+
+The scanner reran against the selected cached public archives and finalized reports
+with a cutoff and generation time of `2026-11-08T16:33:27Z`. The newer federal oracle
+artifacts passed all 30 state scopes for 2026 and all 29 for 2027. Every catalog
+pointer matched the preceding publication. The producer still reads the active
+catalog pointer or returns from an import whose publication transaction has
+committed. The reviewed producer file hashes are unchanged from the review above.
+
+The adapter retains the earlier reviewed artifacts and additionally accepts these
+exact reviewed hashes. Arbitrary passing reports remain rejected.
+
+| Report | SHA-256 |
+| --- | --- |
+| Federal 2026 | `ceed4a68227b10ee4001770d8b0feafea8c2235dd904af471c88cdc0ac662fe3` |
+| Federal 2027 | `9f009bbef3b37cf953c6aeed8767786093fe8e24424fe29fdfd13e714d91971f` |
+
+The full scan found zero count or status changes in all six datasets. A separate
+issuer-only scan reproduced the committed provider and prescription records
+exactly before the full refresh. FL and NC geocodes do not change this metric:
+coordinates and identity enrichment are not evidence of additional active
+plan-linked network sources. Providers and Prescriptions remain at three measured
+states in 2026. No new state qualifies from these inputs.
+
+`table(dataset)` now formats either a Providers or Premiums fallback. The scanner
+still writes the Providers 2026 fragment by default. Generate the Premiums 2026
+fragment from the checked dataset for the two availability views and run the UI
+parity checker before committing.

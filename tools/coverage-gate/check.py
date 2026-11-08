@@ -61,17 +61,18 @@ class Markup(html.parser.HTMLParser):
 def years(root, index):
     default = loads((root / 'plans/data/coverage/providers-2026.json').read_bytes())
     year = default['year']
-    for filename in ('index.html', 'coverage-table.html'):
+    for filename in ('index.html', 'availability.html', 'coverage-table.html'):
         page = Markup((root / 'plans' / filename).read_text())
-        title = page.one('coverage-title' if filename == 'index.html' else 'h1')
+        title = page.one('h1' if filename == 'coverage-table.html' else 'coverage-title')
+        label = 'Providers' if filename == 'coverage-table.html' else 'Premiums'
         require(title == f'Coverage for plan year {year}', 'year reference: coverage heading differs from dataset')
-        require(re.match(rf'^Providers · (?:Plan year )?{year} · ', page.one('caption')),
+        require(re.match(rf'^{label} · (?:Plan year )?{year} · ', page.one('caption')),
                 'year reference: table caption differs from dataset')
         if filename == 'coverage-table.html':
             require(page.one('title') == f'Providers / plan year {year} — OpenPlans',
                     'year reference: fallback page title differs from dataset')
         else:
-            require(page.one('coverage-svg-title') == f'Provider source availability by state, {year}',
+            require(page.one('coverage-svg-title') == f'Premium source availability by state, {year}',
                     'year reference: map title differs from dataset')
     # Check the reader's actual assignments, not just a year string elsewhere in it.
     # Runtime/browser behavior remains B's separate optional browser suite.

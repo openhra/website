@@ -54,6 +54,11 @@ def fail(reason):
     print(f"FAIL: {reason}")
     sys.exit(1)
 
+required_pages = ("plans/index.html", "plans/availability.html", "plans/coverage-table.html")
+for name in required_pages:
+    if not (root / name).is_file():
+        fail("missing required page: " + name)
+
 html_files = sorted(p for site in sites for p in site.rglob("*.html"))
 for page in html_files:
     try:
@@ -80,6 +85,8 @@ for page in html_files:
         target = (site_root / path.lstrip("/")) if path.startswith("/") else (page.parent / path)
         if target.is_dir():
             target = target / "index.html"
+        if path == "/availability" and site_root.name == "plans":
+            target = site_root / "availability.html"
         if not target.is_file():
             fail(f"dead relative link in {page.relative_to(root)}: {ref}")
 

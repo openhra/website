@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run named, diagnostic-checked mutations against isolated publication copies."""
 import copy
+import datetime as dt
 import re
 import shutil
 import subprocess
@@ -112,7 +113,7 @@ def premium_denominator(root):
 
 def advance_cutoff(root):
     release = root / 'plans/data/coverage'
-    date = '2026-11-08T13:00:01Z'
+    date = (dt.datetime.fromisoformat(loads((release / 'index.json').read_bytes())['as_of'].replace('Z', '+00:00')) + dt.timedelta(seconds=1)).isoformat().replace('+00:00', 'Z')
     moved = {}
     for path in (release / 'evidence').glob('*.json'):
         value = loads(path.read_bytes())
@@ -134,10 +135,9 @@ def advance_cutoff(root):
 
 
 def backward_publication(root):
-    index(root, lambda i: i.update(generated_at='2026-11-08T13:00:01Z'))
     path = root.parent / 'previous/index.json'
     value = loads(path.read_bytes())
-    value['generated_at'] = '2026-11-08T13:00:02Z'
+    value['generated_at'] = (dt.datetime.fromisoformat(value['generated_at'].replace('Z', '+00:00')) + dt.timedelta(seconds=2)).isoformat().replace('+00:00', 'Z')
     write(path, value)
 
 
@@ -192,7 +192,7 @@ def cases():
     for kind in ('index', 'dataset', 'ledger', 'release'):
         yield kind + ' size budget', lambda r, k=kind: oversized(r, k), 'budget: ' + (kind + ' exceeded' if kind != 'release' else 'release exceeds 2 MiB')
     yield 'SVG missing DC', lambda r: replace(r, 'plans/brand/us-states.svg', 'data-state="DC"', 'data-state="XX"'), 'Census geometry differs'
-    yield 'saved section stale value', lambda r: replace(r, 'plans/index.html', '14/32 (43.8%)', '15/32 (46.9%)'), 'saved table differs: index.html'
+    yield 'saved section stale value', lambda r: replace(r, 'plans/index.html', '203592/203592 (100.0%)', '203591/203592 (100.0%)'), 'saved table differs: index.html'
     yield 'standalone stale value', lambda r: replace(r, 'plans/coverage-table.html', '14/32 (43.8%)', '15/32 (46.9%)'), 'saved table differs: coverage-table.html'
     for state in ('NY', 'VT', 'OR'):
         yield state + ' supplemental/SHOP serving denominator', lambda r, s=state: promote(r, s), ('supplemental NY/VT rows cannot be promoted' if state != 'OR' else 'OR SHOP cannot replace federal catalog')
@@ -201,7 +201,7 @@ def cases():
     yield 'dataset year mismatched', ds(lambda d: d.update(year=2027)), 'dataset: scope or timestamp mismatch'
     yield 'coverage heading wrong year', lambda r: replace(r, 'plans/index.html', 'Coverage for plan year 2026', 'Coverage for plan year 2027'), 'year reference: coverage heading differs'
     yield 'fallback page title wrong year', lambda r: replace(r, 'plans/coverage-table.html', 'Providers / plan year 2026 —', 'Providers / plan year 2027 —'), 'year reference: fallback page title differs'
-    yield 'caption wrong year', lambda r: replace(r, 'plans/index.html', '<caption>Providers · 2026', '<caption>Providers · 2027'), 'year reference: table caption differs'
+    yield 'caption wrong year', lambda r: replace(r, 'plans/index.html', '<caption>Premiums · 2026', '<caption>Premiums · 2027'), 'year reference: table caption differs'
     yield 'reader heading frozen year', lambda r: replace(r, 'plans/coverage.js', 'Coverage for plan year ${year}', 'Coverage for plan year 2026'), 'year reference: reader title/caption must bind'
     yield 'reader caption frozen year', lambda r: replace(r, 'plans/coverage.js', 'caption.textContent = `${labels[layer]} · Plan year ${year}', 'caption.textContent = `${labels[layer]} · Plan year 2026'), 'year reference: reader title/caption must bind'
     yield 'scanner version migration absent', ix(lambda i: i['scanner'].update(version='2.0.0')), 'index.scanner.version: unsupported enum value'
@@ -222,6 +222,7 @@ def main():
         root = Path(tmp) / 'site'
         for directory in ('plans', 'tools/coverage-scan', 'tools/coverage-ui-check', 'docs/coverage-map'):
             shutil.copytree(ROOT / directory, root / directory, ignore=shutil.ignore_patterns('__pycache__'))
+        shutil.copy(ROOT / 'tools/gate.sh', root / 'tools/gate.sh')
         previous = Path(tmp) / 'previous'
         shutil.copytree(root / 'plans/data/coverage', previous)
         previous_baseline = {p.relative_to(previous): p.read_bytes() for p in previous.rglob('*') if p.is_file()}

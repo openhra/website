@@ -90,7 +90,7 @@ plans/data/coverage/prescriptions-2027.json
 plans/data/coverage/evidence/<content-sha256>.json
 ```
 
-Use one file per layer/year for small, atomic reads. Do not make per-state network requests. The browser may load the evidence ledger. It must be committed and checked. File budgets, uncompressed: index ≤16 KiB, each layer/year ≤64 KiB, each evidence ledger ≤256 KiB, complete release ≤2 MiB. Shared map SVG ≤200 KiB; reader ≤16 KiB; CSS additions ≤8 KiB. These are proposed budgets enforced by slice C; the design preview has a different combined evidence layout.
+Use one file per layer/year for small, atomic reads. Do not make per-state network requests. The browser may load the evidence ledger. It must be committed and checked. File budgets, uncompressed: index ≤16 KiB, each layer/year ≤64 KiB, each evidence ledger ≤256 KiB, complete release ≤2 MiB. Shared map SVG ≤200 KiB; reader ≤24 KiB; CSS additions ≤8 KiB. These are proposed budgets enforced by slice C; the design preview has a different combined evidence layout.
 
 Index object (all fields required unless marked optional):
 
@@ -157,7 +157,7 @@ If validation fails, keep the last valid snapshot visible with its real date and
 
 Use schema plus semantic checks offline. Reject unknown fields, noninteger counts, NaN, duplicates, invalid states/year/layers, missing states, zero-denominator fractions, stale-year borrowing, inconsistent hashes/bytes/as-of, wrong percent, roster/count disagreement, unsafe URLs/paths, conflicting source scopes, unexpected input formats and excessive file sizes. Require an ACTIVE pointer and an association in the same state/year. Checking only `status: complete` is insufficient. Reject report-only denominators when a public inventory cannot corroborate them. Reconcile known buckets exactly; never compute unknown as a catch-all subtraction without a classification record.
 
-The reader loads the index, then the selected layer/year file from the same origin. It checks version/state set/count bounds/formula before updating the map, detail and table as one operation. Abort superseded fetches or use a generation token so late results cannot overwrite a newer selection. On parse/network/hash/version failure, keep the saved static table and announce "Coverage snapshot unavailable". Never paint zeros. Do not interpolate JSON through `innerHTML`. Pin file SHA-256s in index; slice C verifies them before publication and the reader verifies fetched content before replacing the saved view.
+The reader loads the index and all six small layer/year files from the same origin to count measured states and choose the widest measured default. It validates each file before using its counts. A selection fetch validates the selected file again before replacing the view. It checks version/state set/count bounds/formula before updating the map, detail and table as one operation. Abort superseded fetches or use a generation token so late results cannot overwrite a newer selection. On parse/network/hash/version failure, keep the saved static table and announce "Coverage snapshot unavailable". Never paint zeros. Do not interpolate JSON through `innerHTML`. Pin file SHA-256s in index; slice C verifies them before publication and the reader verifies fetched content before replacing the saved view.
 
 ## Presentation and accessibility
 
@@ -194,3 +194,11 @@ The preview parses KML polygons, keeps 50 states plus DC (USPS codes), projects 
 2. Which single serving snapshot should eventually replace the preview's separate validated runs? Until supplied, keep that limitation visible and do not call the figures live API coverage.
 3. Add an audited filed-rate denominator adapter for NY/VT next? The first scanner must preserve unknown until it can establish statewide scope and the served row inventory.
 4. The proposed stale-display threshold is 7 days. Confirm a refresh cadence when the scanner exists; this design creates no automatic schedule.
+
+## Availability pages, November 8 update
+
+The landing page defaults to the dataset with the most measured states. Ties use the newest year. This selects Premiums 2026 with 49 measured states, ahead of Premiums 2027 with 29. The measured-state summary is an evidence count, not a market percentage. Unknown states read as not yet measured.
+
+The landing section has a collapsed full table and an immediate link to `/availability`. The full page uses the same reader and shows the table and methodology. Both restore `layer`, `year` and `state` query parameters, replace the current URL on selection and restore selections on browser history navigation. Both share a full-page deep link through native sharing or clipboard copy with a polite visible confirmation.
+
+The shared reader budget is now 24 KiB, including URL restoration, measured-state counts and sharing. There is no framework or build step. Hosting security headers remain unchanged.

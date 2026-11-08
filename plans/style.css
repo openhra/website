@@ -99,3 +99,21 @@
   #contact-captcha { justify-self: center; }
   #contact .contact > p { padding-inline: 20px; }
 }
+
+/* Availability summary and full-page controls. */
+.coverage .coverage-summary { font-size: 14px; max-width: 78ch; }
+.coverage .coverage-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; margin-block: 20px; }
+.coverage .coverage-actions a { overflow-wrap: anywhere; }
+.coverage .coverage-actions [role="status"] { font-size: 14px; }
+.coverage .coverage-table-disclosure > summary, .coverage .coverage-evidence > summary { cursor: pointer; min-height: 44px; padding-block: 10px; text-decoration: underline; }
+.coverage .coverage-methodology { border-top: 1px solid var(--line); margin-top: 32px; padding-top: 24px; }
+.coverage .coverage-methodology p { max-width: 76ch; font-size: 15px; }
+.coverage-compact .coverage-workspace { margin-block: 20px; }
+.coverage-compact .coverage-detail p { margin-block: 10px; }
+.coverage-compact .coverage-downloads, .coverage-compact > .wrap > .coverage-note { margin-block: 12px; }
+.availability-page h1 { max-width: 20ch; font-size: clamp(32px, 5vw, 52px); line-height: 1.1; letter-spacing: -.035em; }
+@media (max-width: 760px) {
+  .coverage .coverage-actions { align-items: flex-start; flex-direction: column; gap: 12px; }
+}
+
+.coverage-full-page .coverage-workspace h2 { font-size: 18px; line-height: 1.35; letter-spacing: -.02em; }

@@ -96,7 +96,7 @@
   "population": "separate_validated_runs",
   "premium_scopes": [
     {
-      "observed_at": "2026-11-08T12:32:55.333Z",
+      "observed_at": "2026-11-08T15:29:37.170Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -107,7 +107,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:32:55.333Z",
+      "observed_at": "2026-11-08T15:29:37.170Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -118,7 +118,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:32:57.098Z",
+      "observed_at": "2026-11-08T15:29:39.226Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -129,7 +129,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:00.405Z",
+      "observed_at": "2026-11-08T15:29:43.018Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -140,7 +140,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:03.704Z",
+      "observed_at": "2026-11-08T15:29:46.137Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -151,7 +151,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:04.482Z",
+      "observed_at": "2026-11-08T15:29:47.143Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -162,7 +162,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:05.283Z",
+      "observed_at": "2026-11-08T15:29:47.652Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -173,7 +173,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:07.724Z",
+      "observed_at": "2026-11-08T15:29:50.284Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -184,7 +184,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:13.209Z",
+      "observed_at": "2026-11-08T15:29:55.587Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -195,7 +195,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:34.236Z",
+      "observed_at": "2026-11-08T15:30:15.841Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -206,7 +206,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:37.372Z",
+      "observed_at": "2026-11-08T15:30:19.507Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -217,7 +217,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:33:41.494Z",
+      "observed_at": "2026-11-08T15:30:23.481Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -228,7 +228,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:02.759Z",
+      "observed_at": "2026-11-08T15:31:38.691Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -239,7 +239,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:10.466Z",
+      "observed_at": "2026-11-08T15:31:45.755Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -250,7 +250,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:14.698Z",
+      "observed_at": "2026-11-08T15:31:49.325Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -261,7 +261,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:20.285Z",
+      "observed_at": "2026-11-08T15:31:54.752Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -272,7 +272,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:33.375Z",
+      "observed_at": "2026-11-08T15:32:06.410Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -283,7 +283,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:35.945Z",
+      "observed_at": "2026-11-08T15:32:09.603Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -294,7 +294,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:39.671Z",
+      "observed_at": "2026-11-08T15:32:13.259Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -305,7 +305,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:35:43.809Z",
+      "observed_at": "2026-11-08T15:32:18.072Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -316,7 +316,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:36:40.775Z",
+      "observed_at": "2026-11-08T15:33:14.331Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -327,7 +327,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:36:45.620Z",
+      "observed_at": "2026-11-08T15:33:19.377Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -338,7 +338,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:36:49.211Z",
+      "observed_at": "2026-11-08T15:33:22.764Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -349,7 +349,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:37:43.687Z",
+      "observed_at": "2026-11-08T15:34:13.533Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -360,7 +360,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:37:46.927Z",
+      "observed_at": "2026-11-08T15:34:15.475Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -371,7 +371,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:37:53.412Z",
+      "observed_at": "2026-11-08T15:34:21.708Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -382,7 +382,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:38:30.462Z",
+      "observed_at": "2026-11-08T15:35:11.543Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -393,7 +393,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:38:35.212Z",
+      "observed_at": "2026-11-08T15:35:14.448Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -404,7 +404,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:38:52.372Z",
+      "observed_at": "2026-11-08T15:35:14.503Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -415,7 +415,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:38:58.331Z",
+      "observed_at": "2026-11-08T15:35:18.530Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2026",
       "rate_member": "rate-puf.csv",
@@ -426,7 +426,7 @@
       "year": 2026
     },
     {
-      "observed_at": "2026-11-08T12:02:30.488Z",
+      "observed_at": "2026-11-08T15:39:26.740Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -437,7 +437,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:30.488Z",
+      "observed_at": "2026-11-08T15:39:26.740Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -448,7 +448,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:32.268Z",
+      "observed_at": "2026-11-08T15:39:28.549Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -459,7 +459,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:35.006Z",
+      "observed_at": "2026-11-08T15:39:31.235Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -470,7 +470,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:38.761Z",
+      "observed_at": "2026-11-08T15:39:34.749Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -481,7 +481,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:39.642Z",
+      "observed_at": "2026-11-08T15:39:35.442Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -492,7 +492,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:40.407Z",
+      "observed_at": "2026-11-08T15:39:36.203Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -503,7 +503,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:43.035Z",
+      "observed_at": "2026-11-08T15:39:38.678Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -514,7 +514,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:02:46.923Z",
+      "observed_at": "2026-11-08T15:39:42.794Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -525,7 +525,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:03:04.451Z",
+      "observed_at": "2026-11-08T15:40:00.795Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -536,7 +536,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:03:08.149Z",
+      "observed_at": "2026-11-08T15:40:03.722Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -547,7 +547,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:03:12.079Z",
+      "observed_at": "2026-11-08T15:40:07.966Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -558,7 +558,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:04:32.243Z",
+      "observed_at": "2026-11-08T15:41:20.521Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -569,7 +569,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:04:38.264Z",
+      "observed_at": "2026-11-08T15:41:26.463Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -580,7 +580,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:04:40.953Z",
+      "observed_at": "2026-11-08T15:41:29.167Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -591,7 +591,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:04:43.641Z",
+      "observed_at": "2026-11-08T15:41:31.823Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -602,7 +602,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:04:55.125Z",
+      "observed_at": "2026-11-08T15:41:45.213Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -613,7 +613,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:04:57.312Z",
+      "observed_at": "2026-11-08T15:41:47.698Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -624,7 +624,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:05:00.334Z",
+      "observed_at": "2026-11-08T15:41:51.254Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -635,7 +635,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:05:03.499Z",
+      "observed_at": "2026-11-08T15:41:55.066Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -646,7 +646,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:05:51.448Z",
+      "observed_at": "2026-11-08T15:42:41.183Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -657,7 +657,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:05:54.893Z",
+      "observed_at": "2026-11-08T15:42:44.996Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -668,7 +668,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:06:37.104Z",
+      "observed_at": "2026-11-08T15:43:26.856Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -679,7 +679,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:06:39.033Z",
+      "observed_at": "2026-11-08T15:43:28.760Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -690,7 +690,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:06:43.371Z",
+      "observed_at": "2026-11-08T15:43:33.309Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -701,7 +701,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:07:46.601Z",
+      "observed_at": "2026-11-08T15:44:36.025Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -712,7 +712,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:07:49.427Z",
+      "observed_at": "2026-11-08T15:44:38.721Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -723,7 +723,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:08:00.269Z",
+      "observed_at": "2026-11-08T15:44:50.142Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -734,7 +734,7 @@
       "year": 2027
     },
     {
-      "observed_at": "2026-11-08T12:08:02.604Z",
+      "observed_at": "2026-11-08T15:44:52.456Z",
       "plan_member": "plan-attributes-puf.csv",
       "plan_source": "federal_plans_2027",
       "rate_member": "rate-puf.csv",
@@ -981,25 +981,25 @@
       "finalized": true,
       "format": "federal-v1",
       "path": "reports/p6d-all-states-2026.json",
-      "sha256": "d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795"
+      "sha256": "ceed4a68227b10ee4001770d8b0feafea8c2235dd904af471c88cdc0ac662fe3"
     },
     "federal_oracle_2027": {
       "finalized": true,
       "format": "federal-v1",
       "path": "reports/p6d-all-states-2027.json",
-      "sha256": "2442b9f54ffd357d5f86cc05f39a10a4de571eac5f761bcc6f2890a1f48fc69e"
+      "sha256": "9f009bbef3b37cf953c6aeed8767786093fe8e24424fe29fdfd13e714d91971f"
     },
     "federal_pointer_2026": {
       "finalized": true,
       "format": "p6d-pointer-v1",
       "path": "reports/p6d-all-states-2026.json",
-      "sha256": "d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795"
+      "sha256": "ceed4a68227b10ee4001770d8b0feafea8c2235dd904af471c88cdc0ac662fe3"
     },
     "federal_pointer_2027": {
       "finalized": true,
       "format": "p6d-pointer-v1",
       "path": "reports/p6d-all-states-2027.json",
-      "sha256": "2442b9f54ffd357d5f86cc05f39a10a4de571eac5f761bcc6f2890a1f48fc69e"
+      "sha256": "9f009bbef3b37cf953c6aeed8767786093fe8e24424fe29fdfd13e714d91971f"
     },
     "p6c_audit": {
       "finalized": true,

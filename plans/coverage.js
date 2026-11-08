@@ -12,7 +12,8 @@
   const actors = {publisher_access: 'publisher restricted access', source_validation: 'source validation', importer_limit: 'importer limitation', undetermined: 'undetermined cause'};
   const warningLabels = {quarantined_sources: 'quarantined', failed_refresh: 'failed refresh', partial_active_sources: 'active with limits'};
   const scope = 'Published exchange inventory, all products including dental and SHOP.';
-  let index, current, wanted = {layer: 'providers', year: 2026}, serial = 0, controller;
+  let index, current, defaults, wanted, serial = 0, controller;
+  const datasets = new Map();
   const require = value => { if (!value) throw Error('Invalid static coverage snapshot'); };
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   const keys = (o, expected) => require(o && typeof o === 'object' && !Array.isArray(o) && same(Object.keys(o).sort(), expected.slice().sort()));
@@ -21,7 +22,7 @@
   const hash = h => require(typeof h === 'string' && /^[a-f0-9]{64}$/.test(h));
   const time = t => { require(typeof t === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?Z$/.test(t) && Number.isFinite(Date.parse(t))); return Date.parse(t); };
   const date = t => new Date(t).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'});
-  const metric = r => r.status === 'measured' ? (r.percent_tenths / 10).toFixed(1) + '%' : ({unknown: 'Unknown', quarantined: 'Quarantined', not_applicable: 'Not applicable'})[r.status];
+  const metric = r => r.status === 'measured' ? (r.percent_tenths / 10).toFixed(1) + '%' : ({unknown: 'Unknown, not yet measured', quarantined: 'Quarantined', not_applicable: 'Not applicable'})[r.status];
   const unit = layer => layer === 'premiums' ? 'rate rows imported and checked' : 'issuers with active ' + (layer === 'providers' ? 'network' : 'formulary') + ' data';
   const publicURL = value => { const u = new URL(value); require(u.protocol === 'https:' && !u.username && !u.password && !u.search && !u.hash && !u.port && u.hostname.includes('.') && !/[\s%@\\]/.test(value)); };
   function header(d) { require(d.schema_version === 1 && d.metric_version === 'exchange-source-availability-v1' && d.scope === 'published_exchange_inventory_all_products'); time(d.as_of); }
@@ -95,6 +96,43 @@
   }
   function fraction(r, layer) { return r.denominator === null ? 'Denominator unverified' : `${r.numerator === null ? 'Unknown' : r.numerator} / ${r.denominator} ${unit(layer)}`; }
   function fill(r) { return r.status === 'unknown' ? 'url(#coverage-unknown)' : r.status === 'quarantined' ? 'url(#coverage-quarantine)' : r.percent_tenths === null || r.percent_tenths === 0 ? 'white' : r.percent_tenths < 250 ? 'var(--teal-100)' : r.percent_tenths < 500 ? 'var(--teal-300)' : r.percent_tenths < 750 ? 'var(--teal-600)' : 'var(--teal-800)'; }
+  function link() {
+    const url = new URL('/availability', location.origin);
+    url.searchParams.set('layer', current.layer); url.searchParams.set('year', current.year); url.searchParams.set('state', $('state').value);
+    return url;
+  }
+  function remember() {
+    const url = new URL(location.href), selected = link();
+    for (const key of ['layer', 'year', 'state']) url.searchParams.set(key, selected.searchParams.get(key));
+    history.replaceState(null, '', url);
+    if ($('full-page')) $('full-page').href = selected.href;
+    $('share-message').textContent = '';
+  }
+  function fromURL() {
+    const params = new URLSearchParams(location.search), year = Number(params.get('year')), layer = params.get('layer');
+    const choice = index.datasets.some(d => d.year === year && d.layer === layer) ? {year, layer} : defaults;
+    return {...choice, state: Object.hasOwn(states, params.get('state')) ? params.get('state') : 'TX'};
+  }
+  async function share() {
+    const url = link().href;
+    try {
+      if (navigator.share) { await navigator.share({title: 'OpenPlans data availability', url}); $('share-message').textContent = 'Link shared'; }
+      else { await navigator.clipboard.writeText(url); $('share-message').textContent = 'Link copied'; }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        const a = document.createElement('a'); a.href = url; a.textContent = 'Copy this selection link';
+        $('share-message').replaceChildren(document.createTextNode('Sharing unavailable. '), a);
+      }
+    }
+  }
+  function summary(year) {
+    const lines = Object.keys(labels).map(layer => {
+      const d = datasets.get(`${layer}-${year}`), records = Object.values(d.states);
+      const measured = records.filter(r => r.status === 'measured').length;
+      return `${labels[layer]}: ${measured} of ${codes.length} states measured`;
+    });
+    $('summary').textContent = lines.join('. ') + '. Includes DC. Unknown states are not yet measured.';
+  }
   function selection() {
     const {layer, year} = current, state = $('state').value, r = current.states[state];
     $('state-name').textContent = `${states[state]} · ${labels[layer]} · Plan year ${year}`;
@@ -109,6 +147,7 @@
     if (!links.childNodes.length) links.append(document.createTextNode('No published inventory evidence in this snapshot for this state, layer and year.'));
     $('provenance').replaceChildren(links);
     for (const p of root.querySelectorAll('[data-state]')) p.dataset.selected = p.dataset.state === state;
+    remember();
     $('message').textContent = `${labels[layer]}, plan year ${year}. ${states[state]}: ${metric(r)}. Figures as of ${date(current.as_of)}. Table and detail use the same snapshot.`;
   }
   function paint(d) {
@@ -124,8 +163,8 @@
       row.insertCell().textContent = `${breakdown(r)} ${notes(r,d)} State observation: ${r.observed_at ? date(r.observed_at) : 'Unknown'}.`;
     }
     // Everything above is detached; commit all visible values in this one task.
-    current = d; wanted = {layer, year}; $('table').replaceChildren(table);
-    $('title').textContent = `Coverage for plan year ${year}`; $('view').textContent = `${labels[layer]} · ${year === 2026 && layer === 'providers' ? 'Default' : 'Selected'} view`;
+    current = d; wanted = {...wanted, layer, year}; $('state').value = wanted.state; summary(year); $('table').replaceChildren(table);
+    $('title').textContent = `Coverage for plan year ${year}`; $('view').textContent = `${labels[layer]} · ${layer === defaults.layer && year === defaults.year ? 'Default' : 'Selected'} view`;
     $('date').textContent = `Figures as of ${date(d.as_of)} · Dated snapshot` + (Date.now() - time(d.as_of) > 7 * 86400000 ? ' (more than 7 days old)' : '');
     $('legend-title').textContent = `${labels[layer]} · Plan year ${year} · ${unit(layer)}`;
     $('scope').textContent = `${scope} Unit: ${unit(layer)}${layer === 'premiums' ? '.' : ' ÷ all issuers in the published catalog.'} ${layer === 'premiums' ? 'This does not measure household quote support.' : 'Presence does not establish network or formulary completeness.'}`;
@@ -137,7 +176,6 @@
     }
     $('year').value = year; for (const b of buttons) b.setAttribute('aria-pressed', b.dataset.coverageLayer === layer);
     $('download').href = `data/coverage/${layer}-${year}.json`; $('download').textContent = `Download ${labels[layer]} / ${year} JSON`;
-    const url = new URL(location.href); url.searchParams.set('year', year); url.searchParams.set('layer',layer); history.replaceState(null,'',url);
     selection();
   }
   async function load(next) {
@@ -148,8 +186,9 @@
       if (id !== serial) return; paint(data);
     } catch (error) {
       if (id !== serial) return;
-      wanted = current ? {layer: current.layer, year: current.year} : {layer:'providers',year:2026};
+      wanted = current ? {layer: current.layer, year: current.year, state: $('state').value} : {...defaults, state: 'TX'};
       $('year').value = wanted.year;
+      if (current) remember();
       $('message').textContent = 'Coverage selection could not be loaded or validated. The last valid dated map, detail and table remain visible; controls reflect that view.';
     }
   }
@@ -157,12 +196,21 @@
     index = await read('index.json', 16384); validateIndex(index);
     const options = [...new Set(index.datasets.map(d => d.year))].sort().map(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; return o; });
     $('year').replaceChildren(...options);
-    const params = new URLSearchParams(location.search), year = Number(params.get('year')), layer = params.get('layer');
-    await load(index.datasets.some(d => d.year === year && d.layer === layer) ? {year,layer} : wanted);
+    await Promise.all(index.datasets.map(async entry => {
+      const data = await read(entry.path, 65536, undefined, entry); validateData(data, entry);
+      datasets.set(`${entry.layer}-${entry.year}`, data);
+    }));
+    const ranked = [...datasets.values()].sort((a, b) =>
+      Object.values(b.states).filter(r => r.status === 'measured').length - Object.values(a.states).filter(r => r.status === 'measured').length ||
+      b.year - a.year || a.layer.localeCompare(b.layer));
+    defaults = {layer: ranked[0].layer, year: ranked[0].year};
+    await load(fromURL());
     // Invalid initial data leaves the saved controls disabled and the fallback intact.
     if (!current) return;
     for (const b of buttons) { b.disabled = false; b.addEventListener('click', () => load({...wanted, layer:b.dataset.coverageLayer})); }
     $('year').disabled = false; $('year').addEventListener('change', () => load({...wanted, year:Number($('year').value)}));
-    $('state').disabled = false; $('state').addEventListener('change', selection);
-  })().catch(() => { $('message').textContent = 'Coverage controls unavailable: the static snapshot could not be validated. Saved Providers / plan year 2026, figures as of November 8, 2026, remain below.'; });
+    $('state').disabled = false; $('state').addEventListener('change', () => { wanted.state = $('state').value; selection(); });
+    $('share').disabled = false; $('share').addEventListener('click', share);
+    window.addEventListener('popstate', () => load(fromURL()));
+  })().catch(() => { $('message').textContent = 'Coverage controls unavailable: the static snapshot could not be validated. Saved Premiums / plan year 2026, figures as of November 8, 2026, remain below.'; });
 })();

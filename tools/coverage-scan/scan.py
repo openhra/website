@@ -16,20 +16,23 @@ from model import (Invalid, LAYERS, METRIC, RATE_BUCKETS, SCOPE, STATES, VERSION
 
 
 def table(dataset):
-    lines = ['<table>', '<caption>Providers · 2026 · Snapshot from ' + dataset['as_of'][:10] +
+    premium = dataset['layer'] == 'premiums'
+    label = 'Premiums' if premium else 'Providers'
+    unit = 'rate rows imported and checked' if premium else 'issuers with active network data'
+    lines = ['<table>', '<caption>' + label + ' · ' + str(dataset['year']) + ' · Snapshot from ' + dataset['as_of'][:10] +
              '. Separate validated runs. Published exchange inventory, all products including dental and SHOP. '
-             'Unit: issuers with active network data.</caption>',
-             '<thead><tr><th scope="col">State</th><th scope="col">Active issuers</th><th scope="col">Status and limits</th></tr></thead>', '<tbody>']
+             'Unit: ' + unit + '.</caption>',
+             '<thead><tr><th scope="col">State</th><th scope="col">Data and count</th><th scope="col">Status and limits</th></tr></thead>', '<tbody>']
     for s, name in STATES.items():
         r = dataset["states"][s]
         n, d, p = (r[k] for k in ("numerator", "denominator", "percent_tenths"))
-        value = "Unknown" if n is None else f"{n}/{d} ({p // 10}.{p % 10}%)"
+        value = "Unknown, not yet measured" if n is None else f"{n}/{d} ({p // 10}.{p % 10}%)"
         if r["status"] == "not_applicable":
             value = "Not applicable"
-        label = r["status"].replace("_", " ").capitalize()
+        label = "Unknown, not yet measured" if r["status"] == "unknown" else r["status"].replace("_", " ").capitalize()
         if r["counts"]:
             c = r["counts"]
-            label += f'; {c["active_partial"]} active with limits; {c["quarantined"]} quarantined; {c["unknown"]} unknown; {c["not_imported"]} not imported'
+            label += (f'; {c["verified"]} verified' if premium else f'; {c["active_partial"]} active with limits') + f'; {c["quarantined"]} quarantined; {c["unknown"]} unknown; {c["not_imported"]} not imported'
         if r["observed_at"]:
             label += "; observed " + r["observed_at"][:10]
         actor_labels = {"publisher_access": "publisher restricted access", "source_validation": "source validation", "importer_limit": "importer limitation", "undetermined": "undetermined cause"}

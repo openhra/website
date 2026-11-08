@@ -45,8 +45,10 @@ def csv_key(value):
 # New reports need source/producer review; a matching reconciliation shape is not
 # serving evidence. Keep this separate from the general federal-v1 adapter.
 P6D_POINTER_REPORTS = {
-    2026: "d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795",
-    2027: "2442b9f54ffd357d5f86cc05f39a10a4de571eac5f761bcc6f2890a1f48fc69e",
+    2026: ("d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795",
+           "ceed4a68227b10ee4001770d8b0feafea8c2235dd904af471c88cdc0ac662fe3"),
+    2027: ("2442b9f54ffd357d5f86cc05f39a10a4de571eac5f761bcc6f2890a1f48fc69e",
+           "9f009bbef3b37cf953c6aeed8767786093fe8e24424fe29fdfd13e714d91971f"),
 }
 
 
@@ -141,7 +143,7 @@ class Bundle:
                 require(isinstance(value, dict), "report: expected object")
                 if spec["format"] == "p6d-pointer-v1":
                     require(type(value.get("year")) is int and
-                            P6D_POINTER_REPORTS.get(value["year"]) == spec["sha256"],
+                            spec["sha256"] in P6D_POINTER_REPORTS.get(value["year"], ()),
                             "serving: unreviewed P6d pointer artifact")
             self.reports[rid] = (spec["format"], value)
             self.input_hashes[rid] = spec["sha256"]

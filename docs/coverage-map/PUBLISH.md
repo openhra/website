@@ -55,8 +55,9 @@ evidence, date rewrites or changed assertions from unchanged scoped inputs.
 NY/VT supplemental checks do not establish serving premium denominators. Oregon
 uses its federal individual catalog, not the SBE SHOP bundle. Do not borrow one
 year's evidence for another or turn a missing report into measured zero. The
-current release has 19 measured SBE premium states in 2026; federal premium
-numerators remain null without serving-pointer evidence. Separate validated runs
+current release has 49 measured premium states in 2026, with 19 SBE declarations
+and 30 reviewed federal serving-pointer reports. Premiums 2027 has 29 measured
+federal states. Separate validated runs
 are not a single deployed snapshot.
 
 Keep `tools/coverage-scan/selection.example.json` synchronized with the selected
@@ -77,15 +78,18 @@ individual JSON files over the published directory. The table fragment is replac
 separately; an interrupted table refresh must fail the site gate and must not be
 committed or published.
 
-Copy the generated Providers/2026 table fragment verbatim into both
-`plans/index.html`'s `coverage-table` container and `plans/coverage-table.html`.
-Refresh the standalone page title, coverage heading, map name, caption, saved detail
-and visible snapshot dates from that same default dataset. Keep the scanner's
-tooling fragment synchronized. This requires the reader/fallback lease; C does
-not modify these files. B's static checker currently pins November 8, 2026 in its
-default-date assertions; the owner must update those expectations under the UI
-checker lease when publishing a differently dated snapshot. A stale fallback must
-never pass because interactive fetching happens to work.
+Generate both saved tables with `scan.table` from the same checked release. Keep
+`tools/coverage-scan/default-providers-2026.html` and the standalone
+`plans/coverage-table.html` aligned with Providers 2026. Keep
+`tools/coverage-scan/default-premiums-2026.html`, `plans/index.html` and
+`plans/availability.html` aligned with Premiums 2026, the dataset with the most
+measured states in this release. Update the saved detail, map fills, heading and
+snapshot dates together. The UI checker compares each saved table with its JSON.
+
+The default is an evidence-availability choice, not a recommendation of a plan
+year. If another dataset becomes the widest measured view, update the saved
+fallbacks and checker expectations together. The reader chooses the most measured
+states and breaks ties with the newest year.
 
 ## Gate and commit
 

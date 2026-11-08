@@ -58,7 +58,7 @@ try {
     if(rows.length!==51||!$('title').textContent.includes(d.year)||!$('legend-title').textContent.includes(d.year)||!$('table').querySelector('caption').textContent.includes('Plan year '+d.year)||!$('date').textContent.includes(date(d.as_of)))fail('year/date parity');
     for(const [i,s]of codes.entries()){
      const r=d.states[s];$('state').value=s;$('state').dispatchEvent(new Event('change'));
-     const metric=r.status==='measured'?(r.percent_tenths/10).toFixed(1)+'%':({unknown:'Unknown',quarantined:'Quarantined',not_applicable:'Not applicable'})[r.status];
+     const metric=r.status==='measured'?(r.percent_tenths/10).toFixed(1)+'%':({unknown:'Unknown, not yet measured',quarantined:'Quarantined',not_applicable:'Not applicable'})[r.status];
      if($('metric').textContent!==metric||!$('state-name').textContent.includes(names[s])||!$('state-name').textContent.includes(d.year))fail(s+' detail');
      if(rows[i].cells[0].textContent!==names[s]||!rows[i].cells[1].textContent.startsWith(metric+';'))fail(s+' table');
      if(r.denominator!==null&&!rows[i].cells[1].textContent.includes((r.numerator===null?'Unknown':r.numerator)+' / '+r.denominator+' '))fail(s+' fraction');
@@ -74,6 +74,8 @@ try {
     if(new URL(location.href).searchParams.get('year')!==String(d.year)||new URL(location.href).searchParams.get('layer')!==d.layer)fail('share URL');
     return codes.length;
    })()`);
+   // Keep exhaustive synthetic state changes below Chrome history IPC throttling.
+   await pause(3500);
   }
  }
  assert(selections===306,'all selections');reports.push({selectionParity:selections});
@@ -120,6 +122,8 @@ try {
  await wait(`document.querySelector('.verification .table').scrollLeft>0`);
  await focused('.verification .table');
  reports.push({verificationRegionKeyboardScroll:true});
+ await key('Tab','Tab',9);await focused('#coverage-full-page');
+ await key('Tab','Tab',9);await focused('#coverage-share');await focusVisible();
  for(const layer of ['providers','prescriptions','premiums']){
   await key('Tab','Tab',9);await focused(layerSelector(layer));await focusVisible();
   await key(layer==='prescriptions'?'Enter':' ',layer==='prescriptions'?'Enter':'Space',layer==='prescriptions'?13:32);
@@ -153,7 +157,27 @@ try {
  await key('Tab','Tab',9);await focused('.coverage-map > p a');
  await key('Tab','Tab',9,8);await focused('#coverage-state');
  await key('Tab','Tab',9,8);await focused('#coverage-year');
- reports.push({keyboard:{tabOrder:['validation region','providers','prescriptions','premiums','year','state','map attribution'],reverseTab:true,buttonsSpaceAndEnter:true,nativeYearTypeAhead:[2027,2026],nativeStateTypeAhead:keyboardStates,focusVisible:true,focusPreserved:true,liveStatusAX:true,announcementsUpdated:true}});
+ reports.push({keyboard:{tabOrder:['validation region','full page','share','providers','prescriptions','premiums','year','state','map attribution'],reverseTab:true,buttonsSpaceAndEnter:true,nativeYearTypeAhead:[2027,2026],nativeStateTypeAhead:keyboardStates,focusVisible:true,focusPreserved:true,liveStatusAX:true,announcementsUpdated:true}});
+ // Both pages restore all three URL parameters, replace state, and share the full-page link.
+ for(const page of ['', 'availability']) {
+  await navigate(page+'?layer=prescriptions&year=2026&state=NC'); await ready();
+  assert(await evaluate(`document.querySelector('#coverage-state').value==='NC'&&document.querySelector('#coverage-state-name').textContent==='North Carolina · Prescriptions · Plan year 2026'`),'URL state ignored on '+page);
+  await evaluate(`{history.pushState(null,'','?layer=premiums&year=2027&state=FL');dispatchEvent(new PopStateEvent('popstate'))}`);
+  await wait(`document.querySelector('#coverage-state-name').textContent==='Florida · Premiums · Plan year 2027'`);
+  await evaluate(`history.back()`);
+  await wait(`document.querySelector('#coverage-state-name').textContent==='North Carolina · Prescriptions · Plan year 2026'`);
+  await evaluate(`history.forward()`);
+  await wait(`document.querySelector('#coverage-state-name').textContent==='Florida · Premiums · Plan year 2027'`);
+  await evaluate(`{Object.defineProperty(navigator,'share',{configurable:true,value:undefined});Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{window.copiedSelection=value}}});document.querySelector('#coverage-share').click()}`);
+  await wait(`document.querySelector('#coverage-share-message').textContent==='Link copied'`);
+  assert(await evaluate(`(()=>{const u=new URL(window.copiedSelection);return u.pathname==='/availability'&&u.searchParams.get('layer')==='premiums'&&u.searchParams.get('year')==='2027'&&u.searchParams.get('state')==='FL'})()`),'clipboard link lost selection');
+  const tree=await call('Accessibility.getFullAXTree');
+  assert(tree.nodes.some(n=>n.role?.value==='status'&&n.properties?.some(p=>p.name==='live'&&p.value.value==='polite')),'share confirmation absent from accessibility tree');
+  await evaluate(`{Object.defineProperty(navigator,'share',{configurable:true,value:async value=>{window.nativeSelection=value.url}});document.querySelector('#coverage-share').click()}`);
+  await wait(`document.querySelector('#coverage-share-message').textContent==='Link shared'`);
+  assert(await evaluate(`window.nativeSelection===window.copiedSelection`),'native share lost selection');
+  reports.push({page:page||'landing',URLStateRestored:true,backForwardRestored:true,shareClipboardSelection:true,copyConfirmation:true,nativeShareSelection:true});
+ }
  // A document-start fetch wrapper mutates temporary response bytes, not production files.
  async function withInit(source,test){const {identifier}=await call('Page.addScriptToEvaluateOnNewDocument',{source});try{await test();}finally{await call('Page.removeScriptToEvaluateOnNewDocument',{identifier});}}
  const injector = mutation => `{
@@ -170,7 +194,7 @@ try {
    if(url.endsWith('providers-2026.json')&&changed)return new Response(changed,{status:200});return response;
   };
  }`;
- async function fallback(label){await navigate();await wait(`document.querySelector('#coverage-message').textContent.includes('could not')||document.querySelector('#coverage-message').textContent.includes('unavailable')`);assert(await evaluate(`document.querySelector('#coverage-state').disabled&&document.querySelectorAll('#coverage-table tbody tr').length===51&&document.querySelector('#coverage-table').textContent.includes('14/32 (43.8%)')&&document.querySelector('#coverage-title').textContent==='Coverage for plan year 2026'&&document.querySelector('[data-state="GA"]').getAttribute('fill')==='url(#coverage-quarantine)'`),'fallback '+label);reports.push({negative:label,rejected:true});}
+ async function fallback(label){await navigate();await wait(`document.querySelector('#coverage-message').textContent.includes('could not')||document.querySelector('#coverage-message').textContent.includes('unavailable')`);assert(await evaluate(`document.querySelector('#coverage-state').disabled&&document.querySelectorAll('#coverage-table tbody tr').length===51&&document.querySelector('#coverage-table').textContent.includes('203592/203592 (100.0%)')&&document.querySelector('#coverage-title').textContent==='Coverage for plan year 2026'&&document.querySelector('[data-state="GA"]').getAttribute('fill')==='var(--teal-800)'`),'fallback '+label);reports.push({negative:label,rejected:true});}
  for(const [label,mutation]of [
   ['impossible percent','d.states.TX.percent_tenths=1001;'],
   ['omitted state','delete d.states.DC;'],
@@ -190,7 +214,7 @@ try {
  assert(await evaluate(`document.querySelector('#coverage-table').textContent===${JSON.stringify(previous)}&&document.querySelector('#coverage-title').textContent.endsWith('2027')&&document.querySelector('[data-coverage-layer="premiums"]').getAttribute('aria-pressed')==='true'&&new URL(location.href).searchParams.get('layer')==='premiums'`),'later failure replaced valid snapshot');reports.push({negative:'later selection 404',retainedLastValid:true});
  // Ignore abort on purpose, so request-id gating itself must reject the old response.
  await navigate();await ready();
- await evaluate(`{const f=window.fetch.bind(window);window.fetch=async(input,options)=>{if(String(input).endsWith('premiums-2026.json')){await new Promise(r=>setTimeout(r,700));return f(input)}return f(input,options)};document.querySelector('[data-coverage-layer="premiums"]').click();document.querySelector('[data-coverage-layer="prescriptions"]').click()}`);
+ await evaluate(`{const f=window.fetch.bind(window);window.fetch=async(input,options)=>{if(String(input).endsWith('providers-2026.json')){await new Promise(r=>setTimeout(r,700));return f(input)}return f(input,options)};document.querySelector('[data-coverage-layer="providers"]').click();document.querySelector('[data-coverage-layer="prescriptions"]').click()}`);
  await wait(`document.querySelector('[data-coverage-layer="prescriptions"]').getAttribute('aria-pressed')==='true'`);await pause(900);
  assert(await evaluate(`document.querySelector('#coverage-download').getAttribute('href').endsWith('prescriptions-2026.json')&&new URL(location.href).searchParams.get('layer')==='prescriptions'`),'old request replaced new selection');reports.push({negative:'delayed old fetch ignores abort',newestWon:true});
  await call('Emulation.setScriptExecutionDisabled',{value:true});await navigate('?year=2027&layer=premiums');await call('Emulation.setScriptExecutionDisabled',{value:false});
@@ -205,13 +229,19 @@ try {
  assert(!await evaluate(`document.querySelector('#coverage-title').textContent==='Coverage for plan year '+document.querySelector('#coverage-year').value`),'mismatched-year negative did not fail');
  reports.push({negative:'white ground and rendered year absent/mismatched',detected:true});
  // A measured zero has a white fill; quarantine and unknown retain their distinct patterns.
- await withInit(injector(`Object.assign(d.states.FL,{numerator:0,percent_tenths:0,warnings:[],counts:{active_complete:0,active_partial:0,quarantined:0,unknown:26,not_imported:0}});`),async()=>{await navigate();await ready();assert(await evaluate(`document.querySelector('[data-state="FL"]').getAttribute('fill')==='white'&&document.querySelector('[data-state="GA"]').getAttribute('fill')==='url(#coverage-quarantine)'&&document.querySelector('[data-state="AK"]').getAttribute('fill')==='url(#coverage-unknown)'`),'zero/quarantine/unknown distinction');});
+ await withInit(injector(`Object.assign(d.states.FL,{numerator:0,percent_tenths:0,warnings:[],counts:{active_complete:0,active_partial:0,quarantined:0,unknown:26,not_imported:0}});`),async()=>{await navigate('?layer=providers&year=2026');await ready();assert(await evaluate(`document.querySelector('[data-state="FL"]').getAttribute('fill')==='white'&&document.querySelector('[data-state="GA"]').getAttribute('fill')==='url(#coverage-quarantine)'&&document.querySelector('[data-state="AK"]').getAttribute('fill')==='url(#coverage-unknown)'`),'zero/quarantine/unknown distinction');});
  reports.push({zeroQuarantineUnknownDistinct:true});
  await withInit(`Date.now=()=>Date.parse('2026-11-16T13:00:00Z')`,async()=>{await navigate();await ready();assert(await evaluate(`document.querySelector('#coverage-date').textContent.includes('more than 7 days old')`),'stale date');});reports.push({snapshotAgeOver7DaysLabelled:true});
- for(const [name,width,height,target]of [['desktop',1440,1100,'#availability'],['phone',390,1300,'#availability'],['phone-table',390,1000,'#coverage-table'],['phone320-verification',320,1000,'.verification'],['phone320-contact',320,1000,'#contact']]){
-  await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await navigate();await ready();await evaluate(`document.querySelector('${target}').scrollIntoView()`);
-  const shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await fs.writeFile(path.join(out,name+'.png'),Buffer.from(shot.data,'base64'));
+ for(const page of ['', 'availability']) for(const width of [1280,390,320]) {
+  const height=width===1280?1200:1800;
+  await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false}); await navigate(page); await ready(); await pageFits();
+  await evaluate(`document.querySelector('#availability').scrollIntoView()`);
+  const name=(page?'availability':'landing')+'-'+width;
+  const shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}); await fs.writeFile(path.join(out,name+'.png'),Buffer.from(shot.data,'base64'));
+  reports.push({page:page||'landing',width,noOverflow:true,capture:name+'.png'});
  }
+ await evaluate(`document.querySelector('#coverage-table').scrollIntoView()`);
+ const tableShot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}); await fs.writeFile(path.join(out,'availability-table-320.png'),Buffer.from(tableShot.data,'base64'));
  const uniqueRequests=[...new Set(requests.map(r=>r.url))];assert(uniqueRequests.every(u=>new URL(u).origin===new URL(url).origin),'remote coverage request');
  reports.push({coverageRequests:uniqueRequests,coverageRequestsSameOrigin:true});
  await fs.writeFile(path.join(out,'browser-checks.json'),JSON.stringify(reports,null,2)+'\n');

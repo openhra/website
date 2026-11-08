@@ -273,7 +273,7 @@ class ScannerTests(unittest.TestCase):
         spec, digest = self.p6d_pointer_fixture()
         # Substitute the handwritten artifact only inside this test. Production
         # accepts the separately reviewed historical artifact, never these bytes.
-        with patch("inputs.P6D_POINTER_REPORTS", {2026: digest}):
+        with patch("inputs.P6D_POINTER_REPORTS", {2026: (digest,)}):
             files, _ = self.build()
             record = loads(files["premiums-2026.json"])["states"]["OR"]
             self.assertEqual((record["numerator"], record["denominator"], record["percent_tenths"]), (2, 2, 1000))
@@ -297,7 +297,7 @@ class ScannerTests(unittest.TestCase):
         spec, digest = self.p6d_pointer_fixture()
         self.e.selection["reports"].pop("p6d_pointer")
         spec["serving_report"] = None
-        with patch("inputs.P6D_POINTER_REPORTS", {2026: digest}):
+        with patch("inputs.P6D_POINTER_REPORTS", {2026: (digest,)}):
             record = loads(self.build()[0]["premiums-2026.json"])["states"]["OR"]
         self.assertIsNone(record["numerator"])
         self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
