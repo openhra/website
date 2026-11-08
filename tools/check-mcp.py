@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
+RELEASE = "https://github.com/openhra/openplans/releases/tag/v0.1.1"
 TOOLS = {
     "search",
     "fetch",
@@ -116,8 +117,29 @@ def check_page(source, site):
     require(len(mcp) == 1, "MCP section missing")
     claims = all_text + " " + normalized(metadata[0].attrs["content"])
     require(
-        not re.search(r"\b(?:stable|production[ -]ready|released)\b", claims),
+        not re.search(r"\b(?:stable|production(?:[ -]ready)?)\b", claims),
         "unsupported release claim",
+    )
+    # A tagged source release does not change the hosted endpoint's status.
+    release_units = root.find(
+        lambda n: n.tag in {"p", "dd", "li", "h1", "h2", "h3", "h4", "title"}
+    )
+    for unit in release_units:
+        text = normalized(unit.text())
+        for sentence in re.split(r"(?<=[.!?])\s+", text):
+            if re.search(r"\breleased\b", sentence):
+                require(
+                    "openplans v0.1.1" in sentence
+                    and "github" in sentence
+                    and not re.search(r"\b(?:endpoint|mcp)\b", sentence)
+                    and unit.find(
+                        lambda n: n.tag == "a" and n.attrs.get("href") == RELEASE
+                    ),
+                    "released must refer to the GitHub source release",
+                )
+    require(
+        not re.search(r"\breleased\b", normalized(metadata[0].attrs["content"])),
+        "released must refer to the GitHub source release",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -152,10 +174,22 @@ def check_page(source, site):
         "navigation must show Public preview",
     )
     require(
-        "no release yet" in all_text
-        and "no tagged openplans release exists yet" in all_text,
-        "no-release status missing",
+        not re.search(r"\bno (?:tagged )?(?:openplans )?release\b", all_text),
+        "stale no-release status",
     )
+    statuses = root.find(lambda n: classed(n, "repo-status"))
+    require(statuses, "release status missing")
+    for status in statuses:
+        require(
+            visible(status)
+            and status.find(
+                lambda n: n.tag == "a"
+                and n.attrs.get("href") == RELEASE
+                and n.text() == "v0.1.1"
+                and visible(n)
+            ),
+            "release status must link to v0.1.1",
+        )
     require(
         "outside acceptance run is still pending" in presentation
         and "coverage is limited" in presentation,
@@ -286,7 +320,13 @@ def check_page(source, site):
         require(
             all(
                 label in normalized(directory.text())
-                for label in ["code", "docs", "issues", "releases", "no release yet"]
+                for label in ["code", "docs", "issues", "releases", "v0.1.1"]
+            )
+            and directory.find(
+                lambda n: n.tag == "a"
+                and n.attrs.get("href") == RELEASE
+                and "v0.1.1" in n.text()
+                and visible(n)
             ),
             "repository contents/release status missing",
         )
@@ -383,7 +423,7 @@ def run(root):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (Public preview, live catalog endpoint, 11 public tools + self-host estimates, GitHub-first, handoff parity)"
+        "mcp: PASS (v0.1.1 source release, Public preview, live catalog endpoint, 11 public tools + self-host estimates, GitHub-first, handoff parity)"
     )
 
 
@@ -471,9 +511,33 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "release disclaimer removed",
-                    lambda s: s.replace("No tagged OpenPlans release exists yet.", ""),
-                    "no-release",
+                    "release links changed",
+                    lambda s: s.replace(RELEASE, RELEASE.replace("v0.1.1", "v0.1.0")),
+                    "GitHub source release",
+                ),
+                (
+                    site,
+                    "stale release status",
+                    lambda s: s.replace("Source available ·", "No release yet ·"),
+                    "stale no-release",
+                ),
+                (
+                    site,
+                    "public endpoint claimed production",
+                    lambda s: s.replace(
+                        "Coverage is limited.",
+                        "Coverage is limited. The public endpoint is production.",
+                    ),
+                    "release claim",
+                ),
+                (
+                    site,
+                    "public endpoint claimed released beside source release",
+                    lambda s: s.replace(
+                        "is released on GitHub.",
+                        "is released on GitHub. The public MCP endpoint is released too.",
+                    ),
+                    "GitHub source release",
                 ),
                 (
                     site,
@@ -535,7 +599,9 @@ def selftest(root):
                     lambda s, claim=claim: s.replace(
                         "Coverage is limited.", "Coverage is limited. " + claim + "."
                     ),
-                    "GA claim" if claim == "GA" else "release claim",
+                    "GA claim" if claim == "GA" else (
+                        "GitHub source release" if claim == "released" else "release claim"
+                    ),
                 )
             )
     mutants.extend(

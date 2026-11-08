@@ -597,6 +597,33 @@ class AcceptanceTests(unittest.TestCase):
                 suite.concurrency()
             self.assertEqual(client.requests, 0)
 
+    def test_concurrency_failure_reports_status_kind_and_timing_without_body(self):
+        for status, body, kind in (
+            (502, SENTINEL.encode(), "non-json-response"),
+            (
+                504,
+                b'{"error":{"code":-32603,"message":"' + SENTINEL.encode() + b'"}}',
+                "rpc-error",
+            ),
+            (
+                429,
+                b'{"error":{"code":-32000,"message":"Rate limit exceeded"}}',
+                "app-rate",
+            ),
+            (429, SENTINEL.encode(), "non-json-response"),
+        ):
+            with self.subTest(status=status, kind=kind), server() as (_, client):
+                suite = probe.Suite(client, "macos", time.time() + 0.05)
+                reply = probe.Reply(status, {"retry-after": "60"}, body)
+                with mock.patch.object(client, "stream", return_value=(reply, None)):
+                    suite.check("synchronized three-call rounds", suite.concurrency)
+                self.assertFalse(suite.sample_ok)
+                self.assertEqual(suite.denials, 0)
+                detail = suite.rows[0][2]
+                self.assertIn(f"round=1 sample=1 HTTP={status} kind={kind}", detail)
+                self.assertRegex(detail, r"elapsed_ms=\d+$")
+                self.assert_safe(detail)
+
     def test_budget_and_response_bounds(self):
         with server() as (_, client):
             client.requests = probe.MAX_REQUESTS
@@ -747,6 +774,34 @@ class AcceptanceTests(unittest.TestCase):
             self.assertEqual(probe.main(["report"]), 1)
         self.assertIn("FAIL", output.getvalue())
         self.assert_safe(output.getvalue())
+
+    def test_failed_job_only_rerun_report_requires_all_jobs(self):
+        peer = {
+            "source": "linux",
+            "ok": True,
+            "samples_ok": True,
+            "samples": 18,
+            "app_denials": 1,
+            "requests": 80,
+            "failed": 0,
+        }
+        late = {
+            **peer,
+            "source": "macos",
+            "ok": False,
+            "samples_ok": False,
+            "samples": 0,
+            "app_denials": 0,
+            "requests": 62,
+            "failed": 1,
+        }
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertFalse(
+                probe.aggregate({"linux": json.dumps(peer), "macos": json.dumps(late)})
+            )
+        self.assertIn("failed-job-only rerun cannot pass", output.getvalue())
+        self.assertIn("Rerun all jobs", output.getvalue())
 
     def test_optional_report_needs_no_secret(self):
         with (

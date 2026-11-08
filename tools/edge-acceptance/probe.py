@@ -148,6 +148,22 @@ def concurrency_error(reply):
         return False
 
 
+def error_kind(reply):
+    """Only fixed labels leave the client, never remote error text or bodies."""
+    try:
+        error = reply.json().get("error")
+        if isinstance(error, dict):
+            if (
+                error.get("code") == -32000
+                and error.get("message") == "Rate limit exceeded"
+            ):
+                return "app-rate"
+            return "rpc-error"
+        return "json-response"
+    except (ValueError, AttributeError):
+        return "non-json-response"
+
+
 class Client:
     """No redirects, cookies or retries. Each socket has a deadline and byte cap."""
 
@@ -410,7 +426,10 @@ class Suite:
             self.rows.append((name, True, "", known))
 
     def concurrency(self):
-        require(0 < self.epoch - time.time() <= 360, "rendezvous missing or late")
+        require(
+            0 < self.epoch - time.time() <= 360,
+            "rendezvous missing or late; rerun all jobs, including preparation and both sources",
+        )
         for round_id in range(ROUNDS):
             due = self.epoch + round_id * self.round_interval
             while time.time() < due:
@@ -424,23 +443,27 @@ class Suite:
                     "name": f"synthetic-edge-{self.run_id}-{round_id}-{index}",
                     "limit": 1,
                 }
-                return self.client.stream(
+                started = time.monotonic()
+                reply, proof = self.client.stream(
                     "search_providers",
                     args,
                     f"{self.source}-{round_id}-{index}",
                     incremental=False,
                 )
+                return reply, proof, round((time.monotonic() - started) * 1000)
 
             with ThreadPoolExecutor(max_workers=3) as pool:
                 replies = list(pool.map(sample, range(3)))
-            for reply, proof in replies:
+            for index, (reply, proof, elapsed_ms) in enumerate(replies):
                 self.samples += 1
                 if concurrency_error(reply):
                     self.denials += 1
                 else:
                     require(
                         reply.status == 200 and proof is not None,
-                        "sample failed without app concurrency error",
+                        "sample failed without app concurrency error: "
+                        f"round={round_id + 1} sample={index + 1} "
+                        f"HTTP={reply.status} kind={error_kind(reply)} elapsed_ms={elapsed_ms}",
                     )
         self.sample_ok = True
 
@@ -868,6 +891,11 @@ def aggregate(reports):
     print("| --- | --- |")
     for name, ok in checks.items():
         print(f"| {name} | {'PASS' if ok else 'FAIL'} |")
+    if not all(checks.values()):
+        print(
+            "Rerun all jobs to create a fresh rendezvous and sample both sources together. "
+            "A failed-job-only rerun cannot pass the paired concurrency check."
+        )
     return all(checks.values())
 
 
