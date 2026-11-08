@@ -5,7 +5,7 @@
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>OpenPlans · US health plan data you can host yourself</title>
-<meta name="description" content="OpenPlans is an open-source, self-hosted service for US health plan data: plans, premiums, subsidy estimates, drug coverage and provider networks, built only from public sources.">
+<meta name="description" content="Host OpenPlans on your own server for US health plan data. This open-source service uses only public sources for plans, premiums, subsidy estimates, drug coverage and provider networks.">
 <link rel="stylesheet" href="/style.css">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <script src="/contact.js" defer></script>
@@ -29,7 +29,7 @@
   <div class="hero-copy">
   <span class="status">IN DEVELOPMENT · APACHE-2.0</span>
   <h1>US health plan data.<br><span>On your server.</span></h1>
-  <p class="lede">OpenPlans turns public CMS, Census, NPPES, RxNorm and insurer files into an API for plans, premiums, subsidy estimates, drug coverage and provider networks. It runs in containers on your own server. Every answer can be traced to the public file it came from.</p>
+  <p class="lede">OpenPlans turns public CMS, Census, NPPES, RxNorm and insurer files into an API for plans, premiums, subsidy estimates, drug coverage and provider networks. It runs in containers on your own server. You can trace every answer to its public source file.</p>
 
   <div class="actions"><a class="button" href="https://github.com/openhra/openplans">Open the repository <span aria-hidden="true">↗</span></a><a class="text-link" href="https://github.com/openhra/openplans#readme">Read the README <span aria-hidden="true">↗</span></a></div>
   <p class="repo-status">In development · no release yet</p>
@@ -38,7 +38,7 @@
     <div class="repo-home-top"><span class="eyebrow">The project lives here</span><img src="/brand/mark-openplans.svg" width="40" height="40" alt=""></div>
     <p class="repo-owner">openhra /</p>
     <h2><a href="https://github.com/openhra/openplans">OpenPlans <span aria-hidden="true">↗</span></a></h2>
-    <p>The repository is home to the source code, README, docs, issues and releases.</p>
+    <p>Find the source code, README, docs, issues and releases in the repository.</p>
     <div class="repo-home-bottom"><span>Open source</span><span>Self-hosted</span></div>
   </aside>
 </section>
@@ -50,7 +50,7 @@
     <div class="grid">
       <div><h3>Plans and premiums</h3><p>Marketplace and stand-alone dental plans, with household premiums from filed rate tables.</p></div>
       <div><h3>Subsidy estimates</h3><p>Benchmark plans, expected contributions and premium tax credits from public data.</p></div>
-      <div><h3>Drugs and providers</h3><p>Formulary coverage and provider networks from each insurer’s published files.</p></div>
+      <div><h3>Drugs and providers</h3><p>Formulary coverage and provider networks from each insurer's published files.</p></div>
     </div>
   </div>
 </section>
@@ -60,10 +60,10 @@
     <p class="eyebrow section-label">02 / Data integrity</p>
     <h2>Unknown stays unknown</h2>
     <ul class="rules">
-      <li>Nothing is invented. When a file is missing, blocked or incomplete, the answer is <code>unknown</code>, never "not covered".</li>
+      <li>When a file is missing, blocked or incomplete, the answer is <code>unknown</code>. OpenPlans never invents an answer or treats missing data as "not covered".</li>
       <li>A state with no cited rating rule returns <code>unsupported_rating_method</code> rather than a guessed premium.</li>
-      <li>Each imported file becomes a snapshot with its URL, checksum and parser version. Partial imports are held back and never served.</li>
-      <li>Fallbacks are labelled. A county found through a secondary source says which source it came from.</li>
+      <li>Each imported file becomes a snapshot with its URL, checksum and parser version. OpenPlans holds back partial imports and never serves them.</li>
+      <li>OpenPlans labels fallbacks. If it finds a county through a secondary source, the answer names that source.</li>
     </ul>
   </div>
 </section>
@@ -72,7 +72,7 @@
   <div class="wrap">
     <p class="eyebrow section-label">03 / Integration</p>
     <h2>Two APIs, same answers</h2>
-    <p>A native JSON API, plus a compatibility API for existing quoting integrations, so they can switch with fewer changes. Both are built from public data only.</p>
+    <p>OpenPlans has a native JSON API and a compatibility API. Existing quoting integrations can use the compatibility API to switch with fewer changes. Both use only public data.</p>
     <a class="text-link" href="https://github.com/openhra/openplans/blob/main/docs/usage.md">API and compatibility API documentation <span aria-hidden="true">↗</span></a>
   </div>
 </section>
@@ -81,7 +81,7 @@
   <div class="wrap">
     <p class="eyebrow section-label">04 / Self-host</p>
     <h2>Run it yourself</h2>
-    <p>Run OpenPlans in containers on your own server. Setup instructions, configuration and import commands belong with the code, in the repository.</p>
+    <p>Run OpenPlans in containers on your own server. Find setup instructions, configuration and import commands alongside the code in the repository.</p>
     <a class="text-link" href="https://github.com/openhra/openplans/blob/main/docs/self-host.md">Self-hosting documentation <span aria-hidden="true">↗</span></a>
   </div>
 </section>
@@ -123,7 +123,7 @@
   <div class="wrap">
     <p class="eyebrow section-label">07 / Provenance</p>
     <h2>Data sources</h2>
-    <p>CMS, Census, NPPES, RxNorm and insurer files supply the data. The repository is home to the detailed source inventory and import documentation.</p>
+    <p>CMS, Census, NPPES, RxNorm and insurer files supply the data. Find the detailed source inventory and import documentation in the repository.</p>
     <a class="text-link" href="https://github.com/openhra/openplans#readme">Data sources in the repository README <span aria-hidden="true">↗</span></a>
     <p>This product uses publicly available data from the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend it. Postal-code data from <a href="https://www.geonames.org/">GeoNames</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
   </div>
