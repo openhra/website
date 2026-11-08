@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OpenHRA · open-source building blocks for health benefits</title>
+<meta name="description" content="OpenHRA builds open-source, self-hosted tools for health reimbursement arrangements and individual-market health benefits, starting with OpenPlans.">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="/contact.js" defer></script>
+<script src="https://www.google.com/recaptcha/api.js?onload=openhraCaptchaReady&amp;render=explicit" defer></script>
+</head>
+<body class="umbrella-site">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="wrap">
+  <nav aria-label="Main">
+    <a class="brand" href="/" aria-label="OpenHRA home"><img src="/brand/logo-openhra.svg" width="218" height="48" alt="OpenHRA"></a>
+    <ul>
+      <li><a class="nav-repo" href="https://github.com/openhra">Repositories <span aria-hidden="true">↗</span></a></li>
+      <li><a href="#principles">Principles</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+<section class="wrap hero">
+  <div class="hero-copy">
+  <span class="status">OPEN SOURCE · SELF-HOSTED</span>
+  <h1>Open building blocks.<br><span>For health benefits.</span></h1>
+  <p class="lede">Individual coverage HRAs let employers give people money for a health plan they choose themselves. Running one well takes plan, premium, subsidy, drug and provider data. That data is often available through paid APIs. OpenHRA builds it in the open, from public sources, for anyone to run.</p>
+
+  <div class="actions"><a class="button" href="https://github.com/openhra">Browse repositories <span aria-hidden="true">↗</span></a><a class="text-link" href="#projects">Meet OpenPlans <span aria-hidden="true">↓</span></a></div>
+  </div>
+  <figure class="brand-figure" aria-label="OpenHRA: open source building blocks, built from public data.">
+    <div class="figure-top"><span class="eyebrow">Open by design</span><span aria-hidden="true">↗</span></div>
+    <div class="construction"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" stroke-linejoin="round"><path d="M12 4H4v24h8M20 4h8v24h-8"/><path d="M12 10v12M20 10v12M12 16h8"/></g></svg></div>
+    <figcaption><span>Public sources.</span><br>Shared building blocks.</figcaption>
+    <div class="figure-bottom"><span>Open source</span><span>Self-hosted</span></div>
+  </figure>
+</section>
+
+<section class="band alt" id="projects">
+  <div class="wrap">
+    <p class="eyebrow section-label">01 / Our repositories</p>
+    <h2>The repository is the project’s home.</h2>
+    <p>Start with the source. Code, documentation, issues and releases belong in each project’s repository.</p>
+    <div class="projects">
+      <div>
+        <div class="project-top"><img src="/brand/mark-openplans.svg" width="32" height="32" alt=""><span class="eyebrow">First project</span></div>
+        <h3><a href="https://github.com/openhra/openplans">OpenPlans <span aria-hidden="true">↗</span></a></h3>
+        <p>A self-hosted API for US marketplace plans, household premiums, subsidy estimates, drug coverage and provider networks, built only from CMS, Census, NPPES, RxNorm and insurer files. Includes a compatibility API for existing quoting integrations.</p>
+        <div class="actions"><a class="button" href="https://github.com/openhra/openplans">Open the repository <span aria-hidden="true">↗</span></a><a class="text-link" href="https://plans.openhra.com/">Project website <span aria-hidden="true">↗</span></a></div>
+        <p class="note">In development · Apache-2.0</p>
+        <p class="repo-status">Public repository being prepared. Code and documentation may not be available yet.</p>
+      </div>
+      <div>
+        <span class="project-index" aria-hidden="true">↗</span><h3>Explore the organisation</h3>
+        <p>Find the public repositories in one place. OpenPlans is our first project.</p>
+        <a class="text-link" href="https://github.com/openhra">Browse repositories <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="principles">
+  <div class="wrap">
+    <p class="eyebrow section-label">02 / How we work</p>
+    <h2>Principles</h2>
+    <ul class="rules">
+      <li><b>Public data only.</b> Every number comes from a file a government agency or insurer publishes, with its source kept.</li>
+      <li><b>Unknown stays unknown.</b> Missing or blocked data is reported as unknown, never guessed or filled in.</li>
+      <li><b>Run it yourself.</b> Everything ships as open source that runs in containers on your own server, with no account or key required for the core data.</li>
+      <li><b>Checked against the source.</b> Releases are compared value by value with the raw public files before they ship.</li>
+      <li><b>Good citizens.</b> Our downloaders identify themselves honestly, respect access controls and avoid repeat downloads.</li>
+    </ul>
+  </div>
+</section>
+<section class="band alt" id="contact">
+  <div class="wrap">
+    <p class="eyebrow section-label">03 / Get in touch</p>
+    <h2>Contact</h2>
+    <p>Questions about OpenHRA or its projects? The address appears after a quick check that you are not a bot.</p>
+    <div class="contact">
+      <div id="contact-captcha" aria-label="Contact verification"></div>
+      <p id="contact-result" class="contact-result" hidden></p>
+      <p id="contact-status" class="note" role="status">Loading the check…</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="footer-identity"><img src="/brand/mark-openhra.svg" width="24" height="24" alt=""><span>OpenHRA</span></span>
+    <span>Not affiliated with CMS, HealthCare.gov or any insurer.</span>
+  </div>
+</footer>
+</body>
+</html>

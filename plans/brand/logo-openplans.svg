@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="358" height="48" viewBox="0 0 358 48" role="img" aria-labelledby="title">
+<title id="title">OpenPlans — an OpenHRA project</title>
+<style>:root { color: #0b6258; }</style>
+<g transform="translate(0 7)"><g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" stroke-linejoin="round"><path d="M12 4H4v24h8M20 4h8v24h-8"/><path d="M12 22V10h8v6h-8"/></g></g>
+<g fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C4 3 2 7 2 15s2 12 8 12 8-4 8-12S16 3 10 3Z" transform="translate(51 5) scale(1)"/><path d="M2 11v25M2 18c0-5 3-8 7-8s7 3 7 9-3 8-7 8-7-3-7-8" transform="translate(73 5) scale(1)"/><path d="M2 18h14c0-5-2-8-7-8s-7 3-7 9 3 8 8 8c3 0 5-1 6-2" transform="translate(93 5) scale(1)"/><path d="M2 27V11M2 18c0-5 3-8 7-8s7 3 7 8v9" transform="translate(113 5) scale(1)"/><path d="M2 27V3h8c6 0 8 3 8 7s-2 7-8 7H2" transform="translate(133 5) scale(1)"/><path d="M3 3v21c0 2 1 3 4 3" transform="translate(155 5) scale(1)"/><path d="M16 11v16M16 19c0-6-2-9-7-9s-7 3-7 9 2 8 7 8 7-2 7-8" transform="translate(167 5) scale(1)"/><path d="M2 27V11M2 18c0-5 3-8 7-8s7 3 7 8v9" transform="translate(187 5) scale(1)"/><path d="M15 12c-2-1-4-2-7-2-4 0-6 2-6 4 0 6 14 3 14 9 0 3-3 4-7 4-3 0-5-1-7-2" transform="translate(207 5) scale(1)"/></g>
+<path d="M249 13v22" stroke="currentColor" stroke-width=".8"/>
+<text x="267" y="28" fill="currentColor" font-family="system-ui, sans-serif" font-size="13">by OpenHRA</text>
+</svg>

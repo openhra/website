@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="206" height="48" viewBox="0 0 206 48" role="img" aria-labelledby="title">
+<title id="title">OpenHRA</title>
+<style>:root { color: #173e37; }</style>
+<g transform="translate(0 7)"><g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" stroke-linejoin="round"><path d="M12 4H4v24h8M20 4h8v24h-8"/><path d="M12 10v12M20 10v12M12 16h8"/></g></g>
+<g fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3C4 3 2 7 2 15s2 12 8 12 8-4 8-12S16 3 10 3Z" transform="translate(51 5) scale(1)"/><path d="M2 11v25M2 18c0-5 3-8 7-8s7 3 7 9-3 8-7 8-7-3-7-8" transform="translate(73 5) scale(1)"/><path d="M2 18h14c0-5-2-8-7-8s-7 3-7 9 3 8 8 8c3 0 5-1 6-2" transform="translate(93 5) scale(1)"/><path d="M2 27V11M2 18c0-5 3-8 7-8s7 3 7 8v9" transform="translate(113 5) scale(1)"/><path d="M2 3v24M18 3v24M2 15h16" transform="translate(133 5) scale(1)"/><path d="M2 27V3h8c6 0 8 3 8 7s-2 7-8 7H2M10 17l9 10" transform="translate(156 5) scale(1)"/><path d="M1 27 10 3h2l9 24M5 19h12" transform="translate(180 5) scale(1)"/></g>
+</svg>

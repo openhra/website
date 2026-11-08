@@ -1,0 +1,51 @@
+@import url('/brand/tokens.css');
+@import url('/brand/site.css');
+
+/* OpenHRA gives the shared frame more room for its purpose and principles. */
+.umbrella-site .hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+.umbrella-site .hero h1 { font-size: clamp(42px, 4.8vw, 64px); }
+.umbrella-site .hero .lede { max-width: 52ch; }
+.brand-figure { margin: 0; padding: 26px; background: var(--diagram-bg); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius-lg); overflow: hidden; }
+.figure-top .eyebrow { color: var(--muted); font-size: 10px; }
+.figure-top > span:last-child { font-size: 24px; color: var(--accent); }
+.construction { display: grid; place-items: center; margin: 28px 0; padding: 32px; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 32px 32px; }
+.construction svg { width: 168px; height: 168px; color: var(--accent); }
+.brand-figure figcaption { font-size: 25px; line-height: 1.3; font-weight: 500; letter-spacing: -.03em; }
+.brand-figure figcaption span { color: var(--accent); }
+.figure-bottom { display: flex; justify-content: space-between; border-top: 1px solid var(--line); margin-top: 26px; padding-top: 16px; color: var(--muted); font-family: var(--mono); font-size: 10px; }
+.projects { display: grid; grid-template-columns: 1.55fr 1fr; margin-top: 36px; border-block: 1px solid var(--line); }
+.projects > div { padding: 32px 40px 32px 0; }
+.projects > div + div { padding-left: 40px; border-left: 1px solid var(--line); }
+.project-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.project-top img { display: block; }
+.project-top .eyebrow { font-size: 10px; }
+.projects h3 { font-size: 30px; font-weight: 550; }
+.projects h3 a { display: flex; justify-content: space-between; align-items: center; text-decoration: none; }
+.projects h3 a:hover { text-decoration: underline; }
+.projects p { color: var(--muted); font-size: 15px; }
+.projects .note { color: var(--accent); font-size: 11px; margin: 24px 0 0; }
+.project-index { display: block; font-size: 32px; color: var(--muted); line-height: 32px; margin-bottom: 22px; }
+.projects > div + div h3 { font-size: 24px; }
+#principles .wrap { display: grid; grid-template-columns: 1fr 1.5fr; column-gap: 64px; }
+#principles .section-label, #principles h2 { grid-column: 1; }
+#principles .rules { grid-column: 2; grid-row: 1 / 4; margin-top: 0; }
+#principles .rules li:first-child { border-top: 0; padding-top: 0; }
+#principles .rules li:first-child::before { top: 0; }
+#principles .rules b { display: block; font-weight: 650; margin-bottom: 4px; }
+#contact .wrap { display: grid; grid-template-columns: 1fr 1fr; column-gap: 64px; }
+#contact .section-label, #contact h2, #contact .wrap > p { grid-column: 1; }
+#contact .contact { grid-column: 2; grid-row: 2 / 5; align-content: start; margin-top: 0; }
+@media (max-width: 760px) {
+  .umbrella-site .hero { grid-template-columns: 1fr; }
+  .umbrella-site .hero h1 { font-size: clamp(40px, 7.8vw, 58px); }
+  .brand-figure { max-width: 100%; }
+  .construction { padding: 24px; }
+  .projects { grid-template-columns: 1fr; }
+  .projects > div, .projects > div + div { padding: 28px 0; border-left: 0; }
+  .projects > div + div { border-top: 1px solid var(--line); }
+  #principles .wrap, #contact .wrap { display: block; }
+  #principles .rules, #contact .contact { margin-top: 28px; }
+}
+
+.projects .repo-status { font-size: 13px; margin-top: 12px; }
+.projects .actions { gap: 12px 24px; }
