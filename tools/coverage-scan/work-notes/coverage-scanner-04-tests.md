@@ -1,0 +1,9 @@
+# Tests
+
+20 standard-library unit tests pass. Hand-authored fixture inputs reproduce TX/FL/NC and GA figures independently of generated output. Isolated mutations cover exact rounding, missing DC, duplicate state/issuer, source year, zero denominator, fractional counts, withheld roster members, quarantined-as-ACTIVE, positive association and pointer scope, failed-refresh displacement, actor attribution, supplemental/SHOP precedence, source hashes, private paths, truncated reports and unsupported schema. Rehashed ledger mutants reach semantic predicates, not just checksum failures.
+
+Absent reports preserve a known denominator with null numerator/percent and unknown units. A later failed manifest refresh preserves the earlier valid exported ACTIVE pointer and emits a warning. A subprocess audit hook fences file opens to declared roots and rejects socket usage; input byte comparisons prove no input writes. Fixture repeat runs are byte-identical. Failed staging and previous-output symlinks fail closed.
+
+The first full-input run passed: public federal 2026 rates total 2,235,761; 49 comparable 2026 premium scopes reconcile, plus 29 for 2027. Only 19 2026 premium scopes have explicit serving evidence. All golden issuer figures and quarantine buckets match DESIGN.md. Coverage checker prints PASS. Full site gate prints PASS, including its six negative controls. Final implementation-pinned full-input repeat hashes remain to be recorded.
+
+Bugs surfaced: manifest partial status can coexist with quarantined source validation; ACTIVE requires corroborated source validation and matching pointers. Missing federal serving evidence is retained as unknown, not inferred from successful oracles. A changed selected report is rejected on hash before publication; the reviewed final report was repinned explicitly.

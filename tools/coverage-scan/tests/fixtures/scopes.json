@@ -1,0 +1,9 @@
+{
+  "as_of": "2026-11-08T13:00:00Z",
+  "scopes": [
+    {"state": "TX", "denominator": 32, "providers": [10, 4, 17, 1], "prescriptions": [10, 1, 20, 1], "provider_tenths": 438, "prescription_tenths": 344},
+    {"state": "FL", "denominator": 26, "providers": [10, 1, 15, 0], "prescriptions": [9, 0, 17, 0], "provider_tenths": 423, "prescription_tenths": 346},
+    {"state": "NC", "denominator": 13, "providers": [5, 1, 7, 0], "prescriptions": [3, 0, 10, 0], "provider_tenths": 462, "prescription_tenths": 231},
+    {"state": "GA", "denominator": 16, "providers": [0, 0, 16, 0], "prescriptions": [0, 0, 16, 0], "provider_tenths": 0, "prescription_tenths": 0}
+  ]
+}
