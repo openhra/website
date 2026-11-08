@@ -540,7 +540,7 @@ sys.path.insert(0, sys.argv[1])
 from inputs import Bundle
 from model import loads
 from scan import release, publish
-import check, encodings.utf_8_sig
+import check, encodings.utf_8_sig, encodings.cp437
 tools, root, output = (Path(v).resolve() for v in sys.argv[1:])
 def audit(event, args):
     if event.startswith('socket.'):

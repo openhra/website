@@ -28,7 +28,34 @@ See [AGENTS.md](AGENTS.md).
 
 ## Checks
 
-Run `tools/gate.sh` for the offline site checks. Use `tools/gate.sh --full` to include the negative-control self-test. To scan all publishable files for case-insensitive policy patterns, set `OPENPLANS_DENYLIST_FILE` to a newline-delimited regex list.
+Run `tools/gate.sh` for the offline site checks. The full gate includes the
+negative-control suites and requires `OPENPLANS_DENYLIST_FILE` to point to an
+external, nonempty regex policy. No policy is bundled with the site.
+
+Run `scripts/ci.sh` for public contributor checks. It creates a temporary synthetic
+policy, runs the unchanged `tools/gate.sh --full`, then runs the disposable
+exporter suite with `scripts/test-export.py --public`. It ignores any inherited
+policy and removes its fixture on exit. A public CI pass proves the checks run;
+it does not approve publication. The publication gate and exporter still require
+an external policy. Private release validation must supply the private policy.
+
+The extracted-root workflow at `.github/workflows/ci.yml` runs on pull requests,
+pushes to `develop`, `main` and `release/**`, and manual dispatch. Required checks
+are `website-linux`, `website-macos`, `website-python39` and `website-required`.
+The final job runs even if a dependency fails or skips, and accepts only a
+successful result for every required platform job. Configure branch protection
+to require these checks. Hosted results belong to the tested commit.
+
+`.node-version` and `.python-version` pin the primary runtimes. Python 3.9.25 is
+also tested on Linux to retain compatibility with existing tooling. The workflow
+pins action revisions and uses hosted runners with read-only repository access.
+It needs Git and rsync, with no npm or Python package install and no site build.
+It uses no deployment credentials and does not deploy.
+
+The workflow uses JSON syntax, which YAML accepts. This lets the standard-library
+checker `python3 scripts/check-ci.py --selftest` verify commands, runtime inputs,
+action pins and required jobs without installing a YAML parser. Its negative
+controls reject missing jobs and failed, skipped, pending or canceled results.
 
 ## Export committed source
 
@@ -59,10 +86,10 @@ checks bytes and modes against the committed selection before replacing staging.
 Failures leave the source and previous destination intact. Exporting does not
 commit, publish or deploy. The release coordinator owns those later stages.
 
-Run `PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-export.py` for disposable
+Run `PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-export.py --public` for disposable
 export tests. They exercise the real exporter and standalone full gate, including
 rejection of unsafe destinations and files planted after assembly. They stay
-separate from the full gate to avoid recursive export calls. The optional pair
+separate from the full gate to avoid recursive export calls. Without `--public`, the optional pair
 `--import-ref <original-import-commit> --public-source <local-public-checkout>`
 replays the historical import proof in a disposable clone; it does not export to
 or modify that reference checkout.

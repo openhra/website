@@ -1,7 +1,10 @@
 {
   "schema_version": 1,
   "files": [
+    ".github/workflows/ci.yml",
     ".gitignore",
+    ".node-version",
+    ".python-version",
     "AGENTS.md",
     "CLAUDE.md",
     "LICENSE",
@@ -65,6 +68,8 @@
     "plans/index.html",
     "plans/style.css",
     "plans/vercel.json",
+    "scripts/check-ci.py",
+    "scripts/ci.sh",
     "scripts/export-public.py",
     "scripts/export-public.sh",
     "scripts/public-paths.json",

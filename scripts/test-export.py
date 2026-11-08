@@ -233,9 +233,12 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--public', action='store_true', help='Run synthetic-policy tests only, without historical import inputs')
     parser.add_argument('--import-ref', help='Optional incubator import commit for the original-tree proof')
     parser.add_argument('--public-source', type=Path, help='Read-only local public checkout containing a055916')
     args = parser.parse_args()
+    if args.public and (args.import_ref or args.public_source):
+        parser.error('--public cannot use historical import inputs')
     if bool(args.import_ref) != bool(args.public_source):
         parser.error('--import-ref and --public-source must be supplied together')
     if args.import_ref:
