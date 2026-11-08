@@ -143,6 +143,9 @@ python3 "$ROOT/tools/check-private-paths.py" "$ROOT"
 python3 "$ROOT/tools/check-neutral.py" "$ROOT"
 python3 "$ROOT/tools/check-mcp.py" "$ROOT"
 
+node --test "$ROOT/tests/alerts.test.mjs"
+python3 -m unittest discover -s "$ROOT/tests" -p 'test_alert_sender.py'
+
 python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"
 if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
   python3 "$ROOT/tools/coverage-gate/check.py" --previous-ref HEAD
