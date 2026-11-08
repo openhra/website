@@ -9,6 +9,20 @@ if [ "${1-}" = "--full" ]; then FULL=1; elif [ "$#" -ne 0 ]; then
   exit 1
 fi
 
+if [ "$FULL" -eq 1 ]; then
+  if [ -z "${OPENPLANS_DENYLIST_FILE:-}" ]; then
+    printf 'FAIL: OPENPLANS_DENYLIST_FILE is required for --full\n' >&2
+    exit 1
+  fi
+  if [ ! -r "$OPENPLANS_DENYLIST_FILE" ]; then
+    printf 'FAIL: cannot read publication denylist\n' >&2
+    exit 1
+  fi
+  # Resolve relative paths before running from any caller working directory.
+  OPENPLANS_DENYLIST_FILE=$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "$OPENPLANS_DENYLIST_FILE")
+  export OPENPLANS_DENYLIST_FILE
+fi
+
 if ! python3 - "$ROOT" <<'PY'
 import html.parser
 import re

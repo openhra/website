@@ -39,6 +39,14 @@ check_pass() {
   grep -q '^PASS$' "$TMP/output" || { cat "$TMP/output"; exit 1; }
 }
 
+if env -u OPENPLANS_DENYLIST_FILE "$TMP/repo/tools/gate.sh" --full >"$TMP/output" 2>&1; then
+  cat "$TMP/output"
+  printf 'FAIL: self-test expected --full to require a publication denylist\n' >&2
+  exit 1
+fi
+grep -Fq 'FAIL: OPENPLANS_DENYLIST_FILE is required for --full' "$TMP/output" || { cat "$TMP/output"; exit 1; }
+printf 'selftest negative: PASS (full gate requires denylist)\n'
+
 check_pass
 printf 'selftest: clean copy PASS\n'
 printf 'fixture %s\n' '/'"Users"'/fixture' > "$TMP/repo/private-path-fixture"
@@ -58,14 +66,17 @@ cp "$TMP/original.html" "$page"
 printf '\ncontact test%s%s\n' '@' 'example.invalid' >> "$page"
 check_fail email 'FAIL: email address found in openhra/index.html'
 cp "$TMP/original.html" "$page"
-printf 'openhra\n# ignored-comment\n' > "$TMP/denylist"
-if OPENPLANS_DENYLIST_FILE="$TMP/denylist" "$TMP/repo/tools/gate.sh" >"$TMP/output" 2>&1; then
+printf 'SyntheticTestTerm7\n# ignored-comment\n' > "$TMP/denylist"
+mkdir -p "$TMP/repo/docs"
+printf 'SyntheticTestTerm7\n' > "$TMP/repo/docs/publication-fixture.md"
+if OPENPLANS_DENYLIST_FILE="$TMP/denylist" "$TMP/repo/tools/gate.sh" --full >"$TMP/output" 2>&1; then
   cat "$TMP/output"
   printf 'FAIL: self-test expected the denylist to reject\n' >&2
   exit 1
 fi
-grep -Fq 'FAIL: denylist term found in ' "$TMP/output" || { cat "$TMP/output"; exit 1; }
-printf 'selftest negative: PASS (denylist)\n'
+grep -Fq 'FAIL: denylist term found in public tree' "$TMP/output" || { cat "$TMP/output"; exit 1; }
+printf 'selftest negative: PASS (denylist scans docs in full gate)\n'
+rm "$TMP/repo/docs/publication-fixture.md"
 cp "$TMP/repo/plans/brand/tokens.css" "$TMP/original.css"
 sed 's/--bg: #ffffff/--bg: #101010/' "$TMP/repo/plans/brand/tokens.css" > "$TMP/tokens"
 cp "$TMP/tokens" "$TMP/repo/plans/brand/tokens.css"
