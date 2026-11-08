@@ -201,7 +201,8 @@ class Client:
         )
         try:
             data = bytearray()
-            while True:
+            # The final Content-Length read may close the response and release sock.
+            while not response.isclosed():
                 left = TIMEOUT - (time.monotonic() - started)
                 require(left > 0, "response deadline exceeded")
                 sock.settimeout(left)

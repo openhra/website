@@ -145,6 +145,7 @@ python3 "$ROOT/tools/check-mcp.py" "$ROOT"
 
 node --test "$ROOT/tests/alerts.test.mjs"
 python3 -m unittest discover -s "$ROOT/tests" -p 'test_alert_sender.py'
+python3 -m unittest discover -s "$ROOT/tests" -p 'edge_acceptance*.py'
 
 python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"
 if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then

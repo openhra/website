@@ -20,6 +20,6 @@ Run offline tests from the website root:
 python3 -B -m unittest discover -s tests -p 'edge_acceptance*.py'
 ```
 
-The fakes test both protocol envelopes and reject buffered SSE, successful GET, oversized-body acceptance, accessible private routes, a successful hostile Host, missing CORS headers, missing Retry-After and forwarding-based rate evasion. TLS refusal tests ensure certificate hostname errors cannot masquerade as refused SNI. These tests run in the preparation job. The existing repository gate has a fixed test-discovery list, so run this command alongside that gate when developing the probe.
+The fakes test both protocol envelopes and reject buffered SSE, successful GET, oversized-body acceptance, accessible private routes, a successful hostile Host, missing CORS headers, missing Retry-After and forwarding-based rate evasion. TLS refusal tests ensure certificate hostname errors cannot masquerade as refused SNI. These tests run in the preparation job and in `tools/gate.sh`, including the full gate.
 
 A passing workflow provides outside-client evidence. Confirm SQL cancellation and retained-log privacy on the host before closing deployment acceptance.

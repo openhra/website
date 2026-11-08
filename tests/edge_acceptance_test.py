@@ -322,6 +322,30 @@ class AcceptanceTests(unittest.TestCase):
             return result, suite.rows, output.getvalue(), fake.envelopes
 
     def test_both_envelopes_json_denials_and_headers(self):
+        # Python 3.12 closes a framed response on its last byte. Model that lifecycle
+        # on older interpreters too, so the next read cannot touch the released socket.
+        with server() as (_, client):
+            original_open = client.open
+
+            def open_closing_response(*args, **kwargs):
+                wire = original_open(*args, **kwargs)
+                response = wire[1]
+                original_read = response.read1
+
+                def read_and_close(size):
+                    part = original_read(size)
+                    if response.length == 0:
+                        response.close()
+                    return part
+
+                response.read1 = read_and_close
+                return wire
+
+            with mock.patch.object(client, "open", side_effect=open_closing_response):
+                reply = client.request("GET", "/healthz")
+            self.assertEqual(reply.status, 200)
+            self.assertEqual(reply.json(), {"status": "ok", "db": "ok"})
+
         result, rows, _, envelopes = self.basics("good")
         self.assertTrue(result["ok"], rows)
         for revision in (probe.MODERN, probe.LEGACY):
