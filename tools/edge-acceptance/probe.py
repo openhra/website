@@ -28,7 +28,8 @@ MAX_CATALOG_RESPONSE = (
     8 * 1024 * 1024
 )  # A native 50-plan page includes source evidence.
 TIMEOUT = 10
-ROUNDS = 6
+ROUNDS = 4
+CONCURRENCY_WORKERS = 4  # The edge permits four simultaneous /mcp calls per source.
 ROUND_INTERVAL = 6
 MIN_PROGRESS_LEAD = 0.025
 RATE_REQUESTS = 19
@@ -435,25 +436,30 @@ class Suite:
             while time.time() < due:
                 time.sleep(min(0.1, due - time.time()))
             require(time.time() - due < 0.5, "missed synchronized concurrency round")
-            gate = threading.Barrier(3)
+            gate = threading.Barrier(CONCURRENCY_WORKERS)
 
             def sample(index, gate=gate, round_id=round_id):
                 gate.wait(timeout=TIMEOUT)
                 args = {
-                    "name": f"synthetic-edge-{self.run_id}-{round_id}-{index}",
+                    # Plan discovery reads the scoped catalog before filtering.
+                    # A unique query bypasses the generation-keyed response cache.
+                    "query": f"synthetic-edge-{self.source}-{self.run_id}-{round_id}-{index}",
+                    "entity": "plan",
+                    "location": {"county": "48201"},
+                    "year": 2026,
                     "limit": 1,
                 }
                 started = time.monotonic()
                 reply, proof = self.client.stream(
-                    "search_providers",
+                    "search",
                     args,
                     f"{self.source}-{round_id}-{index}",
                     incremental=False,
                 )
                 return reply, proof, round((time.monotonic() - started) * 1000)
 
-            with ThreadPoolExecutor(max_workers=3) as pool:
-                replies = list(pool.map(sample, range(3)))
+            with ThreadPoolExecutor(max_workers=CONCURRENCY_WORKERS) as pool:
+                replies = list(pool.map(sample, range(CONCURRENCY_WORKERS)))
             for index, (reply, proof, elapsed_ms) in enumerate(replies):
                 self.samples += 1
                 if concurrency_error(reply):
@@ -837,7 +843,7 @@ class Suite:
 
     def run(self):
         # Sampling starts with fresh buckets. Other checks precede the final rate burst.
-        self.check("synchronized three-call rounds", self.concurrency)
+        self.check("synchronized four-call catalog rounds", self.concurrency)
         self.client.mcp_interval = 1.1
         self.basics()
         self.streaming()
@@ -866,7 +872,10 @@ def aggregate(reports):
             "invalid report counters",
         )
         require(
-            0 <= report["app_denials"] <= report["samples"] <= ROUNDS * 3,
+            0
+            <= report["app_denials"]
+            <= report["samples"]
+            <= ROUNDS * CONCURRENCY_WORKERS,
             "invalid concurrency counts",
         )
         require(
@@ -879,7 +888,8 @@ def aggregate(reports):
             r["ok"] and r["failed"] == 0 for r in reports.values()
         ),
         "both synchronized sources sampled": all(
-            r["samples_ok"] and r["samples"] == ROUNDS * 3 for r in reports.values()
+            r["samples_ok"] and r["samples"] == ROUNDS * CONCURRENCY_WORKERS
+            for r in reports.values()
         ),
         "application concurrency 429 with Retry-After": any(
             r["app_denials"] > 0 for r in reports.values()

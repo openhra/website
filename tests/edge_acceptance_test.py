@@ -262,6 +262,14 @@ class Handler(BaseHTTPRequestHandler):
             token = params.get("_meta", {}).get("progressToken")
             if token is None:
                 self.json(tool(), headers={} if fake.mode == "cors" else cors)
+            elif fake.mode == "fast-catalog":
+                # Model cached/empty work that releases its app slot before another
+                # request can acquire it. Socket overlap alone proves no refusal.
+                with fake.guard:
+                    fake.active += 1
+                    fake.peak = max(fake.peak, fake.active)
+                    fake.active -= 1
+                self.sse(token, fast=True)
             else:
                 with fake.guard:
                     rejected = fake.active >= 4
@@ -564,31 +572,51 @@ class AcceptanceTests(unittest.TestCase):
             self.assertTrue(all(row[1] for row in suite.rows), suite.rows)
             self.assertEqual(client.requests, 16 + probe.RATE_REQUESTS)
 
-    def test_two_sources_reach_application_concurrency(self):
-        with server() as (fake, _):
-            clients = [
-                probe.Client(
-                    f"http://127.0.0.1:{fake.server_port}",
-                    {"X-Synthetic-Source": source},
-                )
-                for source in ("linux", "macos")
-            ]
-            epoch = time.time() + 0.15
-            suites = [
-                probe.Suite(client, source, epoch, round_interval=0.3)
-                for source, client in zip(("linux", "macos"), clients)
-            ]
-            # Two rounds are enough to prove cross-source overlap on the fake; production uses six.
-            with (
-                mock.patch.object(probe, "ROUNDS", 2),
-                probe.ThreadPoolExecutor(max_workers=2) as pool,
-            ):
-                list(pool.map(lambda suite: suite.concurrency(), suites))
-            self.assertTrue(
-                all(suite.sample_ok and suite.samples == 6 for suite in suites)
+    def test_application_concurrency_requires_slow_overlapping_catalog_reads(self):
+        for mode in ("fast-catalog", "good"):
+            with self.subTest(mode=mode), server(mode) as (fake, _):
+                self.paired_concurrency(fake, expect_denial=mode == "good")
+
+    def paired_concurrency(self, fake, expect_denial):
+        fake.rate_enabled = False
+        clients = [
+            probe.Client(
+                f"http://127.0.0.1:{fake.server_port}",
+                {"X-Synthetic-Source": source},
             )
-            self.assertGreater(sum(suite.denials for suite in suites), 0)
-            self.assertEqual(fake.peak, 4)
+            for source in ("linux", "macos")
+        ]
+        epoch = time.time() + 0.15
+        suites = [
+            probe.Suite(client, source, epoch, round_interval=0.3)
+            for source, client in zip(("linux", "macos"), clients)
+        ]
+        # Two rounds prove cross-source overlap; production uses four.
+        with (
+            mock.patch.object(probe, "ROUNDS", 2),
+            probe.ThreadPoolExecutor(max_workers=2) as pool,
+        ):
+            list(pool.map(lambda suite: suite.concurrency(), suites))
+            self.assertTrue(
+                all(suite.sample_ok and suite.samples == 8 for suite in suites)
+            )
+            with contextlib.redirect_stdout(io.StringIO()):
+                reports = {suite.source: json.dumps(suite.report()) for suite in suites}
+                accepted = probe.aggregate(reports)
+            self.assertEqual(accepted, expect_denial)
+        self.assertEqual(sum(suite.denials for suite in suites) > 0, expect_denial)
+        self.assertEqual(fake.peak, 4 if expect_denial else 1)
+        self.assertEqual([client.requests for client in clients], [8, 8])
+        self.assertEqual(len(fake.tool_calls), 16)
+        self.assertEqual(len({call["arguments"]["query"] for call in fake.tool_calls}), 16)
+        for call in fake.tool_calls:
+            self.assertEqual(call["name"], "search")
+            args = call["arguments"]
+            self.assertEqual(args["entity"], "plan")
+            self.assertEqual(args["location"], {"county": "48201"})
+            self.assertEqual(args["year"], 2026)
+            self.assertEqual(args["limit"], 1)
+            self.assertTrue(args["query"].startswith("synthetic-edge-"))
 
     def test_late_rendezvous_fails_without_requests(self):
         with server() as (_, client):
@@ -616,7 +644,7 @@ class AcceptanceTests(unittest.TestCase):
                 suite = probe.Suite(client, "macos", time.time() + 0.05)
                 reply = probe.Reply(status, {"retry-after": "60"}, body)
                 with mock.patch.object(client, "stream", return_value=(reply, None)):
-                    suite.check("synchronized three-call rounds", suite.concurrency)
+                    suite.check("synchronized four-call catalog rounds", suite.concurrency)
                 self.assertFalse(suite.sample_ok)
                 self.assertEqual(suite.denials, 0)
                 detail = suite.rows[0][2]
@@ -666,7 +694,7 @@ class AcceptanceTests(unittest.TestCase):
             "source": "linux",
             "ok": True,
             "samples_ok": True,
-            "samples": 18,
+            "samples": 16,
             "app_denials": 1,
             "requests": 79,
             "failed": 0,
@@ -683,7 +711,7 @@ class AcceptanceTests(unittest.TestCase):
                 ("app_denials", 0),
                 ("ok", False),
                 ("samples_ok", False),
-                ("samples", 17),
+                ("samples", 15),
             ):
                 mutant = copy.deepcopy(report)
                 mutant[field] = value
@@ -754,7 +782,8 @@ class AcceptanceTests(unittest.TestCase):
                 self.assertEqual(key, "linux")
                 self.assertEqual(result["ok"], mode == "good")
                 self.assertTrue(result["samples_ok"])
-                self.assertEqual(result["samples"], 18)
+                self.assertEqual(result["samples"], 16)
+                self.assertEqual(result["requests"], 78)
                 self.assertLessEqual(result["requests"], probe.MAX_REQUESTS)
                 self.assertGreater(result["requests"], 60)
 
@@ -780,7 +809,7 @@ class AcceptanceTests(unittest.TestCase):
             "source": "linux",
             "ok": True,
             "samples_ok": True,
-            "samples": 18,
+            "samples": 16,
             "app_denials": 1,
             "requests": 80,
             "failed": 0,
