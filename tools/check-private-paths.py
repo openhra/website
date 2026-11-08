@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Reject machine-specific absolute paths anywhere in the website tree."""
-import os
+"""Reject machine-specific absolute paths in publishable website files."""
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+from public_paths import selected_files
 
 
 def check(root):
@@ -11,20 +13,11 @@ def check(root):
     roots = ("Vol" + "umes", "Us" + "ers", "home", "private" + "/" + "tmp")
     pattern = re.compile("/" + "(?:" + "|".join(map(re.escape, roots)) + ")" + "/", re.I)
     count = 0
-    for directory, directories, files in os.walk(root, followlinks=False):
-        base = Path(directory)
-        directories[:] = [name for name in directories if name != ".git"]
-        for name in files:
-            path = base / name
-            if path.is_symlink():
-                continue
-            try:
-                content = path.read_bytes().decode("utf-8", errors="replace")
-            except OSError:
-                raise ValueError("cannot read website file")
-            if pattern.search(content):
-                raise ValueError("private absolute path found in " + path.relative_to(root).as_posix())
-            count += 1
+    for path in selected_files(root):
+        content = path.read_bytes().decode("utf-8", errors="replace")
+        if pattern.search(content):
+            raise ValueError("private absolute path found in " + path.relative_to(root).as_posix())
+        count += 1
     print(f"private paths: PASS ({count} files)")
 
 

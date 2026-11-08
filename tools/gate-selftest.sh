@@ -11,7 +11,12 @@ import sys
 from pathlib import Path
 
 source, target = map(Path, sys.argv[1:])
-shutil.copytree(source, target, ignore=shutil.ignore_patterns(".git", ".claude", ".lanes"))
+sys.path.insert(0, str(source / 'scripts'))
+from public_paths import selected_files
+for path in selected_files(source):
+    output = target / path.relative_to(source)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(path, output)
 subprocess.run(["git", "-C", str(target), "init", "--quiet"], check=True)
 subprocess.run(["git", "-C", str(target), "add", "--all"], check=True)
 PY
@@ -49,9 +54,9 @@ printf 'selftest negative: PASS (full gate requires denylist)\n'
 
 check_pass
 printf 'selftest: clean copy PASS\n'
-printf 'fixture %s\n' '/'"Users"'/fixture' > "$TMP/repo/private-path-fixture"
-check_fail private-path 'FAIL: private absolute path found in private-path-fixture'
-rm "$TMP/repo/private-path-fixture"
+printf 'fixture %s\n' '/'"Users"'/fixture' >> "$TMP/repo/README.md"
+check_fail private-path 'FAIL: private absolute path found in README.md'
+cp "$ROOT/README.md" "$TMP/repo/README.md"
 page="$TMP/repo/openhra/index.html"
 cp "$page" "$TMP/original.html"
 printf '\n<broken' >> "$page"
@@ -67,16 +72,15 @@ printf '\ncontact test%s%s\n' '@' 'example.invalid' >> "$page"
 check_fail email 'FAIL: email address found in openhra/index.html'
 cp "$TMP/original.html" "$page"
 printf 'SyntheticTestTerm7\n# ignored-comment\n' > "$TMP/denylist"
-mkdir -p "$TMP/repo/docs"
-printf 'SyntheticTestTerm7\n' > "$TMP/repo/docs/publication-fixture.md"
+printf 'SyntheticTestTerm7\n' >> "$TMP/repo/README.md"
 if OPENPLANS_DENYLIST_FILE="$TMP/denylist" "$TMP/repo/tools/gate.sh" --full >"$TMP/output" 2>&1; then
   cat "$TMP/output"
   printf 'FAIL: self-test expected the denylist to reject\n' >&2
   exit 1
 fi
 grep -Fq 'FAIL: denylist term found in public tree' "$TMP/output" || { cat "$TMP/output"; exit 1; }
-printf 'selftest negative: PASS (denylist scans docs in full gate)\n'
-rm "$TMP/repo/docs/publication-fixture.md"
+printf 'selftest negative: PASS (denylist scans publishable docs in full gate)\n'
+cp "$ROOT/README.md" "$TMP/repo/README.md"
 cp "$TMP/repo/plans/brand/tokens.css" "$TMP/original.css"
 sed 's/--bg: #ffffff/--bg: #101010/' "$TMP/repo/plans/brand/tokens.css" > "$TMP/tokens"
 cp "$TMP/tokens" "$TMP/repo/plans/brand/tokens.css"

@@ -51,7 +51,7 @@ def check(root):
     assert '"plans/availability.html"' in gate.split('required_pages = (', 1)[-1].split(')', 1)[0], 'availability missing from gate page list'
     svg = (root / 'plans/brand/us-states.svg').read_text()
     ns = {'s':'http://www.w3.org/2000/svg'}
-    expected = ET.fromstring((root / 'docs/coverage-map/map.svg').read_text())
+    expected = ET.fromstring((root / 'tests/reference/map.svg').read_text())
     actual = ET.fromstring(svg)
     geometry = lambda el: {p.attrib['data-state']:p.attrib['d'] for p in el.findall('.//s:path[@data-state]', ns)}
     assert geometry(actual) == geometry(expected) and set(geometry(actual)) == set(STATES), 'Census geometry differs'
@@ -131,7 +131,7 @@ def negatives():
     for name, filename, mutate in cases:
         with tempfile.TemporaryDirectory() as tmp:
             dest = Path(tmp)
-            for directory in ('plans','tools/coverage-scan','docs/coverage-map'):
+            for directory in ('plans','tools/coverage-scan','tests/reference'):
                 shutil.copytree(ROOT / directory,dest / directory)
             shutil.copy(ROOT / 'tools/gate.sh', dest / 'tools/gate.sh')
             target = dest / filename; before = target.read_text(); target.write_text(mutate(before))

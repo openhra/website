@@ -220,7 +220,7 @@ def main():
                  for p in (ROOT / directory).rglob('*') if p.is_file() and '__pycache__' not in p.parts}
     with tempfile.TemporaryDirectory(prefix='coverage-gate-') as tmp:
         root = Path(tmp) / 'site'
-        for directory in ('plans', 'tools/coverage-scan', 'tools/coverage-ui-check', 'docs/coverage-map'):
+        for directory in ('plans', 'tools/coverage-scan', 'tools/coverage-ui-check', 'tests/reference'):
             shutil.copytree(ROOT / directory, root / directory, ignore=shutil.ignore_patterns('__pycache__'))
         shutil.copy(ROOT / 'tools/gate.sh', root / 'tools/gate.sh')
         previous = Path(tmp) / 'previous'

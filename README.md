@@ -30,23 +30,39 @@ See [AGENTS.md](AGENTS.md).
 
 Run `tools/gate.sh` for the offline site checks. Use `tools/gate.sh --full` to include the negative-control self-test. To scan all publishable files for case-insensitive policy patterns, set `OPENPLANS_DENYLIST_FILE` to a newline-delimited regex list.
 
-## Promote committed source
+## Export committed source
 
-Develop the sites in the private incubator's `website/` directory. Lanes never edit the public
-clone directly. After committing, run `scripts/export-public.sh <destination>` with
-`OPENPLANS_DENYLIST_FILE` pointing to an external publication policy. The policy is required,
-nonempty and never bundled with the sites.
+Develop the sites in the incubator's `website/` directory. After committing, run
+`scripts/export-public.sh <staging-directory>` with `OPENPLANS_DENYLIST_FILE`
+pointing to an external, nonempty regex policy. The policy is never bundled.
+Python 3.9 or later, Git, Node and rsync must be available.
 
-The exporter refuses uncommitted website changes, archives HEAD, and runs the full offline gate
-on a disposable copy. It then syncs the untouched archive with deletion of stale public files.
-The destination's root `.git`, `.vercel`, `.lanes` and `.env*` entries are preserved. Choose the
-destination carefully: other files there are replaced. A final audit includes untracked files
-and rejects private host paths, email addresses, policy matches and symlinks. Exporting changes
-files only; committing and publishing the destination are separate owner actions.
+The destination must be outside every Git checkout and either empty or owned by
+an earlier successful export. The exporter creates `.website-export-owned` as a
+staging control file. Keep it out of public commits and deployment uploads. Do
+not add it to an existing directory to bypass the ownership check. Stale files
+are removed only from owned staging. Any nested Git metadata, hosting link,
+environment file or symlink stops the export before replacement. Shared clones,
+lane worktrees and ignored directories inside checkouts are rejected.
 
-Run `PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-export.py` for export integration tests.
-They use disposable Git repositories and run the real exporter, including its isolated full gate.
-They are separate from `tools/gate.sh --full` to avoid recursive export/gate invocations.
-The optional pair `--import-ref <original-import-commit> --public-source <local-public-checkout>`
-also verifies the archived import has zero diff against public commit `a055916` in a temporary
-clone. The final export includes the later incubator tooling changes as well as the original sites.
+`scripts/public-paths.json` lists every public file. Add a path there when adding
+public source or tooling. Design captures, private docs, work notes and installed
+dependencies are excluded. `tests/reference/map.svg` holds the unchanged Census
+geometry used by the offline tests. Source audits read only the selected files;
+`tools/check-neutral.py <tree> --artifact` also rejects unexpected files and
+directories throughout a bare artifact. Use that strict check before adding the
+staging control file or after removing it from a disposable copy.
+
+The exporter pins HEAD, reads its policy and payload from that commit, and runs
+`tools/gate.sh --full` on a separate copy. It audits the assembled file set and
+checks bytes and modes against the committed selection before replacing staging.
+Failures leave the source and previous destination intact. Exporting does not
+commit, publish or deploy. The release coordinator owns those later stages.
+
+Run `PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-export.py` for disposable
+export tests. They exercise the real exporter and standalone full gate, including
+rejection of unsafe destinations and files planted after assembly. They stay
+separate from the full gate to avoid recursive export calls. The optional pair
+`--import-ref <original-import-commit> --public-source <local-public-checkout>`
+replays the historical import proof in a disposable clone; it does not export to
+or modify that reference checkout.

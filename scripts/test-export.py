@@ -57,87 +57,178 @@ def verify_import(import_ref, public_source):
 
 
 def main():
+    import sys
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    from public_paths import OWNER, OWNER_BYTES, public_paths, selected_files
+
     with tempfile.TemporaryDirectory(prefix='website-export-test-') as temporary:
-        base = Path(temporary)
+        base = Path(temporary).resolve()
         source, dest = base / 'source', base / 'destination'
-        shutil.copytree(ROOT, source, ignore=shutil.ignore_patterns('.git', '.vercel', '.lanes', '.env*'))
+        for path in selected_files(ROOT):
+            target = source / path.relative_to(ROOT)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, target)
         git(source, 'init', '--quiet')
+        # These committed inputs must stay private; installed tools are ignored.
+        (source / 'docs').mkdir()
+        (source / 'docs/private-note.md').write_text('PRIVATE' + ' TEST' + ' MARKER\n')
+        (source / 'tools/coverage-scan/work-notes').mkdir()
+        (source / 'tools/coverage-scan/work-notes/capture.txt').write_text('PRIVATE' + ' TEST' + ' MARKER\n')
         commit(source)
         baseline = snapshot(source)
         policy = base / 'denylist'
         policy.write_text('# synthetic policy\nprivate[- ]test[- ]marker\n')
         env = dict(os.environ, OPENPLANS_DENYLIST_FILE=str(policy), PYTHONDONTWRITEBYTECODE='1')
         command = [str(source / 'scripts/export-public.sh'), str(dest)]
+        dest.mkdir()
 
-        # A destination clone without a remote: root metadata and local settings survive.
-        git(base, 'clone', '--quiet', '--no-hardlinks', str(source), str(dest))
-        git(dest, 'remote', 'remove', 'origin')
-        for name in ('.vercel', '.lanes'):
-            (dest / name).mkdir()
-            (dest / name / 'synthetic-sentinel').write_text('synthetic local settings\n')
-        (dest / '.env.synthetic').write_text('SYNTHETIC_EXPORT_TEST=1\n')
-        protected = {p: snapshot(dest)[p] for p in snapshot(dest) if p.parts[0].startswith(('.env', '.vercel', '.lanes'))}
-        metadata = snapshot(dest / '.git')
-        (dest / 'stale-public-file').write_text('must be deleted\n')
-        # Only root exclusions are protected; a stale nested hosting directory is deleted.
-        (dest / 'plans/.vercel').mkdir()
-        (dest / 'plans/.vercel/stale').write_text('synthetic\n')
+        def rejected(args, diagnostic, test_env=env):
+            before_source, before_dest = snapshot(source), snapshot(dest)
+            run(args, env=test_env, expected=diagnostic)
+            assert snapshot(source) == before_source, 'rejection changed source'
+            assert snapshot(dest) == before_dest, 'rejection changed destination'
+            print('export negative: PASS (' + diagnostic + '; source and destination unchanged)', flush=True)
 
         missing = dict(env)
-        missing.pop('OPENPLANS_DENYLIST_FILE')
-        run(command, env=missing, expected='OPENPLANS_DENYLIST_FILE is required')
-        print('export negative: PASS (missing policy)')
+        missing.pop('OPENPLANS_DENYLIST_FILE', None)
+        rejected(command, 'OPENPLANS_DENYLIST_FILE is required', missing)
+        empty_policy = base / 'empty-policy'
+        empty_policy.write_text('# empty synthetic policy\n')
+        rejected(command, 'publication denylist must contain at least one pattern',
+                 dict(env, OPENPLANS_DENYLIST_FILE=str(empty_policy)))
         readme = source / 'README.md'
         original = readme.read_bytes()
         readme.write_bytes(original + b'\nDirty fixture\n')
-        run(command, env=env, expected='source website tree is dirty')
+        rejected(command, 'source website tree is dirty')
         readme.write_bytes(original)
         (source / 'untracked-fixture').write_text('synthetic\n')
-        run(command, env=env, expected='source website tree is dirty')
+        rejected(command, 'source website tree is dirty')
         (source / 'untracked-fixture').unlink()
-        print('export negative: PASS (tracked and untracked dirty source)')
+
+        # An unowned directory is never cleaned, even if it resembles an export.
+        (dest / 'unrelated-sentinel').write_text('synthetic owner file\n')
+        rejected(command, 'destination must be empty or exporter-owned staging')
+        (dest / OWNER).write_bytes(OWNER_BYTES)
+        for metadata in ('.git', 'plans/.git', 'plans/.vercel', '.lanes', '.env.synthetic'):
+            path = dest / metadata
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('synthetic local state\n')
+            rejected(command, 'destination contains local state')
+            path.unlink()
+        outside = base / 'outside'
+        outside.mkdir()
+        (outside / 'sentinel').write_text('unrelated\n')
+        link = dest / 'plans/linked'
+        link.symlink_to(outside, target_is_directory=True)
+        rejected(command, 'destination contains a symlink')
+        assert (outside / 'sentinel').read_text() == 'unrelated\n'
+        link.unlink()
+        alias = base / 'alias'
+        alias.symlink_to(dest, target_is_directory=True)
+        rejected([command[0], str(alias)], 'destination must not use symlinks')
+
+        # A Git worktree can be hidden by ignore rules or nested under owned staging.
+        worktree_repo = base / 'worktree-owner'
+        worktree_repo.mkdir()
+        git(worktree_repo, 'init', '--quiet')
+        (worktree_repo / 'tracked').write_text('synthetic\n')
+        commit(worktree_repo)
+        (worktree_repo / '.gitignore').write_text('ignored/\n')
+        nested = dest / 'ignored/lane'
+        git(worktree_repo, 'worktree', 'add', '--quiet', '--detach', str(nested))
+        nested_before = snapshot(nested)
+        rejected(command, 'destination contains local state')
+        assert snapshot(nested) == nested_before
+        git(worktree_repo, 'worktree', 'remove', str(nested))
+        ignored_inside = worktree_repo / 'ignored/output'
+        rejected([command[0], str(ignored_inside)], 'destination is inside a Git checkout')
+        assert not ignored_inside.exists()
+        clone = base / 'shared-clone'
+        git(base, 'clone', '--quiet', '--no-hardlinks', str(source), str(clone))
+        clone_before, clone_metadata = snapshot(clone), snapshot(clone / '.git')
+        rejected([command[0], str(clone)], 'destination is inside a Git checkout')
+        assert snapshot(clone) == clone_before and snapshot(clone / '.git') == clone_metadata
 
         marker = 'PRIVATE' + ' TEST' + ' MARKER'
         cases = (
-            ('private volume path', '/' + 'Volumes/fixture', 'private host path found'),
-            ('private user path', '/' + 'Users/fixture', 'private host path found'),
+            ('private path', '/' + 'Vol' + 'umes/fixture', 'private host path found'),
+            ('private user path', '/' + 'Us' + 'ers/fixture', 'private host path found'),
             ('email literal', 'fixture' + '@' + 'example.invalid', 'email address found'),
-            ('denylisted regex', marker, 'denylist term found'),
+            ('private note in public prose', marker, 'denylist term found'),
         )
-        before = snapshot(dest)
         for name, mutation, diagnostic in cases:
             readme.write_bytes(original + ('\n' + mutation + '\n').encode())
             commit(source)
-            run(command, env=env, expected=diagnostic)
-            assert snapshot(dest) == before, 'failed preflight changed destination'
+            rejected(command, diagnostic)
             readme.write_bytes(original)
             commit(source)
-            print('export negative: PASS (' + name + '; destination unchanged)')
+        svg = source / 'tests/reference/map.svg'
+        svg_bytes = svg.read_bytes()
+        svg.unlink()
+        svg.symlink_to(source / 'plans/brand/us-states.svg')
+        commit(source)
+        rejected(command, 'symlink or special file is not publishable')
+        svg.unlink()
+        svg.write_bytes(svg_bytes)
+        commit(source)
+        path_policy = source / 'scripts/public-paths.json'
+        policy_bytes = path_policy.read_bytes()
+        path_policy.unlink()
+        commit(source)
+        rejected(command, 'required export command failed')
+        path_policy.write_bytes(policy_bytes)
+        commit(source)
 
-        # Prove the final destination check runs even after a successful gate/sync.
-        # The wrapper delegates the real copy then plants a publication mutation.
+        # Real copying completes, then a benign untracked note is planted. Path-set
+        # validation must reject it before replacing any destination bytes.
         wrapper = base / 'bin'
         wrapper.mkdir()
         real_rsync = shutil.which('rsync')
-        (wrapper / 'rsync').write_text('#!/bin/sh\n' + real_rsync + ' "$@"\n' +
-                                     'printf "' + marker + '\\n" > "$EXPORT_TEST_DEST/planted-after-sync"\n')
+        (wrapper / 'rsync').write_text('#!/bin/sh\n"' + real_rsync + '" "$@"\n' +
+                                     'for last do :; done\n' +
+                                     'printf "synthetic note\\n" > "$last/planted-after-assembly.md"\n')
         (wrapper / 'rsync').chmod(0o755)
-        hooked = dict(env, PATH=str(wrapper) + os.pathsep + env['PATH'], EXPORT_TEST_DEST=str(dest))
-        run(command, env=hooked, expected='denylist term found')
-        assert (dest / 'planted-after-sync').is_file(), 'post-sync mutation never reached rsync'
-        print('export negative: PASS (destination audit after rsync)')
+        hooked = dict(env, PATH=str(wrapper) + os.pathsep + env['PATH'])
+        rejected(command, 'unexpected file in public artifact', hooked)
 
+        shutil.rmtree(dest)
+        dest.mkdir()
+        output = run(command, env=env)
+        assert output.splitlines()[-1] == 'website-export: PASS'
+        print('export positive: PASS (empty staging)', flush=True)
+        (dest / 'stale-public-file').write_text('synthetic stale public content\n')
         output = run(command, env=env)
         assert output.splitlines()[-1] == 'website-export: PASS'
         actual = snapshot(dest)
-        assert all(actual[p] == value for p, value in protected.items()), 'protected destination data changed'
-        assert snapshot(dest / '.git') == metadata, 'destination Git metadata changed'
-        public = {p: value for p, value in actual.items() if p not in protected}
-        assert public == baseline, 'clean export differs from committed website tree'
+        assert actual.pop(Path(OWNER))[0] == OWNER_BYTES
+        expected = {Path(name): baseline[Path(name)] for name in public_paths(source)}
+        assert actual == expected, 'artifact differs from committed public selection'
         assert snapshot(source) == baseline, 'export changed source tree'
         assert not git(source, 'status', '--porcelain'), 'export dirtied source checkout'
-        print('export positive: PASS (committed tree exact; stale files deleted; rooted exclusions and Git metadata preserved)')
-        print('website export selftest: PASS (isolated full gate; dirty source, policy and publication negative controls)')
+        assert not (dest / 'docs').exists(), 'private design files exported'
+        assert not (dest / 'tools/coverage-scan/work-notes').exists(), 'work notes exported'
+        print('export positive: PASS (exact committed public files; private notes excluded; owned stale files removed)', flush=True)
+
+        # Bare-artifact auditing excludes the staging ownership control.
+        (dest / OWNER).unlink()
+        run(['python3', str(dest / 'tools/check-neutral.py'), str(dest), '--artifact'], env=env)
+
+        # Installed tool files containing private paths are outside source audits.
+        for directory in ('node_modules', '.venv'):
+            path = dest / directory / 'synthetic-tool.txt'
+            path.parent.mkdir()
+            path.write_text('/' + 'Us' + 'ers/fixture\n' + marker)
+        run(['python3', str(dest / 'tools/check-private-paths.py'), str(dest)], env=env)
+        run(['python3', str(dest / 'tools/check-neutral.py'), str(dest)], env=env)
+        run(['python3', str(dest / 'tools/check-neutral.py'), str(dest), '--artifact'],
+            env=env, expected='unexpected')
+        shutil.rmtree(dest / 'node_modules')
+        shutil.rmtree(dest / '.venv')
+        output = run([str(dest / 'tools/gate.sh'), '--full'], env=env)
+        assert output.splitlines()[-1] == 'PASS'
+        assert snapshot(source) == baseline
+        print('export positive: PASS (exported full gate standalone; installed tooling excluded from source audits)', flush=True)
+        print('website export selftest: PASS', flush=True)
 
 
 if __name__ == '__main__':

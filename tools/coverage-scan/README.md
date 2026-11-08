@@ -10,8 +10,8 @@ published SHOP rows. Providers and Prescriptions measure issuer presence, not
 network completeness, enrollment, medical-only market share, provider membership
 or whether a medicine is covered. Premiums measure source rate rows independently
 checked by the selected import oracle in an evidenced serving catalog. Never
-combine the three percentages. The normative metric is
-[DESIGN.md](../../docs/coverage-map/DESIGN.md).
+combine the three percentages. The machine-readable contract is
+[schema.json](schema.json).
 
 ## Run and review
 
@@ -168,8 +168,9 @@ AK, AL, AR, AZ, DE, FL, HI, IA, IN, KS, LA, MI, MO, MS, MT, NC, ND, NE, NH, OH,
 OK, SC, SD, TN, TX, UT, WI, WV, WY. Their numerators total 2,115,809 rate rows;
 each equals its unchanged public source denominator, for 100.0%. Oregon is absent
 from the 2027 federal inventory and stays Unknown. This release changes no 2026
-dataset or issuer dataset. See the per-state counts and checks in the
-[2027 handoff](work-notes/premium-2027-acceptance.md).
+dataset or issuer dataset. The exported
+[2027 premium dataset](../../plans/data/coverage/premiums-2027.json) contains the
+per-state counts and evidence identifiers.
 
 The second `p6d-pointer-v1` selection is mandatory, bound to the same per-year
 reconciliation artifact. Changed or unreviewed artifacts fail closed. A 2027
