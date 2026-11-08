@@ -25,3 +25,7 @@ The contact form needs the serverless function and shows "not available" locally
 ## Rules
 
 See [AGENTS.md](AGENTS.md).
+
+## Checks
+
+Run `tools/gate.sh` for the offline site checks. Run `tools/gate.sh --full` to also run the gate's negative-control self-test. Set `OPENPLANS_DENYLIST_FILE` to a newline-delimited list of case-insensitive terms to scan tracked files.
