@@ -363,6 +363,8 @@ class ScannerTests(unittest.TestCase):
             ("displaced active pointer", lambda s: s["roster"][0].update(active_pointer=False), "TX", "ACTIVE pointer"),
             ("withheld denied issuer", lambda s: s["roster"].pop(), "TX", "withheld or duplicate issuer"),
             ("quarantine falsely active", lambda s: s["roster"][0].update(active_pointer=True), "GA", "quarantined is not active"),
+            ("unproved not imported", lambda s: s["roster"][-1].update(classification="not_imported"), "TX", "audited valid-source adapter"),
+            ("unknown falsely validated", lambda s: s["roster"][-1].update(validation_status="ACTIVE"), "TX", "unknown unit must remain unassessed"),
             ("wrong publisher attribution", lambda s: s["roster"][0].update(actor="publisher_access"), "GA", "adapter failure is not publisher denial"),
         ]
         for name, edit, state, reason in cases:

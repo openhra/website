@@ -69,6 +69,9 @@ from each selected public plan file, including denied issuers and issuers withou
 registry entry. `unassessed_issuers` explicitly declares public roster members absent
 from both source report and audit; it never removes them from the denominator.
 Reference edge counts, NPPES identities and enrichment never contribute to coverage.
+The current adapters emit zero `not_imported` units. The checker rejects that issuer
+classification until a reviewed adapter can attest an assessed, valid unimported
+source; unknown and quarantined units cannot be relabelled to imply that evidence.
 
 Premium evidence reconciles the 49 comparable 2026 source scopes and 29 federal
 2027 scopes against the public archives. **The committed release measures only the

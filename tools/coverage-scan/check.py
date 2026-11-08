@@ -118,10 +118,16 @@ def check_scope(scope, record, index, layer, year, state, ledger):
             require(r["active_pointer"] is active and r["positive_association"] is active, "issuer: ACTIVE pointer and positive association required; quarantined is not active")
             if active:
                 require(r["validation_status"] == "ACTIVE" and r["snapshot_sha256"] and r["association_state"] == state and r["association_year"] == year, "issuer: positive association state/year mismatch")
+                require(r["reason_code"] == "active_validated", "issuer: ACTIVE source requires validated-source observation")
             else:
                 require(r["association_state"] is None and r["association_year"] is None, "issuer: non-active association forbidden")
                 if r["classification"] == "quarantined":
                     require(r["validation_status"] == "QUARANTINED" and r["snapshot_sha256"], "issuer: quarantine validation required")
+                    require(r["reason_code"] not in ("unassessed", "active_validated"), "issuer: quarantine reason contradicts validation")
+                elif r["classification"] == "unknown":
+                    require(r["validation_status"] is None and r["snapshot_sha256"] is None and r["reason_code"] == "unassessed", "issuer: unknown unit must remain unassessed")
+                else:
+                    raise Invalid("issuer: not_imported requires an audited valid-source adapter; unsupported in v1")
         expected = issuer_result(roster, scope["assessed"])
         require(expected == scope["result"] and all(record[k] == v for k, v in expected.items()), "issuer: roster/buckets/result mismatch")
         require(record["warnings"] == scope["warnings"], "issuer: warning lineage mismatch")

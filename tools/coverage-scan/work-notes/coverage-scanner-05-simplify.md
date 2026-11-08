@@ -7,3 +7,5 @@ No existing site code can absorb public inventory reconciliation without mixing 
 Tests after simplification: 21 tests pass. Source-file review is complete. Final repeat scan, full gate and static-data commit remain on the TODO list.
 
 Final source review tightened the SBE declaration adapter to parse its enumerated state table and cross-check URL, issuer, plan and row counts. Narrative wording alone cannot establish state membership. Its fixture negative controls reject missing/duplicate scopes and precedence contradictions.
+
+Closed the reserved not_imported classification until an audited valid-source adapter exists, and required unknown rows to retain null validation/snapshot evidence. Rehashed controls prove neither bucket can acquire unsupported source-validity claims.
