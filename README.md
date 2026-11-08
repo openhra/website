@@ -1,21 +1,21 @@
 # OpenHRA websites
 
-Source of the two public OpenHRA sites. Static HTML and CSS, one small serverless function each for
-the contact form, no build step.
+This repository holds the two public OpenHRA sites. Both use static HTML and CSS, with one small
+serverless function per site for the contact form. There is no build step.
 
 | Folder | Site | What it is |
 |---|---|---|
 | `openhra/` | <https://www.openhra.com/> | OpenHRA: open building blocks for health benefits |
 | `plans/` | <https://plans.openhra.com/> | OpenPlans project page; the project itself lives in [openhra/openplans](https://github.com/openhra/openplans) |
 
-The shared brand system (tokens, marks, logos, guide) lives in `plans/brand/`; start with
+Shared brand tokens, marks, logos and the guide live in `plans/brand/`. Start with
 [`plans/brand/BRAND.md`](plans/brand/BRAND.md) and [`plans/brand/REPO-FIRST.md`](plans/brand/REPO-FIRST.md).
 
 ## Contact form
 
 Each site's `api/contact.js` returns the contact address only after a server-side reCAPTCHA check.
-The address and keys are deployment environment variables (`CONTACT_EMAIL`, `RECAPTCHA_SITE_KEY`,
-`RECAPTCHA_SECRET_KEY`); they are never committed. Do not put an email address in any file.
+Deployment environment variables hold the address and keys: `CONTACT_EMAIL`, `RECAPTCHA_SITE_KEY`
+and `RECAPTCHA_SECRET_KEY`. Never commit their values. Do not put an email address in any file.
 
 ## Preview locally
 
@@ -28,4 +28,4 @@ See [AGENTS.md](AGENTS.md).
 
 ## Checks
 
-Run `tools/gate.sh` for the offline site checks. Run `tools/gate.sh --full` to also run the gate's negative-control self-test. Set `OPENPLANS_DENYLIST_FILE` to a newline-delimited list of case-insensitive terms to scan tracked files.
+Run `tools/gate.sh` for the offline site checks. Use `tools/gate.sh --full` to include the negative-control self-test. To scan tracked files for case-insensitive terms, set `OPENPLANS_DENYLIST_FILE` to a newline-delimited list.
