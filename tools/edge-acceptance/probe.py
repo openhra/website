@@ -24,7 +24,9 @@ MODERN = "2026-07-28"
 LEGACY = "2025-11-25"
 MAX_REQUESTS = 80  # Two sources, plus at most one optional signed report.
 MAX_RESPONSE = 262144
-MAX_CATALOG_RESPONSE = 8 * 1024 * 1024  # A native 50-plan page includes source evidence.
+MAX_CATALOG_RESPONSE = (
+    8 * 1024 * 1024
+)  # A native 50-plan page includes source evidence.
 TIMEOUT = 10
 ROUNDS = 6
 ROUND_INTERVAL = 6
@@ -93,7 +95,8 @@ def rpc_result(reply, request_id=1, allow_sse=False):
         events = reply.body.replace(b"\r\n", b"\n").split(b"\n\n")
         require(not events[-1].strip(), "incomplete SSE response")
         messages = [
-            message for event in events[:-1]
+            message
+            for event in events[:-1]
             if (message := event_message(event)) is not None
         ]
         require(
@@ -278,8 +281,14 @@ class Client:
                 == "text/event-stream",
                 "expected request-scoped SSE",
             )
-            require(reply.headers.get("x-accel-buffering") == "no", "SSE buffering header missing")
-            require(reply.headers.get("content-encoding") in (None, "identity"), "SSE must not be compressed")
+            require(
+                reply.headers.get("x-accel-buffering") == "no",
+                "SSE buffering header missing",
+            )
+            require(
+                reply.headers.get("content-encoding") in (None, "identity"),
+                "SSE must not be compressed",
+            )
             pending = b""
             total = 0
             progress_at = None
@@ -459,7 +468,8 @@ class Suite:
 
         def catalog():
             reply = c.request(
-                "GET", "/v1/plans?county=48201&year=2026",
+                "GET",
+                "/v1/plans?county=48201&year=2026",
                 max_response=MAX_CATALOG_RESPONSE,
             )
             require(
@@ -742,7 +752,9 @@ class Suite:
                         "X-Forwarded-Proto": "https",
                         "X-Forwarded-Host": "openplans.openhra.com",
                         "X-Forwarded-Port": "443",
-                    } if forged else {},
+                    }
+                    if forged
+                    else {},
                 )
                 return forged, reply
 
@@ -752,9 +764,12 @@ class Suite:
                 replies.extend(pool.map(attempt, range(split, RATE_REQUESTS)))
             for _, reply in replies:
                 if reply.status == 429:
-                    require(retry_after(reply), "rate response lacks bounded Retry-After")
                     require(
-                        not concurrency_error(reply), "rate burst hit app concurrency instead"
+                        retry_after(reply), "rate response lacks bounded Retry-After"
+                    )
+                    require(
+                        not concurrency_error(reply),
+                        "rate burst hit app concurrency instead",
                     )
                 else:
                     rpc_result(reply)

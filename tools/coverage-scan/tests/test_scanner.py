@@ -24,10 +24,18 @@ AS_OF = FIXTURE["as_of"]
 
 class Evidence:
     """Small handwritten source/report recipe; never derived from scanner output."""
+
     def __init__(self, root):
         self.root = root
-        self.selection = dict(schema_version=1, source_commit="a" * 40, population="separate_validated_runs",
-                              sources={}, reports={}, premium_scopes=[], issuer_scopes=[])
+        self.selection = dict(
+            schema_version=1,
+            source_commit="a" * 40,
+            population="separate_validated_runs",
+            sources={},
+            reports={},
+            premium_scopes=[],
+            issuer_scopes=[],
+        )
         for scope in FIXTURE["scopes"]:
             state = scope["state"]
             ids = [str(10000 + n) for n in range(scope["denominator"])]
@@ -35,46 +43,104 @@ class Evidence:
             for layer in ("providers", "prescriptions"):
                 kind = "provider" if layer == "providers" else "drug"
                 complete, partial, quarantined, unknown = scope[layer]
-                classifications = ["complete"] * complete + ["partial"] * partial + ["unknown"] * quarantined
+                classifications = (
+                    ["complete"] * complete
+                    + ["partial"] * partial
+                    + ["unknown"] * quarantined
+                )
                 rows, manifest, active = [], [], []
                 for i, completeness in zip(ids, classifications):
                     is_active = completeness != "unknown"
                     snapshot = f"{'provider' if kind == 'provider' else 'formulary'}:{i}:2026:{state}:fixture"
-                    rows.append(dict(issuer=i, state=state, year=2026, snapshot_id=snapshot,
-                                     status="ACTIVE" if is_active else "QUARANTINED", completeness=completeness,
-                                     edges=2 if is_active else 0, expected_children=1, complete_children=1 if is_active else 0, reason="catalog_not_available" if state == "GA" else "index_connect_timeout"))
-                    manifest.append(dict(issuer_id=i, state=state, plan_year=2026, kind=kind,
-                                         snapshot_id=snapshot, status=completeness, reason=rows[-1]["reason"],
-                                         validation_state=rows[-1]["status"]))
+                    rows.append(
+                        dict(
+                            issuer=i,
+                            state=state,
+                            year=2026,
+                            snapshot_id=snapshot,
+                            status="ACTIVE" if is_active else "QUARANTINED",
+                            completeness=completeness,
+                            edges=2 if is_active else 0,
+                            expected_children=1,
+                            complete_children=1 if is_active else 0,
+                            reason="catalog_not_available"
+                            if state == "GA"
+                            else "index_connect_timeout",
+                        )
+                    )
+                    manifest.append(
+                        dict(
+                            issuer_id=i,
+                            state=state,
+                            plan_year=2026,
+                            kind=kind,
+                            snapshot_id=snapshot,
+                            status=completeness,
+                            reason=rows[-1]["reason"],
+                            validation_state=rows[-1]["status"],
+                        )
+                    )
                     if is_active:
-                        active.append(dict(issuer_id=i, kind=kind, snapshot_id=snapshot))
+                        active.append(
+                            dict(issuer_id=i, kind=kind, snapshot_id=snapshot)
+                        )
                 rid = state.lower() + "_" + layer
                 aid = rid + "_audit"
-                self.report(rid, dict(state=state, year=2026, kind="providers" if layer == "providers" else "formulary",
-                                     issuers=rows, running=False), "issuer-v1")
+                self.report(
+                    rid,
+                    dict(
+                        state=state,
+                        year=2026,
+                        kind="providers" if layer == "providers" else "formulary",
+                        issuers=rows,
+                        running=False,
+                    ),
+                    "issuer-v1",
+                )
                 self.report(aid, dict(manifest=manifest, active=active), "audit-v1")
-                self.selection["issuer_scopes"].append(dict(state=state, year=2026, source=state.lower(), plan_member="plans.csv",
-                    layer=layer, report=rid, audit=aid, observed_at=AS_OF, unassessed_issuers=ids[-unknown:] if unknown else []))
+                self.selection["issuer_scopes"].append(
+                    dict(
+                        state=state,
+                        year=2026,
+                        source=state.lower(),
+                        plan_member="plans.csv",
+                        layer=layer,
+                        report=rid,
+                        audit=aid,
+                        observed_at=AS_OF,
+                        unassessed_issuers=ids[-unknown:] if unknown else [],
+                    )
+                )
 
     def source(self, state, ids, year=2026):
         path = self.root / (state.lower() + ".zip")
         rows = [[year, state, i, i + state + "0000001"] for i in ids]
         out = io.StringIO(newline="")
         writer = csv.writer(out)
-        writer.writerow(["BusinessYear", "StateCode", "IssuerId", "StandardComponentId"])
+        writer.writerow(
+            ["BusinessYear", "StateCode", "IssuerId", "StandardComponentId"]
+        )
         writer.writerows(rows)
         with zipfile.ZipFile(path, "w") as z:
             z.writestr("plans.csv", out.getvalue())
             z.writestr("rates.csv", out.getvalue())
         sid = state.lower()
-        self.selection["sources"][sid] = dict(path=path.name, sha256=sha(path.read_bytes()),
-            url=f"https://download.cms.gov/marketplace-puf/{year}/{sid}-fixture.zip", title="Public fixture", vintage=year,
-            retrieved_at=AS_OF, members=[dict(name="plans.csv", kind="plans")])
+        self.selection["sources"][sid] = dict(
+            path=path.name,
+            sha256=sha(path.read_bytes()),
+            url=f"https://download.cms.gov/marketplace-puf/{year}/{sid}-fixture.zip",
+            title="Public fixture",
+            vintage=year,
+            retrieved_at=AS_OF,
+            members=[dict(name="plans.csv", kind="plans")],
+        )
 
     def report(self, rid, data, fmt):
         path = self.root / (rid + ".json")
         path.write_bytes(encoded(data))
-        self.selection["reports"][rid] = dict(path=path.name, sha256=sha(path.read_bytes()), format=fmt, finalized=True)
+        self.selection["reports"][rid] = dict(
+            path=path.name, sha256=sha(path.read_bytes()), format=fmt, finalized=True
+        )
 
     def mutate_report(self, rid, edit):
         spec = self.selection["reports"][rid]
@@ -91,20 +157,57 @@ class Evidence:
         ids = ["20000", "20001"]
         self.source(state, ids, year)
         sid = state.lower()
-        self.selection["sources"][sid]["members"].append(dict(name="rates.csv", kind="rates"))
-        row = dict(state=state, year=year, generated_at=AS_OF, passed=True,
-                   premiums=dict(passed=True, mismatch_count=0, mismatches=[], raw_rows=2, stored_rows=2),
-                   base_ids=dict(passed=True, actual=2, expected=2, only_actual=[], only_expected=[]),
-                   variant_ids=dict(passed=True, actual=2, expected=2, only_actual=[], only_expected=[]),
-                   import_id=f"puf-{year}-{state}-fixture")
+        self.selection["sources"][sid]["members"].append(
+            dict(name="rates.csv", kind="rates")
+        )
+        row = dict(
+            state=state,
+            year=year,
+            generated_at=AS_OF,
+            passed=True,
+            premiums=dict(
+                passed=True, mismatch_count=0, mismatches=[], raw_rows=2, stored_rows=2
+            ),
+            base_ids=dict(
+                passed=True, actual=2, expected=2, only_actual=[], only_expected=[]
+            ),
+            variant_ids=dict(
+                passed=True, actual=2, expected=2, only_actual=[], only_expected=[]
+            ),
+            import_id=f"puf-{year}-{state}-fixture",
+        )
         rid = sid + "_premium"
         self.report(rid, dict(year=year, passed=True, results=[row]), "federal-v1")
         active_id = sid + "_serving"
         if serving:
-            self.report(active_id, dict(schema_version=1, catalogs=[dict(state=state, year=year,
-                import_id=row["import_id"], status="ACTIVE", source_sha256=self.selection["sources"][sid]["sha256"], observed_at=AS_OF)]), "serving-v1")
-        spec = dict(state=state, year=year, source=sid, plan_source=sid, rate_member="rates.csv", plan_member="plans.csv",
-                    report=rid, serving_report=active_id if serving else None, observed_at=AS_OF)
+            self.report(
+                active_id,
+                dict(
+                    schema_version=1,
+                    catalogs=[
+                        dict(
+                            state=state,
+                            year=year,
+                            import_id=row["import_id"],
+                            status="ACTIVE",
+                            source_sha256=self.selection["sources"][sid]["sha256"],
+                            observed_at=AS_OF,
+                        )
+                    ],
+                ),
+                "serving-v1",
+            )
+        spec = dict(
+            state=state,
+            year=year,
+            source=sid,
+            plan_source=sid,
+            rate_member="rates.csv",
+            plan_member="plans.csv",
+            report=rid,
+            serving_report=active_id if serving else None,
+            observed_at=AS_OF,
+        )
         self.selection["premium_scopes"].append(spec)
         return spec
 
@@ -126,14 +229,19 @@ class ScannerTests(unittest.TestCase):
 
     def test_golden_report_figures_and_quarantine(self):
         files, fragment = self.build()
-        for layer, pctkey in [("providers", "provider_tenths"), ("prescriptions", "prescription_tenths")]:
+        for layer, pctkey in [
+            ("providers", "provider_tenths"),
+            ("prescriptions", "prescription_tenths"),
+        ]:
             data = loads(files[layer + "-2026.json"])
             for f in FIXTURE["scopes"]:
                 r = data["states"][f["state"]]
                 self.assertEqual(r["denominator"], f["denominator"])
                 self.assertEqual(r["numerator"], sum(f[layer][:2]))
                 self.assertEqual(r["percent_tenths"], f[pctkey])
-                self.assertEqual(r["status"], "quarantined" if f["state"] == "GA" else "measured")
+                self.assertEqual(
+                    r["status"], "quarantined" if f["state"] == "GA" else "measured"
+                )
             self.assertIsNone(data["states"]["DC"]["denominator"])
         self.assertEqual(fragment.count(b'<th scope="row">'), 51)
         self.assertIn(b"Georgia</th><td>0/16 (0.0%)</td><td>Quarantined", fragment)
@@ -143,7 +251,9 @@ class ScannerTests(unittest.TestCase):
 
     def test_fixed_runs_identical_no_network_or_input_writes(self):
         before = {p.name: p.read_bytes() for p in self.root.iterdir()}
-        with patch.object(socket, "socket", side_effect=AssertionError("network forbidden")):
+        with patch.object(
+            socket, "socket", side_effect=AssertionError("network forbidden")
+        ):
             first, html1 = self.build()
             second, html2 = self.build()
         self.assertEqual(first, second)
@@ -158,11 +268,29 @@ class ScannerTests(unittest.TestCase):
         data = loads(files["providers-2026.json"])
         definitions = schemas()
         mutations = [
-            ("percentage", lambda d: d["states"]["TX"].update(percent_tenths=500), "rounding"),
+            (
+                "percentage",
+                lambda d: d["states"]["TX"].update(percent_tenths=500),
+                "rounding",
+            ),
             ("delete DC", lambda d: d["states"].pop("DC"), "required field"),
-            ("zero denominator", lambda d: d["states"]["TX"].update(denominator=0), "partition"),
-            ("fractional count", lambda d: d["states"]["TX"].update(numerator=14.5), "schema alternative"),
-            ("private absolute path", lambda d: d["states"]["TX"].update(observed_at="/" + "private/" + "tmp/fixture"), "ISO UTC"),
+            (
+                "zero denominator",
+                lambda d: d["states"]["TX"].update(denominator=0),
+                "partition",
+            ),
+            (
+                "fractional count",
+                lambda d: d["states"]["TX"].update(numerator=14.5),
+                "schema alternative",
+            ),
+            (
+                "private absolute path",
+                lambda d: d["states"]["TX"].update(
+                    observed_at="/" + "private/" + "tmp/fixture"
+                ),
+                "ISO UTC",
+            ),
         ]
         for name, edit, reason in mutations:
             with self.subTest(name=name):
@@ -185,23 +313,76 @@ class ScannerTests(unittest.TestCase):
 
     def test_report_negative_controls(self):
         cases = [
-            ("withheld denied issuer", "tx_providers", lambda r: r["issuers"].pop(), "roster mismatch"),
-            ("duplicate TX issuer", "tx_providers", lambda r: r["issuers"].append(copy.deepcopy(r["issuers"][0])), "duplicate report issuer"),
-            ("association year", "tx_providers", lambda r: r["issuers"][0].update(year=2027), "state/year mismatch"),
-            ("association state", "tx_providers", lambda r: r["issuers"][0].update(state="FL"), "state/year mismatch"),
-            ("positive association absent", "tx_providers", lambda r: r["issuers"][0].update(edges=0), "positive same-state/year"),
-            ("fractional edges", "tx_providers", lambda r: r["issuers"][0].update(edges=2.5), "safe integer"),
-            ("quarantine counted ACTIVE", "ga_providers", lambda r: r["issuers"][0].update(status="ACTIVE", edges=1, completeness="complete"), "ACTIVE pointer absent"),
-            ("failed refresh displaces pointer", "tx_providers_audit", lambda r: r["active"][0].update(snapshot_id="failed-refresh"), "ACTIVE pointer absent"),
-            ("GA importer blamed on publisher", "ga_providers_audit", lambda r: r["manifest"][0].update(status="access_denied"), "adapter failure is not publisher denial"),
+            (
+                "withheld denied issuer",
+                "tx_providers",
+                lambda r: r["issuers"].pop(),
+                "roster mismatch",
+            ),
+            (
+                "duplicate TX issuer",
+                "tx_providers",
+                lambda r: r["issuers"].append(copy.deepcopy(r["issuers"][0])),
+                "duplicate report issuer",
+            ),
+            (
+                "association year",
+                "tx_providers",
+                lambda r: r["issuers"][0].update(year=2027),
+                "state/year mismatch",
+            ),
+            (
+                "association state",
+                "tx_providers",
+                lambda r: r["issuers"][0].update(state="FL"),
+                "state/year mismatch",
+            ),
+            (
+                "positive association absent",
+                "tx_providers",
+                lambda r: r["issuers"][0].update(edges=0),
+                "positive same-state/year",
+            ),
+            (
+                "fractional edges",
+                "tx_providers",
+                lambda r: r["issuers"][0].update(edges=2.5),
+                "safe integer",
+            ),
+            (
+                "quarantine counted ACTIVE",
+                "ga_providers",
+                lambda r: r["issuers"][0].update(
+                    status="ACTIVE", edges=1, completeness="complete"
+                ),
+                "ACTIVE pointer absent",
+            ),
+            (
+                "failed refresh displaces pointer",
+                "tx_providers_audit",
+                lambda r: r["active"][0].update(snapshot_id="failed-refresh"),
+                "ACTIVE pointer absent",
+            ),
+            (
+                "GA importer blamed on publisher",
+                "ga_providers_audit",
+                lambda r: r["manifest"][0].update(status="access_denied"),
+                "adapter failure is not publisher denial",
+            ),
         ]
         for name, rid, edit, reason in cases:
             with self.subTest(name=name):
-                original = (self.root / self.e.selection["reports"][rid]["path"]).read_bytes()
+                original = (
+                    self.root / self.e.selection["reports"][rid]["path"]
+                ).read_bytes()
                 self.e.mutate_report(rid, edit)
                 with self.assertRaisesRegex(Invalid, reason):
                     self.e.bundle().reconcile()
-                self.e.report(rid, json.loads(original), self.e.selection["reports"][rid]["format"])
+                self.e.report(
+                    rid,
+                    json.loads(original),
+                    self.e.selection["reports"][rid]["format"],
+                )
 
     def test_remove_denied_issuer_from_both_reports_fails(self):
         self.e.mutate_report("tx_providers", lambda r: r["issuers"].pop())
@@ -210,11 +391,18 @@ class ScannerTests(unittest.TestCase):
             self.e.bundle().reconcile()
 
     def test_failed_refresh_preserves_prior_valid_active_pointer(self):
-        self.e.mutate_report("tx_providers_audit", lambda r: r["manifest"][0].update(status="failed", snapshot_id="later-failed-refresh"))
+        self.e.mutate_report(
+            "tx_providers_audit",
+            lambda r: r["manifest"][0].update(
+                status="failed", snapshot_id="later-failed-refresh"
+            ),
+        )
         data = loads(self.build()[0]["providers-2026.json"])
         r = data["states"]["TX"]
         self.assertEqual(r["numerator"], 14)
-        self.assertIn(dict(code="failed_refresh", actor="undetermined", count=1), r["warnings"])
+        self.assertIn(
+            dict(code="failed_refresh", actor="undetermined", count=1), r["warnings"]
+        )
 
     def test_absent_report_is_unknown_not_zero(self):
         s = self.e.selection["issuer_scopes"][0]
@@ -231,7 +419,9 @@ class ScannerTests(unittest.TestCase):
     def test_premium_active_serving_and_missing_pointer(self):
         self.e.premium()
         r = loads(self.build()[0]["premiums-2026.json"])["states"]["OR"]
-        self.assertEqual((r["numerator"], r["denominator"], r["percent_tenths"]), (2, 2, 1000))
+        self.assertEqual(
+            (r["numerator"], r["denominator"], r["percent_tenths"]), (2, 2, 1000)
+        )
         self.e.selection["reports"].pop("or_serving")
         self.e.selection["premium_scopes"][0]["serving_report"] = None
         r = loads(self.build()[0]["premiums-2026.json"])["states"]["OR"]
@@ -247,24 +437,43 @@ class ScannerTests(unittest.TestCase):
         self.assertEqual(scope["reconciliation"]["verified"], 2)
         self.assertIsNone(scope["serving"])
         self.assertEqual(record["denominator"], 2)
-        self.assertEqual(record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0))
+        self.assertEqual(
+            record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0)
+        )
         self.assertEqual(record["status"], "unknown")
         self.assertEqual(record["serving_basis"], "unverified")
         self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
         self.assertIsNone(record["numerator"])
         self.assertIsNone(record["percent_tenths"])
         # Even a self-consistent 2/2 record cannot replace absent pointer lineage.
-        record.update(numerator=2, percent_tenths=1000, status="measured",
-                      counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
-                      reason_codes=[], serving_basis="active_catalog")
-        with self.assertRaisesRegex(Invalid, "independent reconciliation and ACTIVE serving evidence"):
-            check_scope(scope, record, loads(files["index.json"]), "premiums", 2026, "OR", ledger)
+        record.update(
+            numerator=2,
+            percent_tenths=1000,
+            status="measured",
+            counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
+            reason_codes=[],
+            serving_basis="active_catalog",
+        )
+        with self.assertRaisesRegex(
+            Invalid, "independent reconciliation and ACTIVE serving evidence"
+        ):
+            check_scope(
+                scope,
+                record,
+                loads(files["index.json"]),
+                "premiums",
+                2026,
+                "OR",
+                ledger,
+            )
 
     def p6d_pointer_fixture(self, year=2026, state="OR"):
         spec = self.e.premium(state, serving=False, year=year)
         rid = spec["report"]
         self.e.mutate_report(rid, lambda r: r.update(states=[state]))
-        report = loads((self.root / self.e.selection["reports"][rid]["path"]).read_bytes())
+        report = loads(
+            (self.root / self.e.selection["reports"][rid]["path"]).read_bytes()
+        )
         self.e.report("p6d_pointer", report, "p6d-pointer-v1")
         spec["serving_report"] = "p6d_pointer"
         return spec, self.e.selection["reports"][rid]["sha256"]
@@ -276,14 +485,24 @@ class ScannerTests(unittest.TestCase):
         with patch("inputs.P6D_POINTER_REPORTS", {2026: (digest,)}):
             files, _ = self.build()
             record = loads(files["premiums-2026.json"])["states"]["OR"]
-            self.assertEqual((record["numerator"], record["denominator"], record["percent_tenths"]), (2, 2, 1000))
+            self.assertEqual(
+                (record["numerator"], record["denominator"], record["percent_tenths"]),
+                (2, 2, 1000),
+            )
             ledger = loads(files[record["evidence"]["path"]])
-            self.assertEqual(ledger["scopes"]["OR"]["serving"]["report_id"], "p6d_pointer")
+            self.assertEqual(
+                ledger["scopes"]["OR"]["serving"]["report_id"], "p6d_pointer"
+            )
             target = self.base / "p6d-release"
             publish(target, files)
             self.assertTrue(check_release(target))
-            self.e.mutate_report(spec["report"], lambda r: r.update(extra="different reconciliation artifact"))
-            with self.assertRaisesRegex(Invalid, "pointer/reconciliation artifact mismatch"):
+            self.e.mutate_report(
+                spec["report"],
+                lambda r: r.update(extra="different reconciliation artifact"),
+            )
+            with self.assertRaisesRegex(
+                Invalid, "pointer/reconciliation artifact mismatch"
+            ):
                 self.build()
 
     def test_unreviewed_p6d_pointer_artifact_is_rejected(self):
@@ -307,7 +526,10 @@ class ScannerTests(unittest.TestCase):
         with patch("inputs.P6D_POINTER_REPORTS", {2027: digest}):
             files, _ = self.build()
             record = loads(files["premiums-2027.json"])["states"]["AK"]
-            self.assertEqual((record["numerator"], record["denominator"], record["percent_tenths"]), (2, 2, 1000))
+            self.assertEqual(
+                (record["numerator"], record["denominator"], record["percent_tenths"]),
+                (2, 2, 1000),
+            )
             target = self.base / "p6d-2027-release"
             publish(target, files)
             self.assertTrue(check_release(target))
@@ -320,23 +542,42 @@ class ScannerTests(unittest.TestCase):
         self.assertEqual(scope["reconciliation"]["verified"], 2)
         self.assertIsNone(scope["serving"])
         self.assertEqual(record["denominator"], 2)
-        self.assertEqual(record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0))
+        self.assertEqual(
+            record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0)
+        )
         self.assertEqual(record["status"], "unknown")
         self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
         self.assertIsNone(record["numerator"])
         self.assertIsNone(record["percent_tenths"])
-        record.update(numerator=2, percent_tenths=1000, status="measured",
-                      counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
-                      reason_codes=[], serving_basis="active_catalog")
-        with self.assertRaisesRegex(Invalid, "independent reconciliation and ACTIVE serving evidence"):
-            check_scope(scope, record, loads(files["index.json"]), "premiums", 2027, "AK", ledger)
+        record.update(
+            numerator=2,
+            percent_tenths=1000,
+            status="measured",
+            counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
+            reason_codes=[],
+            serving_basis="active_catalog",
+        )
+        with self.assertRaisesRegex(
+            Invalid, "independent reconciliation and ACTIVE serving evidence"
+        ):
+            check_scope(
+                scope,
+                record,
+                loads(files["index.json"]),
+                "premiums",
+                2027,
+                "AK",
+                ledger,
+            )
 
     def test_2027_never_borrows_reviewed_2026_pointer(self):
         spec, digest = self.p6d_pointer_fixture(year=2027, state="AK")
         self.e.mutate_report("p6d_pointer", lambda r: r.update(year=2026))
         old_digest = self.e.selection["reports"]["p6d_pointer"]["sha256"]
         with patch("inputs.P6D_POINTER_REPORTS", {2026: old_digest, 2027: digest}):
-            with self.assertRaisesRegex(Invalid, "pointer/reconciliation artifact mismatch"):
+            with self.assertRaisesRegex(
+                Invalid, "pointer/reconciliation artifact mismatch"
+            ):
                 self.build()
 
     def test_unreviewed_2027_pointer_is_rejected(self):
@@ -357,7 +598,9 @@ class ScannerTests(unittest.TestCase):
                 self.e.bundle().reconcile()
             spec["year"] = 2026
         with self.subTest("wrong serving source hash"):
-            self.e.mutate_report("or_serving", lambda r: r["catalogs"][0].update(source_sha256="b" * 64))
+            self.e.mutate_report(
+                "or_serving", lambda r: r["catalogs"][0].update(source_sha256="b" * 64)
+            )
             with self.assertRaisesRegex(Invalid, "catalog/source pointer mismatch"):
                 self.e.bundle().reconcile()
 
@@ -366,7 +609,9 @@ class ScannerTests(unittest.TestCase):
             with self.subTest(state=state):
                 e = Evidence(self.root)
                 e.premium(state)
-                with self.assertRaisesRegex(Invalid, "supplemental or SHOP catalog forbidden"):
+                with self.assertRaisesRegex(
+                    Invalid, "supplemental or SHOP catalog forbidden"
+                ):
                     e.bundle().reconcile()
 
     def test_path_url_hash_and_format_boundaries(self):
@@ -378,7 +623,12 @@ class ScannerTests(unittest.TestCase):
         (self.root / "escape").symlink_to(outside)
         with self.assertRaisesRegex(Invalid, "symlink escape"):
             relative_file(self.root, "escape")
-        for url in ("https://example.com/source?token=fixture", "http://example.com/source", "https://localhost/source", "https://127.0.0.1/source"):
+        for url in (
+            "https://example.com/source?token=fixture",
+            "http://example.com/source",
+            "https://localhost/source",
+            "https://127.0.0.1/source",
+        ):
             original = self.e.selection["sources"]["tx"]["url"]
             self.e.selection["sources"]["tx"]["url"] = url
             with self.subTest(url=url), self.assertRaisesRegex(Invalid, "source URL"):
@@ -418,7 +668,11 @@ class ScannerTests(unittest.TestCase):
         definitions = schemas()
         files, _ = self.build()
         index = loads(files["index.json"])
-        for mutate in (lambda x: x.update(schema_version=2), lambda x: x.update(extra="unsupported"), lambda x: x.update(schema_version=True)):
+        for mutate in (
+            lambda x: x.update(schema_version=2),
+            lambda x: x.update(extra="unsupported"),
+            lambda x: x.update(schema_version=True),
+        ):
             mutant = copy.deepcopy(index)
             mutate(mutant)
             with self.assertRaises(Invalid):
@@ -450,11 +704,14 @@ class ScannerTests(unittest.TestCase):
             index = loads(mutated["index.json"])
             for d in index["datasets"]:
                 if d["path"] == "providers-2026.json":
-                    d.update(sha256=sha(mutated[d["path"]]), bytes=len(mutated[d["path"]]))
+                    d.update(
+                        sha256=sha(mutated[d["path"]]), bytes=len(mutated[d["path"]])
+                    )
             mutated["index.json"] = encoded(index)
             target = self.base / "mutant"
             if target.exists():
                 import shutil
+
                 shutil.rmtree(target)
             for name, content in mutated.items():
                 path = target / name
@@ -463,15 +720,60 @@ class ScannerTests(unittest.TestCase):
             return target
 
         cases = [
-            ("missing positive association", lambda s: s["roster"][0].update(positive_association=False), "TX", "positive association required"),
-            ("wrong positive state", lambda s: s["roster"][0].update(association_state="FL"), "TX", "association state/year"),
-            ("wrong positive year", lambda s: s["roster"][0].update(association_year=2027), "TX", "association state/year"),
-            ("displaced active pointer", lambda s: s["roster"][0].update(active_pointer=False), "TX", "ACTIVE pointer"),
-            ("withheld denied issuer", lambda s: s["roster"].pop(), "TX", "withheld or duplicate issuer"),
-            ("quarantine falsely active", lambda s: s["roster"][0].update(active_pointer=True), "GA", "quarantined is not active"),
-            ("unproved not imported", lambda s: s["roster"][-1].update(classification="not_imported"), "TX", "audited valid-source adapter"),
-            ("unknown falsely validated", lambda s: s["roster"][-1].update(validation_status="ACTIVE"), "TX", "unknown unit must remain unassessed"),
-            ("wrong publisher attribution", lambda s: s["roster"][0].update(actor="publisher_access"), "GA", "adapter failure is not publisher denial"),
+            (
+                "missing positive association",
+                lambda s: s["roster"][0].update(positive_association=False),
+                "TX",
+                "positive association required",
+            ),
+            (
+                "wrong positive state",
+                lambda s: s["roster"][0].update(association_state="FL"),
+                "TX",
+                "association state/year",
+            ),
+            (
+                "wrong positive year",
+                lambda s: s["roster"][0].update(association_year=2027),
+                "TX",
+                "association state/year",
+            ),
+            (
+                "displaced active pointer",
+                lambda s: s["roster"][0].update(active_pointer=False),
+                "TX",
+                "ACTIVE pointer",
+            ),
+            (
+                "withheld denied issuer",
+                lambda s: s["roster"].pop(),
+                "TX",
+                "withheld or duplicate issuer",
+            ),
+            (
+                "quarantine falsely active",
+                lambda s: s["roster"][0].update(active_pointer=True),
+                "GA",
+                "quarantined is not active",
+            ),
+            (
+                "unproved not imported",
+                lambda s: s["roster"][-1].update(classification="not_imported"),
+                "TX",
+                "audited valid-source adapter",
+            ),
+            (
+                "unknown falsely validated",
+                lambda s: s["roster"][-1].update(validation_status="ACTIVE"),
+                "TX",
+                "unknown unit must remain unassessed",
+            ),
+            (
+                "wrong publisher attribution",
+                lambda s: s["roster"][0].update(actor="publisher_access"),
+                "GA",
+                "adapter failure is not publisher denial",
+            ),
         ]
         for name, edit, state, reason in cases:
             with self.subTest(name=name):
@@ -479,7 +781,12 @@ class ScannerTests(unittest.TestCase):
                 with self.assertRaisesRegex(Invalid, reason):
                     check_release(target)
         with self.assertRaisesRegex(Invalid, "public archive hash mismatch"):
-            check_release(write_mutant(lambda _: None, ledger_edit=lambda l: l["inputs"].update(tx="b" * 64)))
+            check_release(
+                write_mutant(
+                    lambda _: None,
+                    ledger_edit=lambda l: l["inputs"].update(tx="b" * 64),
+                )
+            )
 
     def test_no_report_premium_is_unknown_with_known_inventory(self):
         spec = self.e.premium(serving=False)
@@ -517,7 +824,13 @@ class ScannerTests(unittest.TestCase):
         states = "CA CO CT DC GA ID IL KY MA MD ME MN NJ NM NV PA RI VA WA".split()
         text = "Nineteen individual-exchange state catalogs serve. Oregon is SHOP-only. NY/VT bundles are validated supplemental.\n"
         for state in states + ["NY", "VT", "OR"]:
-            basis = "Federal individual preserved" if state == "OR" else "P8 preserved" if state in ("NY", "VT") else "SBE"
+            basis = (
+                "Federal individual preserved"
+                if state == "OR"
+                else "P8 preserved"
+                if state in ("NY", "VT")
+                else "SBE"
+            )
             text += f"| [{state}](https://example.com/{state}.zip) | {basis} | 2 | 2 | 2 | 2 | 0 | 0 | 0 | 0 |\n"
         parsed = sbe_declaration(text)
         self.assertEqual(len(parsed), 22)
@@ -526,14 +839,18 @@ class ScannerTests(unittest.TestCase):
         with self.assertRaisesRegex(Invalid, "duplicate or invalid SBE scope"):
             sbe_declaration(text + text.splitlines()[1] + "\n")
         with self.assertRaisesRegex(Invalid, "22 scopes and 19 serving"):
-            sbe_declaration("\n".join(line for line in text.splitlines() if "[CA]" not in line))
+            sbe_declaration(
+                "\n".join(line for line in text.splitlines() if "[CA]" not in line)
+            )
         with self.assertRaisesRegex(Invalid, "scope precedence contradiction"):
-            sbe_declaration(text.replace("Federal individual preserved", "P8 preserved"))
+            sbe_declaration(
+                text.replace("Federal individual preserved", "P8 preserved")
+            )
 
     def test_audited_filesystem_and_network_boundary(self):
         selection = self.root / "selection.json"
         selection.write_bytes(encoded(self.e.selection))
-        script = r'''
+        script = r"""
 import os, sys
 from pathlib import Path
 sys.path.insert(0, sys.argv[1])
@@ -559,9 +876,20 @@ bundle = Bundle(root, loads((root / 'selection.json').read_bytes()), '2026-11-08
 files, fragment = release(bundle, bundle.reconcile(), '2026-11-08T13:00:00Z', '2026-11-08T13:00:00Z')
 publish(output, files)
 print('boundary: PASS')
-'''
-        result = subprocess.run([sys.executable, "-B", "-c", script, str(TOOLS), str(self.root), str(self.base / "output")],
-                                capture_output=True, text=True)
+"""
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                "-c",
+                script,
+                str(TOOLS),
+                str(self.root),
+                str(self.base / "output"),
+            ],
+            capture_output=True,
+            text=True,
+        )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("boundary: PASS", result.stdout)
 

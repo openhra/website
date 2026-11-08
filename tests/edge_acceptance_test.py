@@ -79,19 +79,28 @@ class Handler(BaseHTTPRequestHandler):
     def json(self, result=None, status=200, headers=None, error=None):
         value = {"jsonrpc": "2.0", "id": 1}
         value["error" if error else "result"] = error or result
-        if status == 200 and (self.headers.get("MCP-Protocol-Version") == probe.LEGACY or self.server.mode == "modern-sse"):
+        if status == 200 and (
+            self.headers.get("MCP-Protocol-Version") == probe.LEGACY
+            or self.server.mode == "modern-sse"
+        ):
             if self.server.mode == "legacy-id":
                 value["id"] = 2
             if self.server.mode == "legacy-error":
                 value = {"jsonrpc": "2.0", "id": 1, "error": {"code": -32603}}
-            body = b": synthetic keepalive\r\n\r\ndata: " + json.dumps(value).encode() + b"\r\n\r\n"
+            body = (
+                b": synthetic keepalive\r\n\r\ndata: "
+                + json.dumps(value).encode()
+                + b"\r\n\r\n"
+            )
             if self.server.mode == "legacy-missing":
                 body = b": synthetic keepalive\n\n"
             if self.server.mode == "legacy-incomplete":
                 body = body.rstrip()
             if self.server.mode == "legacy-multiple":
                 body += body
-            self.send(status, body, {"Content-Type": "text/event-stream", **(headers or {})})
+            self.send(
+                status, body, {"Content-Type": "text/event-stream", **(headers or {})}
+            )
             return
         self.send(
             status,
@@ -124,9 +133,19 @@ class Handler(BaseHTTPRequestHandler):
                 self.send(200, b'{"status":"ok","db":"ok"}')
             return
         if self.path.startswith("/v1/plans?"):
-            padding = (6 * 1024 * 1024 if fake.mode == "large-catalog" else
-                       probe.MAX_CATALOG_RESPONSE if fake.mode == "giant-catalog" else 0)
-            self.send(200, json.dumps({"plans": [{"synthetic": True}], "synthetic_padding": "x" * padding}).encode())
+            padding = (
+                6 * 1024 * 1024
+                if fake.mode == "large-catalog"
+                else probe.MAX_CATALOG_RESPONSE
+                if fake.mode == "giant-catalog"
+                else 0
+            )
+            self.send(
+                200,
+                json.dumps(
+                    {"plans": [{"synthetic": True}], "synthetic_padding": "x" * padding}
+                ).encode(),
+            )
             return
         if self.path != "/mcp":
             status = (
@@ -196,7 +215,11 @@ class Handler(BaseHTTPRequestHandler):
                 fake.refilled = True
         if fake.rate_enabled and fake.mode != "no-rate" and limited and not refill:
             if fake.mode == "app-rate":
-                self.json(status=429, error={"code": -32000, "message": "Concurrency limit exceeded"}, headers={"Retry-After": "1"})
+                self.json(
+                    status=429,
+                    error={"code": -32000, "message": "Concurrency limit exceeded"},
+                    headers={"Retry-After": "1"},
+                )
                 return
             self.send(
                 429,
@@ -253,7 +276,11 @@ class Handler(BaseHTTPRequestHandler):
                     )
                     return
                 try:
-                    self.sse(token, fast=fake.mode == "fast-provider" and params["name"] == "search_providers")
+                    self.sse(
+                        token,
+                        fast=fake.mode == "fast-provider"
+                        and params["name"] == "search_providers",
+                    )
                 finally:
                     with fake.guard:
                         fake.active -= 1
@@ -403,7 +430,13 @@ class AcceptanceTests(unittest.TestCase):
         self.assertIn("byte cap", catalog[2])
 
     def test_legacy_sse_still_requires_one_matching_successful_rpc_result(self):
-        for mode in ("legacy-id", "legacy-error", "legacy-missing", "legacy-incomplete", "legacy-multiple"):
+        for mode in (
+            "legacy-id",
+            "legacy-error",
+            "legacy-missing",
+            "legacy-incomplete",
+            "legacy-multiple",
+        ):
             with self.subTest(mode=mode):
                 _, rows, _, _ = self.basics(mode)
                 legacy = [row for row in rows if row[0].startswith(probe.LEGACY)]
@@ -477,13 +510,23 @@ class AcceptanceTests(unittest.TestCase):
     def test_streaming_uses_distinct_plan_reads_instead_of_fast_empty_searches(self):
         with server("fast-provider") as (fake, client):
             with self.assertRaisesRegex(probe.CheckFailed, "no measurable incremental"):
-                client.stream("search_providers", {"name": "synthetic-empty", "limit": 1}, "synthetic-fast")
+                client.stream(
+                    "search_providers",
+                    {"name": "synthetic-empty", "limit": 1},
+                    "synthetic-fast",
+                )
             for source in ("linux", "macos"):
                 suite = probe.Suite(client, source, time.time() + 1)
                 suite.streaming()
                 self.assertTrue(all(row[1] for row in suite.rows), suite.rows)
-            self.assertEqual([(call["name"], call["arguments"]["limit"]) for call in fake.tool_calls],
-                             [("search_providers", 1)] + [("search_plans", limit) for limit in (1, 2, 3, 4)])
+            self.assertEqual(
+                [
+                    (call["name"], call["arguments"]["limit"])
+                    for call in fake.tool_calls
+                ],
+                [("search_providers", 1)]
+                + [("search_plans", limit) for limit in (1, 2, 3, 4)],
+            )
 
     def test_streaming_rejects_missing_buffering_header_or_compression(self):
         for mode in ("no-accel", "gzip"):

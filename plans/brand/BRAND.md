@@ -14,16 +14,16 @@ Write OpenPlans with a capital O and capital P in page copy, headings, metadata,
 
 Calm, precise and useful. Write for people evaluating an integration, operating a service or understanding a request in their server logs. Treat insurers and other data publishers as partners. Their files make this work possible.
 
-| Rule | Do | Don't |
-| --- | --- | --- |
-| Lead with what exists | "US health plan data. On your server." | "The future of health benefits." |
-| Make provenance concrete | "Every answer can be traced to the public file it came from." | "Data you can always trust." |
-| State limits alongside capabilities | "Texas and Florida, for every insurer whose published files could be read." | "Complete nationwide coverage." |
-| Describe missing data honestly | "Unknown stays unknown." | "We fill every gap." |
-| Respect publishers | "It downloads only files you publish for the public." | "We break through the barriers." |
-| Prefer facts to competition | "Built from public sources." | "Taking on the insurers." |
-| Keep invitations practical | "Open the repository." | "Transform your business today." |
-| Keep status visible | "Public preview." | "Production-ready." |
+| Rule                                | Do                                                                          | Don't                            |
+| ----------------------------------- | --------------------------------------------------------------------------- | -------------------------------- |
+| Lead with what exists               | "US health plan data. On your server."                                      | "The future of health benefits." |
+| Make provenance concrete            | "Every answer can be traced to the public file it came from."               | "Data you can always trust."     |
+| State limits alongside capabilities | "Texas and Florida, for every insurer whose published files could be read." | "Complete nationwide coverage."  |
+| Describe missing data honestly      | "Unknown stays unknown."                                                    | "We fill every gap."             |
+| Respect publishers                  | "It downloads only files you publish for the public."                       | "We break through the barriers." |
+| Prefer facts to competition         | "Built from public sources."                                                | "Taking on the insurers."        |
+| Keep invitations practical          | "Open the repository."                                                      | "Transform your business today." |
+| Keep status visible                 | "Public preview."                                                           | "Production-ready."              |
 
 Use sentence case for headings, short paragraphs and descriptive links. Keep identifiers, flags and API paths exact; set them in monospace. Explain ICHRA before using it with a general audience. Numbers need a source and date. Never invent adoption, performance, endorsements or road-map commitments. Never publish contact addresses in source or docs; retain the existing contact verification flow.
 
@@ -35,27 +35,27 @@ Use light colours only for now, by owner direction on 2026-11-08. The page backg
 
 Keep section bands, repository cards and illustration backgrounds white. Divide long pages with fine horizontal rules, generous whitespace, numbered labels and column dividers. Do not alternate tinted backgrounds. Hero panels have a thin teal top edge. Keep the [H] construction grid and [P] repository lock-up prominent. Use pale neutral fills only for table headings, code and the verification placeholder. No shadows or broad tinted panels.
 
-| Semantic token | Value | Use |
-| --- | --- | --- |
-| `--bg` | `#ffffff` | Page ground, header and footer |
-| `--surface` | `#ffffff` | Section bands and white panels (aliases bg) |
-| `--surface-subtle` | `#f5f8f7` | Table headers and reserved verification area only |
-| `--ink` | `#173e37` | Headings and body text |
-| `--muted` | `#53665f` | Secondary text and notes |
-| `--line` | `#d9e3df` | Decorative rules, panel edges and construction grid |
-| `--line-strong` | `#6b8279` | Meaningful diagram edges and connectors |
-| `--accent` | `#0b6258` | Links, marks, primary actions and focus |
-| `--accent-ink` | `#ffffff` | Text on accent fill |
-| `--accent-soft` | `#edf7f3` | Touch feedback only |
-| `--support` | `#4b617e` | Optional secondary annotation |
-| `--code-bg` | `#f0f5f3` | Commands and identifiers only |
-| `--diagram-bg` | `#ffffff` | White repository card and illustrations (aliases surface) |
+| Semantic token     | Value     | Use                                                       |
+| ------------------ | --------- | --------------------------------------------------------- |
+| `--bg`             | `#ffffff` | Page ground, header and footer                            |
+| `--surface`        | `#ffffff` | Section bands and white panels (aliases bg)               |
+| `--surface-subtle` | `#f5f8f7` | Table headers and reserved verification area only         |
+| `--ink`            | `#173e37` | Headings and body text                                    |
+| `--muted`          | `#53665f` | Secondary text and notes                                  |
+| `--line`           | `#d9e3df` | Decorative rules, panel edges and construction grid       |
+| `--line-strong`    | `#6b8279` | Meaningful diagram edges and connectors                   |
+| `--accent`         | `#0b6258` | Links, marks, primary actions and focus                   |
+| `--accent-ink`     | `#ffffff` | Text on accent fill                                       |
+| `--accent-soft`    | `#edf7f3` | Touch feedback only                                       |
+| `--support`        | `#4b617e` | Optional secondary annotation                             |
+| `--code-bg`        | `#f0f5f3` | Commands and identifiers only                             |
+| `--diagram-bg`     | `#ffffff` | White repository card and illustrations (aliases surface) |
 
 Use the fixed teal ramp for illustrations and semantic tokens for text and controls. Do not assume every ramp colour is readable as text on white.
 
-| Token | Hex |
-| --- | --- |
-| `--teal-50` | `#edf7f3` |
+| Token        | Hex       |
+| ------------ | --------- |
+| `--teal-50`  | `#edf7f3` |
 | `--teal-100` | `#d7eee6` |
 | `--teal-300` | `#9bd6c5` |
 | `--teal-400` | `#70cbb5` |
@@ -68,20 +68,20 @@ Use the fixed teal ramp for illustrations and semantic tokens for text and contr
 
 Contrast uses WCAG sRGB relative luminance, rounded to two decimals. Every normal-text pair must reach 4.5:1. Meaningful non-text graphics and focus indicators must reach 3:1. The matrix covers all site text roles on permitted backgrounds, including optional support and touch-feedback colours. White applies equally to `bg`, `surface` and `diagram-bg`. This audit covers site colours. It excludes the existing third-party verification frame.
 
-| Foreground | White | `surface-subtle` | `code-bg` | `accent-soft` | Requirement |
-| --- | ---: | ---: | ---: | ---: | --- |
-| `ink` | 11.79:1 | 11.04:1 | 10.70:1 | 10.78:1 | 4.5:1 |
-| `muted` | 6.12:1 | 5.72:1 | 5.55:1 | 5.59:1 | 4.5:1 |
-| `accent` | 7.24:1 | 6.77:1 | 6.57:1 | 6.62:1 | 4.5:1 |
-| `support` | 6.34:1 | 5.94:1 | 5.76:1 | 5.80:1 | 4.5:1 |
+| Foreground |   White | `surface-subtle` | `code-bg` | `accent-soft` | Requirement |
+| ---------- | ------: | ---------------: | --------: | ------------: | ----------- |
+| `ink`      | 11.79:1 |          11.04:1 |   10.70:1 |       10.78:1 | 4.5:1       |
+| `muted`    |  6.12:1 |           5.72:1 |    5.55:1 |        5.59:1 | 4.5:1       |
+| `accent`   |  7.24:1 |           6.77:1 |    6.57:1 |        6.62:1 | 4.5:1       |
+| `support`  |  6.34:1 |           5.94:1 |    5.76:1 |        5.80:1 | 4.5:1       |
 
-| Additional pair | Ratio | Requirement |
-| --- | ---: | --- |
-| `accent-ink` / `accent`. Primary action, selection and skip link | 7.24:1 | 4.5:1 |
-| `bg` / `ink`. Primary action hover | 11.79:1 | 4.5:1 |
-| `line-strong` / `bg`. Meaningful diagram connectors on white | 4.12:1 | 3:1 |
-| `line-strong` / `surface-subtle`. Meaningful edges on the table-header surface | 3.86:1 | 3:1 |
-| `accent` / `line`. Mark across decorative construction-grid lines | 5.51:1 | 3:1 |
+| Additional pair                                                                |   Ratio | Requirement |
+| ------------------------------------------------------------------------------ | ------: | ----------- |
+| `accent-ink` / `accent`. Primary action, selection and skip link               |  7.24:1 | 4.5:1       |
+| `bg` / `ink`. Primary action hover                                             | 11.79:1 | 4.5:1       |
+| `line-strong` / `bg`. Meaningful diagram connectors on white                   |  4.12:1 | 3:1         |
+| `line-strong` / `surface-subtle`. Meaningful edges on the table-header surface |  3.86:1 | 3:1         |
+| `accent` / `line`. Mark across decorative construction-grid lines              |  5.51:1 | 3:1         |
 
 Use full-contrast `accent` for focus with a 5 px offset. This places the indicator against the surrounding white or pale background, outside the filled action. Do not use `line` for text or as the sole boundary of an interactive control. Its rules and grid are decorative. Headings, spacing and labels establish the structure. Do not apply opacity to text. Links in prose remain underlined. White text is reserved for solid `accent` or `ink` fills.
 
@@ -93,17 +93,17 @@ The dark theme has been removed. Do not keep it in an unused selector or restore
 
 No font downloads. Headings and body use `system-ui, sans-serif`; code, labels and data use `ui-monospace, monospace`. The logo's main lettering is drawn as vector paths, independent of installed fonts. Its small endorsement uses the system font stack.
 
-| Role | Size | Weight / line height | Notes |
-| --- | --- | --- | --- |
-| Desktop hero | 52–66 px | 550 / 1.04 | −.055em tracking; two clear phrases |
-| Phone hero | 40–58 px | 550 / 1.04 | −.045em tracking at narrow widths |
-| Section heading | 28–38 px | 550 / 1.16 | −.035em tracking |
-| Subheading | 17–18 px | 650 / 1.35 | Sentence case |
-| Body | 15–16 px | 400 / 1.65 | Maximum 70 characters per line |
-| Intro | 16–17 px | 400 / 1.75 | Secondary colour |
-| Navigation / actions | 12–14 px | 550–600 | At least 44 px target height |
-| Eyebrow / table heading | 9–11 px | 500 / 1.5 | Uppercase; metadata only |
-| Code / data / notes | 11–14 px | 400 / 1.7–1.8 | Numeric columns use tabular figures |
+| Role                    | Size     | Weight / line height | Notes                               |
+| ----------------------- | -------- | -------------------- | ----------------------------------- |
+| Desktop hero            | 52–66 px | 550 / 1.04           | −.055em tracking; two clear phrases |
+| Phone hero              | 40–58 px | 550 / 1.04           | −.045em tracking at narrow widths   |
+| Section heading         | 28–38 px | 550 / 1.16           | −.035em tracking                    |
+| Subheading              | 17–18 px | 650 / 1.35           | Sentence case                       |
+| Body                    | 15–16 px | 400 / 1.65           | Maximum 70 characters per line      |
+| Intro                   | 16–17 px | 400 / 1.75           | Secondary colour                    |
+| Navigation / actions    | 12–14 px | 550–600              | At least 44 px target height        |
+| Eyebrow / table heading | 9–11 px  | 500 / 1.5            | Uppercase; metadata only            |
+| Code / data / notes     | 11–14 px | 400 / 1.7–1.8        | Numeric columns use tabular figures |
 
 Small uppercase labels supplement the copy. They must not be the only explanation of a feature. Keep body copy readable and content in order when zoomed. Let tables wrap. If a table needs scrolling, its container must remain keyboard-focusable.
 

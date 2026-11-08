@@ -7,7 +7,12 @@ These assets reuse the OpenPlans [P] mark, path-drawn OpenPlans wordmark and sha
 Copy `readme-header-light.svg` into `brand/repo/` in the source repository, then place this at the top of its README:
 
 ```html
-<img src="brand/repo/readme-header-light.svg" alt="OpenPlans by OpenHRA — US health plan data. On your server." width="960" height="280">
+<img
+  src="brand/repo/readme-header-light.svg"
+  alt="OpenPlans by OpenHRA — US health plan data. On your server."
+  width="960"
+  height="280"
+/>
 ```
 
 The existing filename is retained for handoff compatibility. The dark header is retired; use this one white image without a theme-selecting picture element. Keep the aspect ratio, and keep a normal text project heading and description below the artwork so the README remains useful when images do not load. Development status and coverage limits belong in that text, not in a badge or an image that can become stale.

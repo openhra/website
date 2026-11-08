@@ -3,10 +3,10 @@
 This repository holds the two public OpenHRA sites. Both use static HTML and CSS, with one small
 serverless function per site for the contact form. There is no build step.
 
-| Folder | Site | What it is |
-|---|---|---|
-| `openhra/` | <https://www.openhra.com/> | OpenHRA: open building blocks for health benefits |
-| `plans/` | <https://plans.openhra.com/> | OpenPlans project page; the project itself lives in [openhra/openplans](https://github.com/openhra/openplans) |
+| Folder     | Site                         | What it is                                                                                                    |
+| ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `openhra/` | <https://www.openhra.com/>   | OpenHRA: open building blocks for health benefits                                                             |
+| `plans/`   | <https://plans.openhra.com/> | OpenPlans project page; the project itself lives in [openhra/openplans](https://github.com/openhra/openplans) |
 
 Shared brand tokens, marks, logos and the guide live in `plans/brand/`. Start with
 [`plans/brand/BRAND.md`](plans/brand/BRAND.md) and [`plans/brand/REPO-FIRST.md`](plans/brand/REPO-FIRST.md).

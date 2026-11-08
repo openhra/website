@@ -57,12 +57,12 @@ No unattended refresh schedule is installed.
 The report-derived issuer figures are reproduced from public plan members, not
 registry availability or report totals:
 
-| State, 2026 | Providers | Prescriptions | Qualification |
-| --- | --- | --- | --- |
-| TX | 14/32, 43.8% | 11/32, 34.4% | One public SHOP-only dental issuer, 92388, remains unknown |
-| FL | 11/26, 42.3% | 9/26, 34.6% | Partial ACTIVE presence is retained |
-| NC | 6/13, 46.2% | 3/13, 23.1% | Final recovered reports are selected |
-| GA | 0/16, Quarantined | 0/16, Quarantined | Catalog adapter limitation, not publisher denial |
+| State, 2026 | Providers         | Prescriptions     | Qualification                                              |
+| ----------- | ----------------- | ----------------- | ---------------------------------------------------------- |
+| TX          | 14/32, 43.8%      | 11/32, 34.4%      | One public SHOP-only dental issuer, 92388, remains unknown |
+| FL          | 11/26, 42.3%      | 9/26, 34.6%       | Partial ACTIVE presence is retained                        |
+| NC          | 6/13, 46.2%       | 3/13, 23.1%       | Final recovered reports are selected                       |
+| GA          | 0/16, Quarantined | 0/16, Quarantined | Catalog adapter limitation, not publisher denial           |
 
 All remaining issuer scopes are unknown. The issuer denominator is reconstructed
 from each selected public plan file, including denied issuers and issuers without a
@@ -117,10 +117,10 @@ The oracle was introduced at OpenPlans commit
 at `38caf7b3ca43bf0a30435eb97e6af997fed56c51`. Reviewed file SHA-256s at source
 commit `9129518013046d50df283f5c0564fc8c37d9da51`:
 
-| Producer file | SHA-256 |
-| --- | --- |
+| Producer file                   | SHA-256                                                            |
+| ------------------------------- | ------------------------------------------------------------------ |
 | `scripts/oracle/all-states.mjs` | `68be82ce8f20b29fb93562bf8a6e6dd9ba5b4c62ee558d7dbb3fed87c0be34d5` |
-| `src/ingest/puf/import.ts` | `0188df4007611173e80a9a67dfcc00fb2eec2a33271c93318e8d773b99434729` |
+| `src/ingest/puf/import.ts`      | `0188df4007611173e80a9a67dfcc00fb2eec2a33271c93318e8d773b99434729` |
 
 Every 2026 oracle import ID also has a matching finalized PUF import JSON with
 `passed: true`, `status: ACTIVE`, six file reconciliations and matching state/year.
@@ -246,14 +246,16 @@ formats are closed, versioned adapters, not guessed shapes:
 ```json
 {
   "schema_version": 1,
-  "catalogs": [{
-    "state": "TX",
-    "year": 2026,
-    "import_id": "puf-2026-TX-example-identity",
-    "status": "ACTIVE",
-    "source_sha256": "replace-with-the-64-character-public-rate-archive-hash",
-    "observed_at": "2026-11-08T12:00:00Z"
-  }]
+  "catalogs": [
+    {
+      "state": "TX",
+      "year": 2026,
+      "import_id": "puf-2026-TX-example-identity",
+      "status": "ACTIVE",
+      "source_sha256": "replace-with-the-64-character-public-rate-archive-hash",
+      "observed_at": "2026-11-08T12:00:00Z"
+    }
+  ]
 }
 ```
 
@@ -316,8 +318,8 @@ committed. The reviewed producer file hashes are unchanged from the review above
 The adapter retains the earlier reviewed artifacts and additionally accepts these
 exact reviewed hashes. Arbitrary passing reports remain rejected.
 
-| Report | SHA-256 |
-| --- | --- |
+| Report       | SHA-256                                                            |
+| ------------ | ------------------------------------------------------------------ |
 | Federal 2026 | `ceed4a68227b10ee4001770d8b0feafea8c2235dd904af471c88cdc0ac662fe3` |
 | Federal 2027 | `9f009bbef3b37cf953c6aeed8767786093fe8e24424fe29fdfd13e714d91971f` |
 
