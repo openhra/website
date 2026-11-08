@@ -3,6 +3,7 @@
   "files": [
     ".editorconfig",
     ".github/workflows/ci.yml",
+    ".github/workflows/edge-acceptance.yml",
     ".github/workflows/edge-watchdog.yml",
     ".gitignore",
     ".node-version",
@@ -90,6 +91,7 @@
     "scripts/public_paths.py",
     "scripts/test-export.py",
     "tests/alerts.test.mjs",
+    "tests/edge_acceptance_test.py",
     "tests/reference/map.svg",
     "tests/test_alert_sender.py",
     "tools/alerts/send.py",
@@ -117,6 +119,8 @@
     "tools/coverage-ui-check/check.py",
     "tools/coverage-ui-check/preview.py",
     "tools/coverage-ui-check/selection-test.mjs",
+    "tools/edge-acceptance/README.md",
+    "tools/edge-acceptance/probe.py",
     "tools/gate-selftest.sh",
     "tools/gate.sh"
   ]

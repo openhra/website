@@ -1,0 +1,106 @@
+{
+  "name": "Manual outside edge acceptance",
+  "on": {
+    "workflow_dispatch": {}
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "concurrency": {
+    "group": "public-edge-acceptance",
+    "cancel-in-progress": false
+  },
+  "jobs": {
+    "prepare": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 5,
+      "outputs": {
+        "epoch": "${{ steps.plan.outputs.epoch }}"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Offline fake server and failure controls",
+          "run": "python3 -B -m unittest discover -s tests -p 'edge_acceptance*.py'"
+        },
+        {
+          "id": "plan",
+          "name": "Set rendezvous for two outside sources",
+          "run": "python3 -B tools/edge-acceptance/probe.py plan"
+        }
+      ]
+    },
+    "probe": {
+      "needs": "prepare",
+      "runs-on": "${{ matrix.runner }}",
+      "timeout-minutes": 10,
+      "strategy": {
+        "fail-fast": false,
+        "max-parallel": 2,
+        "matrix": {
+          "include": [
+            {
+              "source": "linux",
+              "runner": "ubuntu-24.04"
+            },
+            {
+              "source": "macos",
+              "runner": "macos-15"
+            }
+          ]
+        }
+      },
+      "outputs": {
+        "linux": "${{ steps.probe.outputs.linux }}",
+        "macos": "${{ steps.probe.outputs.macos }}"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "id": "probe",
+          "name": "Run bounded outside matrix",
+          "env": {
+            "EDGE_SOURCE": "${{ matrix.source }}",
+            "EDGE_EPOCH": "${{ needs.prepare.outputs.epoch }}"
+          },
+          "run": "python3 -B tools/edge-acceptance/probe.py probe --source \"$EDGE_SOURCE\" --epoch \"$EDGE_EPOCH\""
+        }
+      ]
+    },
+    "report": {
+      "if": "${{ always() }}",
+      "needs": [
+        "prepare",
+        "probe"
+      ],
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 3,
+      "steps": [
+        {
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Require both matrices and report app concurrency evidence",
+          "env": {
+            "EDGE_REPORTS": "${{ toJSON(needs.probe.outputs) }}",
+            "OPENHRA_ALERT_SECRET": "${{ secrets.OPENHRA_ALERT_SECRET }}"
+          },
+          "run": "python3 -B tools/edge-acceptance/probe.py report"
+        }
+      ]
+    }
+  }
+}
