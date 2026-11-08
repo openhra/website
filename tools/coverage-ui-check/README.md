@@ -25,11 +25,13 @@ node tools/coverage-ui-check/browser.mjs
 ```
 
 `COVERAGE_PREVIEW_URL` can select another loopback preview; `COVERAGE_CAPTURE_DIR`
-can select a capture directory. The default output is `/tmp/openplans-coverage-ui/`:
-`desktop.png`, `phone.png`, `phone-table.png`, and `browser-checks.json`. Captures are
-local review artifacts, not production assets. The checker creates one temporary
-baseline HTML page from A's local branch, serves it through the existing preview,
-and removes it in `finally`. It never changes coverage data files. Response mutants
+can select a capture directory. The default output is `<scratch>/openplans-coverage-ui/`:
+`desktop.png`, `phone.png`, `phone-table.png`, `phone320-verification.png`,
+`phone320-contact.png`, and `browser-checks.json`. Captures are
+local review artifacts, not production assets. The checker requires the current
+whole page to fit at 320, 360, 390, 768, 1280 and 1440 CSS pixels, with desktop scrollbars present. A planted 1000px element
+at 320px must fail that same overflow assertion. It never changes production
+HTML or coverage data files. Response mutants
 are document-start browser wrappers removed between cases.
 
 The static checker verifies byte-identical A fallback fragments against the default
@@ -45,22 +47,26 @@ The semantic mutants have their dataset hashes recomputed so rejection must reac
 the reader's field/semantic validation. A separate hash mutant retains the expected
 digest. The race ignores AbortSignal on purpose, proving request-ID gating too.
 
-## Verification limits recorded by the checker
+## Keyboard and phone verification
 
-- At 320 CSS pixels with a 15px desktop scrollbar, the existing verification table
-  and fixed 304px contact area make the page 324px wide (305px client width). The
-  unchanged A baseline has exactly the same overflow. Coverage adds no overflow
-  and uses 16px gutters. The checker records `pageNoOverflow: false`, and rejects
-  any increase over baseline or any overflow inside coverage. Section 05 and the
-  contact area are outside B's lease; the whole-page acceptance remains open.
-- On this macOS Chrome, CDP keyboard events activate buttons but do not operate
-  native select popups. The checker records this explicitly instead of treating
-  synthetic `change` events as keyboard proof. It verifies all selection results,
-  full state options, focus retention and announcements. Native keyboard-only
-  year/state navigation (including DC, Alaska and Hawaii) still needs a platform
-  that can drive those popups or a manual pass.
-- No form was submitted and no CAPTCHA challenge was solved. Contact handler,
-  scripts, identifiers and CSP are byte-identical to `main`.
+The checker tabs forward from the validation table region through all three layer
+buttons, the year select, the state select and map attribution, then reverses through
+the selects with Shift+Tab. Space and Enter activate layer buttons. Native select
+closed-control type-ahead changes both years and selects Alaska, DC, Hawaii and
+Texas; these checks use CDP keyboard input, never assigned values or synthetic
+`change` events. On macOS, arrow events sent into the native popup alone did not
+change its selection, so the checker uses the supported closed-control interaction.
+Every change must preserve focus, update the selected map/detail, and update the
+polite atomic live status. The accessibility tree must expose that live status.
+Focus indicators must be visible, teal, at least 3px with a 5px offset, with the
+focused control inside the viewport. Actual screen-reader speech is not recorded. The W5 run is recorded in
+`work-notes/phone-layout-browser-checks.json` and `work-notes/phone-layout-04-tests.md`.
+
+At 320px, the verification table stays inside its labelled keyboard-focusable scroll
+region and long cells wrap. The contact widget grid extends into the gutters to retain its full 304px width;
+it is neither scaled nor cropped, and contact text keeps its normal gutters. Both the interactive view and script-disabled saved
+view must fit the page. Contact handler/scripts/ids and CSP are unchanged. No form
+was submitted and no CAPTCHA challenge was solved.
 
 ## Publication assumptions
 

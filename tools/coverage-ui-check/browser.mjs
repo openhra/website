@@ -1,9 +1,9 @@
 // Drive the local page in the shared headed agent-browser session; no dependencies.
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import os from 'node:os';
+import {fileURLToPath} from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const url = process.env.COVERAGE_PREVIEW_URL || 'http://127.0.0.1:8779/';
 if (!['127.0.0.1','localhost'].includes(new URL(url).hostname)) throw Error('Local preview only');
@@ -34,16 +34,14 @@ const assert=(condition,message)=>{if(!condition)throw Error(message);};
 const navigate=async(suffix='')=>{const r=await call('Page.navigate',{url:url+suffix});for(let i=0;i<200&&!loaded.has(r.loaderId);i++)await pause(25);assert(loaded.has(r.loaderId),'navigation did not finish');};
 const ready=()=>wait('!document.querySelector("#coverage-state").disabled');
 const click=async layer=>{await evaluate(`document.querySelector('[data-coverage-layer="${layer}"]').click()`);await wait(`document.querySelector('#coverage-download').getAttribute('href').endsWith('${layer}-'+document.querySelector('#coverage-year').value+'.json') && document.querySelector('[data-coverage-layer="${layer}"]').getAttribute('aria-pressed')==='true'`);};
-const baselineFile=path.join(root,'plans/__coverage-ui-baseline.html');
-await fs.writeFile(baselineFile,execFileSync('git',['show','lane/W4A/coverage-scanner:plans/index.html'],{cwd:root,encoding:'utf8'}));
-const reports=[], baselineWidths={};
+const reports=[];
+const pageFits=async()=>{
+ const size=await evaluate('({client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth})');
+ assert(size.scroll<=size.client,'page-level horizontal overflow: '+JSON.stringify(size));
+ return size;
+};
 try {
  await call('Page.enable'); await call('Page.setLifecycleEventsEnabled',{enabled:true}); await call('Network.enable');
- for(const width of [320,360,390,768,1440]){
-  await call('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
-  await navigate('__coverage-ui-baseline.html');
-  baselineWidths[width]=await evaluate('document.documentElement.scrollWidth');
- }
  await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await navigate(); await ready();
  // Check every selected record, table cell, map fill and date against the committed data.
@@ -83,10 +81,13 @@ try {
  assert(await evaluate(`document.querySelector('#coverage-title').textContent.endsWith('2027')&&document.querySelector('[data-coverage-layer="premiums"]').getAttribute('aria-pressed')==='true'&&document.querySelector('#coverage-table').textContent.includes('not published yet')`),'share restore/unpublished');
  reports.push({shareURLRestored:true,unpublishedStatesRemainUnknown:true});
  // Responsive/appearance checks include the entire existing page, not just the map.
- for(const width of [320,360,390,768,1440]){
+ for(const width of [320,360,390,768,1280,1440]){
   await call('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
   const result=await evaluate(`(()=>{const c=document.querySelector('.coverage'),s=getComputedStyle(c),map=c.querySelector('svg');return {width:innerWidth,client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,white:s.backgroundColor,mapWhite:getComputedStyle(map).backgroundColor,states:c.querySelectorAll('[data-state]').length,controls:[...c.querySelectorAll('button,select')].every(e=>e.getBoundingClientRect().height>=44),gutter:parseFloat(getComputedStyle(c.querySelector('.wrap')).paddingLeft),coverageRight:c.getBoundingClientRect().right,coverageOverflow:[...c.querySelectorAll('*')].filter(e=>!(e instanceof SVGElement)).some(e=>e.getBoundingClientRect().right>document.documentElement.clientWidth+1)}})()`);
-  result.baselineScroll=baselineWidths[width]; result.pageNoOverflow=result.scroll<=result.client; assert(result.scroll<=Math.max(result.client,result.baselineScroll)&&!result.coverageOverflow,'new page or component overflow '+width+': '+JSON.stringify(result));assert(result.white==='rgb(255, 255, 255)'&&result.mapWhite==='rgb(255, 255, 255)'&&result.controls&&result.states===51,'white/controls '+width); if(width<760)assert(result.gutter===16,'phone gutter');reports.push(result);
+  await pageFits(); result.pageNoOverflow=true;
+  result.contactWidget=await evaluate(`(()=>{const r=document.querySelector('#contact-captcha').getBoundingClientRect();return {width:r.width,left:r.left,right:r.right}})()`);
+  assert(result.contactWidget.width>=304&&result.contactWidget.left>=0&&result.contactWidget.right<=result.client,'contact widget cropped or shrunk '+width);
+  assert(await evaluate(`(()=>{const e=document.querySelector('.verification .table');return e.tabIndex===0&&e.getAttribute('role')==='region'&&getComputedStyle(e).overflowX==='auto'&&[...e.querySelectorAll('th,td')].every(cell=>getComputedStyle(cell).whiteSpace==='normal'&&getComputedStyle(cell).overflowWrap==='anywhere')})()`),'verification scroll region/cell wrapping'); assert(!result.coverageOverflow,'component overflow '+width+': '+JSON.stringify(result));assert(result.white==='rgb(255, 255, 255)'&&result.mapWhite==='rgb(255, 255, 255)'&&result.controls&&result.states===51,'white/controls '+width); if(width<760)assert(result.gutter===16,'phone gutter');reports.push(result);
  }
  for(const features of [[{name:'prefers-color-scheme',value:'dark'}],[{name:'prefers-reduced-motion',value:'reduce'}],[{name:'forced-colors',value:'active'}]]){
   await call('Emulation.setEmulatedMedia',{features});
@@ -97,23 +98,62 @@ try {
  // 200% desktop browser zoom via CDP device metrics: 1440 physical pixels / 2.
  await call('Emulation.setDeviceMetricsOverride',{width:720,height:550,deviceScaleFactor:2,mobile:false});
  assert(await evaluate('document.documentElement.scrollWidth<=document.documentElement.clientWidth'),'200% overflow');reports.push({zoom200:{physicalWidth:1440,cssWidth:720,pass:true}});
- // Keyboard events activate a layer button and operate native year/state pickers.
+ // The same assertion must reject planted page overflow at the smallest width.
+ await call('Emulation.setDeviceMetricsOverride',{width:320,height:1000,deviceScaleFactor:1,mobile:false});
+ await pageFits();
+ await evaluate(`{const wide=document.createElement('div');wide.id='overflow-negative';wide.style.width='1000px';wide.style.height='1px';document.body.append(wide)}`);
+ let overflowRejected=false;
+ try{await pageFits();}catch(error){if(!error.message.startsWith('page-level horizontal overflow:'))throw error;overflowRejected=true;}
+ finally{await evaluate(`document.querySelector('#overflow-negative').remove()`);}
+ assert(overflowRejected,'wide element was accepted');await pageFits();
+ reports.push({negative:'planted wide element at 320px',rejected:overflowRejected});
+ // Tab order and native closed-select type-ahead: no synthetic change events.
  await navigate();await ready();
- const key=async(name,code=name,vk=0)=>{for(const type of ['keyDown','keyUp'])await call('Input.dispatchKeyEvent',{type,key:name,code,windowsVirtualKeyCode:vk});};
- await evaluate(`document.querySelector('[data-coverage-layer="premiums"]').focus()`);await key(' ','Space',32);
- await wait(`document.querySelector('[data-coverage-layer="premiums"]').getAttribute('aria-pressed')==='true'`);
- assert(await evaluate(`document.activeElement.dataset.coverageLayer==='premiums'`),'button focus moved');
- await evaluate(`document.querySelector('#coverage-year').scrollIntoView();document.querySelector('#coverage-year').focus()`);await key('ArrowDown','ArrowDown',40);await key('Enter','Enter',13);
- const nativeYearChanged=await evaluate(`document.querySelector('#coverage-year').value==='2027'`);
- if(nativeYearChanged) await wait(`document.querySelector('#coverage-title').textContent.endsWith('2027')`);
- assert(await evaluate(`document.activeElement.id==='coverage-year'`),'year focus moved');
- // macOS native select popups are outside CDP. Exercise change/focus separately and report the limit.
- const keyboardStates=[];
- for(const state of ['AK','DC','HI']){
-  await evaluate(`document.querySelector('#coverage-state').focus();document.querySelector('#coverage-state').value='${state}';document.querySelector('#coverage-state').dispatchEvent(new Event('change'))`);
-  assert(await evaluate(`document.activeElement.id==='coverage-state'&&document.querySelector('#coverage-message').textContent.includes(document.querySelector('#coverage-state').selectedOptions[0].textContent)`),'state focus/announcement');keyboardStates.push(state);
+ const key=async(name,code=name,vk=0,modifiers=0)=>{
+  for(const type of ['keyDown','keyUp'])await call('Input.dispatchKeyEvent',{type,key:name,code,windowsVirtualKeyCode:vk,modifiers,...(type==='keyDown'&&(name.length===1||name==='Enter')?{text:name==='Enter'?'\r':name}:{})});
+ };
+ const focused=async(selector)=>assert(await evaluate(`document.activeElement===document.querySelector(${JSON.stringify(selector)})`),'unexpected keyboard focus: '+selector);
+ const focusVisible=async()=>assert(await evaluate(`(()=>{const e=document.activeElement,s=getComputedStyle(e),r=e.getBoundingClientRect();return e.matches(':focus-visible')&&s.outlineStyle==='solid'&&parseFloat(s.outlineWidth)>=3&&s.outlineOffset==='5px'&&s.outlineColor==='rgb(11, 98, 88)'&&r.left>=0&&r.right<=document.documentElement.clientWidth&&r.top>=0&&r.bottom<=innerHeight})()`),'focus ring missing or control offscreen');
+ const layerSelector=layer=>'[data-coverage-layer="'+layer+'"]';
+ await evaluate(`document.querySelector('.verification .table').focus()`);
+ await key('ArrowRight','ArrowRight',39);
+ await wait(`document.querySelector('.verification .table').scrollLeft>0`);
+ await focused('.verification .table');
+ reports.push({verificationRegionKeyboardScroll:true});
+ for(const layer of ['providers','prescriptions','premiums']){
+  await key('Tab','Tab',9);await focused(layerSelector(layer));await focusVisible();
+  await key(layer==='prescriptions'?'Enter':' ',layer==='prescriptions'?'Enter':'Space',layer==='prescriptions'?13:32);
+  await wait(`document.querySelector('${layerSelector(layer)}').getAttribute('aria-pressed')==='true'`);
+  await focused(layerSelector(layer));
+  assert(await evaluate(`document.querySelector('#coverage-message').textContent.startsWith('${layer[0].toUpperCase()+layer.slice(1)}, plan year 2026.')`),'layer announcement');
  }
- reports.push({keyboard:{button:true,yearPopupKeystrokesChangedSelection:nativeYearChanged,nativePopupManualVerificationRequired:!nativeYearChanged,stateChangeAndFocus:keyboardStates,focusPreserved:true}});
+ await key('Tab','Tab',9);await focused('#coverage-year');await focusVisible();
+ const typeAhead=async text=>{
+  // Native select search buffers expire after one second on Chrome/macOS.
+  await pause(1100);
+  for(const char of text)await key(char,char===' '?'Space':/\d/.test(char)?'Digit'+char:'Key'+char.toUpperCase(),char.toUpperCase().charCodeAt(0));
+ };
+ for(const year of [2027,2026]){
+  await typeAhead(String(year));
+  await wait(`document.querySelector('#coverage-year').value==='${year}'&&document.querySelector('#coverage-title').textContent.endsWith('${year}')`);
+  await focused('#coverage-year');await focusVisible();
+  assert(await evaluate(`document.querySelector('#coverage-message').textContent.includes('plan year ${year}')`),'year announcement');
+ }
+ await key('Tab','Tab',9);await focused('#coverage-state');await focusVisible();
+ const keyboardStates=[];
+ for(const [state,name]of [['AK','Alaska'],['DC','District of Columbia'],['HI','Hawaii'],['TX','Texas']]){
+  await typeAhead(name);
+  await wait(`document.querySelector('#coverage-state').value==='${state}'&&document.querySelector('#coverage-message').textContent.includes('${name}:')`);
+  await focused('#coverage-state');await focusVisible();keyboardStates.push(state);
+  assert(await evaluate(`document.querySelector('[data-state="${state}"]').dataset.selected==='true'&&document.querySelector('#coverage-state-name').textContent.startsWith('${name} · Premiums · Plan year 2026')`),'keyboard state detail/map');
+ }
+ assert(await evaluate(`(()=>{const e=document.querySelector('#coverage-message');return e.getAttribute('role')==='status'&&e.getAttribute('aria-live')==='polite'&&e.getAttribute('aria-atomic')==='true'})()`),'live status semantics');
+ const {nodes}=await call('Accessibility.getFullAXTree');
+ assert(nodes.some(n=>n.role?.value==='status'&&n.properties?.some(p=>p.name==='live'&&p.value.value==='polite')&&n.properties?.some(p=>p.name==='atomic'&&p.value.value===true)),'live status absent from accessibility tree');
+ await key('Tab','Tab',9);await focused('.coverage-map > p a');
+ await key('Tab','Tab',9,8);await focused('#coverage-state');
+ await key('Tab','Tab',9,8);await focused('#coverage-year');
+ reports.push({keyboard:{tabOrder:['validation region','providers','prescriptions','premiums','year','state','map attribution'],reverseTab:true,buttonsSpaceAndEnter:true,nativeYearTypeAhead:[2027,2026],nativeStateTypeAhead:keyboardStates,focusVisible:true,focusPreserved:true,liveStatusAX:true,announcementsUpdated:true}});
  // A document-start fetch wrapper mutates temporary response bytes, not production files.
  async function withInit(source,test){const {identifier}=await call('Page.addScriptToEvaluateOnNewDocument',{source});try{await test();}finally{await call('Page.removeScriptToEvaluateOnNewDocument',{identifier});}}
  const injector = mutation => `{
@@ -154,7 +194,7 @@ try {
  await wait(`document.querySelector('[data-coverage-layer="prescriptions"]').getAttribute('aria-pressed')==='true'`);await pause(900);
  assert(await evaluate(`document.querySelector('#coverage-download').getAttribute('href').endsWith('prescriptions-2026.json')&&new URL(location.href).searchParams.get('layer')==='prescriptions'`),'old request replaced new selection');reports.push({negative:'delayed old fetch ignores abort',newestWon:true});
  await call('Emulation.setScriptExecutionDisabled',{value:true});await navigate('?year=2027&layer=premiums');await call('Emulation.setScriptExecutionDisabled',{value:false});
- assert(await evaluate(`document.querySelector('#coverage-state').disabled&&document.querySelectorAll('#coverage-table tbody tr').length===51&&document.querySelector('#coverage-title').textContent.endsWith('2026')`),'no-script fallback');reports.push({negative:'scripts disabled with nondefault URL',datedDefaultRetained:true});
+ assert(await evaluate(`document.querySelector('#coverage-state').disabled&&document.querySelectorAll('#coverage-table tbody tr').length===51&&document.querySelector('#coverage-title').textContent.endsWith('2026')`),'no-script fallback');await pageFits();reports.push({negative:'scripts disabled with nondefault URL',datedDefaultRetained:true});
  await navigate();await ready();
  // Planted visual negatives prove the computed-style and rendered year checks can fail.
  await evaluate(`document.querySelector('.coverage').style.backgroundColor='black'`);
@@ -168,7 +208,7 @@ try {
  await withInit(injector(`Object.assign(d.states.FL,{numerator:0,percent_tenths:0,warnings:[],counts:{active_complete:0,active_partial:0,quarantined:0,unknown:26,not_imported:0}});`),async()=>{await navigate();await ready();assert(await evaluate(`document.querySelector('[data-state="FL"]').getAttribute('fill')==='white'&&document.querySelector('[data-state="GA"]').getAttribute('fill')==='url(#coverage-quarantine)'&&document.querySelector('[data-state="AK"]').getAttribute('fill')==='url(#coverage-unknown)'`),'zero/quarantine/unknown distinction');});
  reports.push({zeroQuarantineUnknownDistinct:true});
  await withInit(`Date.now=()=>Date.parse('2026-11-16T13:00:00Z')`,async()=>{await navigate();await ready();assert(await evaluate(`document.querySelector('#coverage-date').textContent.includes('more than 7 days old')`),'stale date');});reports.push({snapshotAgeOver7DaysLabelled:true});
- for(const [name,width,height,target]of [['desktop',1440,1100,'#availability'],['phone',390,1300,'#availability'],['phone-table',390,1000,'#coverage-table']]){
+ for(const [name,width,height,target]of [['desktop',1440,1100,'#availability'],['phone',390,1300,'#availability'],['phone-table',390,1000,'#coverage-table'],['phone320-verification',320,1000,'.verification'],['phone320-contact',320,1000,'#contact']]){
   await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await navigate();await ready();await evaluate(`document.querySelector('${target}').scrollIntoView()`);
   const shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await fs.writeFile(path.join(out,name+'.png'),Buffer.from(shot.data,'base64'));
  }
@@ -176,4 +216,4 @@ try {
  reports.push({coverageRequests:uniqueRequests,coverageRequestsSameOrigin:true});
  await fs.writeFile(path.join(out,'browser-checks.json'),JSON.stringify(reports,null,2)+'\n');
  console.log(JSON.stringify(reports,null,2));console.log('PASS: coverage browser checks (306 selections, responsive/appearance, keyboard, fallback, hashes and race controls)');
-} finally { await fs.rm(baselineFile,{force:true}); ws.close(); }
+} finally { ws.close(); }

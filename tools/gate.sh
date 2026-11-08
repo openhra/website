@@ -118,6 +118,7 @@ then
   exit 1
 fi
 
+python3 "$ROOT/tools/check-private-paths.py" "$ROOT"
 python3 "$ROOT/tools/check-neutral.py" "$ROOT"
 
 python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"

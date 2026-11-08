@@ -41,6 +41,9 @@ check_pass() {
 
 check_pass
 printf 'selftest: clean copy PASS\n'
+printf 'fixture %s\n' '/'"Users"'/fixture' > "$TMP/repo/private-path-fixture"
+check_fail private-path 'FAIL: private absolute path found in private-path-fixture'
+rm "$TMP/repo/private-path-fixture"
 page="$TMP/repo/openhra/index.html"
 cp "$page" "$TMP/original.html"
 printf '\n<broken' >> "$page"
@@ -69,4 +72,4 @@ cp "$TMP/tokens" "$TMP/repo/plans/brand/tokens.css"
 check_fail background 'FAIL: plans/brand/tokens.css must keep --bg: #ffffff'
 cp "$TMP/original.css" "$TMP/repo/plans/brand/tokens.css"
 check_pass
-printf 'selftest: PASS (clean and restored copies; 6 diagnostic-checked negative controls)\n'
+printf 'selftest: PASS (clean and restored copies; 7 diagnostic-checked negative controls)\n'

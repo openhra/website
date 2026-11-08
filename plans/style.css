@@ -86,3 +86,16 @@
   .coverage .coverage-swatch { forced-color-adjust: none; }
   .coverage button[aria-pressed="true"] { border: 3px solid ButtonText; text-decoration: underline; }
 }
+
+/* Keep long verification cells inside the existing focusable scroll region. */
+.verification .table { min-width: 0; max-width: 100%; }
+.verification table { min-width: 420px; }
+.verification th, .verification td { overflow-wrap: anywhere; white-space: normal; }
+#contact .contact { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+#contact-status { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 360px) {
+  /* Preserve the full 304px verification widget, including desktop scrollbars. */
+  #contact .contact { margin-inline: -20px; }
+  #contact-captcha { justify-self: center; }
+  #contact .contact > p { padding-inline: 20px; }
+}

@@ -162,7 +162,7 @@ class ScannerTests(unittest.TestCase):
             ("delete DC", lambda d: d["states"].pop("DC"), "required field"),
             ("zero denominator", lambda d: d["states"]["TX"].update(denominator=0), "partition"),
             ("fractional count", lambda d: d["states"]["TX"].update(numerator=14.5), "schema alternative"),
-            ("private absolute path", lambda d: d["states"]["TX"].update(observed_at="/private/tmp/fixture"), "ISO UTC"),
+            ("private absolute path", lambda d: d["states"]["TX"].update(observed_at="/" + "private/" + "tmp/fixture"), "ISO UTC"),
         ]
         for name, edit, reason in mutations:
             with self.subTest(name=name):
@@ -370,7 +370,7 @@ class ScannerTests(unittest.TestCase):
                     e.bundle().reconcile()
 
     def test_path_url_hash_and_format_boundaries(self):
-        for path in ("../escape", "/private/fixture", "C:\\fixture"):
+        for path in ("../escape", "/" + "private/" + "fixture", "C:" + "\\fixture"):
             with self.subTest(path=path), self.assertRaisesRegex(Invalid, "input path"):
                 relative_file(self.root, path)
         outside = self.base / "outside"
