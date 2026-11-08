@@ -1,0 +1,1497 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OpenPlans public-source availability v1",
+  "description": "Strict publication schema. Semantic constraints and file budgets are enforced by check.py.",
+  "$defs": {
+    "index": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "enum": [
+            1
+          ]
+        },
+        "metric_version": {
+          "enum": [
+            "exchange-source-availability-v1"
+          ]
+        },
+        "as_of": {
+          "type": "string",
+          "format": "utc"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "utc"
+        },
+        "scope": {
+          "enum": [
+            "published_exchange_inventory_all_products"
+          ]
+        },
+        "population": {
+          "enum": [
+            "separate_validated_runs",
+            "single_serving_snapshot"
+          ]
+        },
+        "state_codes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "AK",
+              "AL",
+              "AR",
+              "AZ",
+              "CA",
+              "CO",
+              "CT",
+              "DC",
+              "DE",
+              "FL",
+              "GA",
+              "HI",
+              "IA",
+              "ID",
+              "IL",
+              "IN",
+              "KS",
+              "KY",
+              "LA",
+              "MA",
+              "MD",
+              "ME",
+              "MI",
+              "MN",
+              "MO",
+              "MS",
+              "MT",
+              "NC",
+              "ND",
+              "NE",
+              "NH",
+              "NJ",
+              "NM",
+              "NV",
+              "NY",
+              "OH",
+              "OK",
+              "OR",
+              "PA",
+              "RI",
+              "SC",
+              "SD",
+              "TN",
+              "TX",
+              "UT",
+              "VA",
+              "VT",
+              "WA",
+              "WI",
+              "WV",
+              "WY"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "layer": {
+                "enum": [
+                  "premiums",
+                  "providers",
+                  "prescriptions"
+                ]
+              },
+              "year": {
+                "enum": [
+                  2026,
+                  2027
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^(premiums|providers|prescriptions)-202[67]\\.json$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "layer",
+              "year",
+              "path",
+              "sha256",
+              "bytes"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "vintage": {
+                "enum": [
+                  2026,
+                  2027
+                ]
+              },
+              "retrieved_at": {
+                "type": "string",
+                "format": "utc"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "url",
+              "title",
+              "vintage",
+              "retrieved_at",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "scanner": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "enum": [
+                "1.0.0"
+              ]
+            },
+            "source_commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "inputs_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "version",
+            "source_commit",
+            "inputs_digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "metric_version",
+        "as_of",
+        "generated_at",
+        "scope",
+        "population",
+        "state_codes",
+        "datasets",
+        "provenance",
+        "scanner"
+      ],
+      "additionalProperties": false
+    },
+    "dataset": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "enum": [
+            1
+          ]
+        },
+        "metric_version": {
+          "enum": [
+            "exchange-source-availability-v1"
+          ]
+        },
+        "as_of": {
+          "type": "string",
+          "format": "utc"
+        },
+        "layer": {
+          "enum": [
+            "premiums",
+            "providers",
+            "prescriptions"
+          ]
+        },
+        "year": {
+          "enum": [
+            2026,
+            2027
+          ]
+        },
+        "unit": {
+          "enum": [
+            "rate_rows",
+            "issuers"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "published_exchange_inventory_all_products"
+          ]
+        },
+        "states": {
+          "type": "object",
+          "properties": {
+            "AK": {
+              "$ref": "#/$defs/record"
+            },
+            "AL": {
+              "$ref": "#/$defs/record"
+            },
+            "AR": {
+              "$ref": "#/$defs/record"
+            },
+            "AZ": {
+              "$ref": "#/$defs/record"
+            },
+            "CA": {
+              "$ref": "#/$defs/record"
+            },
+            "CO": {
+              "$ref": "#/$defs/record"
+            },
+            "CT": {
+              "$ref": "#/$defs/record"
+            },
+            "DC": {
+              "$ref": "#/$defs/record"
+            },
+            "DE": {
+              "$ref": "#/$defs/record"
+            },
+            "FL": {
+              "$ref": "#/$defs/record"
+            },
+            "GA": {
+              "$ref": "#/$defs/record"
+            },
+            "HI": {
+              "$ref": "#/$defs/record"
+            },
+            "IA": {
+              "$ref": "#/$defs/record"
+            },
+            "ID": {
+              "$ref": "#/$defs/record"
+            },
+            "IL": {
+              "$ref": "#/$defs/record"
+            },
+            "IN": {
+              "$ref": "#/$defs/record"
+            },
+            "KS": {
+              "$ref": "#/$defs/record"
+            },
+            "KY": {
+              "$ref": "#/$defs/record"
+            },
+            "LA": {
+              "$ref": "#/$defs/record"
+            },
+            "MA": {
+              "$ref": "#/$defs/record"
+            },
+            "MD": {
+              "$ref": "#/$defs/record"
+            },
+            "ME": {
+              "$ref": "#/$defs/record"
+            },
+            "MI": {
+              "$ref": "#/$defs/record"
+            },
+            "MN": {
+              "$ref": "#/$defs/record"
+            },
+            "MO": {
+              "$ref": "#/$defs/record"
+            },
+            "MS": {
+              "$ref": "#/$defs/record"
+            },
+            "MT": {
+              "$ref": "#/$defs/record"
+            },
+            "NC": {
+              "$ref": "#/$defs/record"
+            },
+            "ND": {
+              "$ref": "#/$defs/record"
+            },
+            "NE": {
+              "$ref": "#/$defs/record"
+            },
+            "NH": {
+              "$ref": "#/$defs/record"
+            },
+            "NJ": {
+              "$ref": "#/$defs/record"
+            },
+            "NM": {
+              "$ref": "#/$defs/record"
+            },
+            "NV": {
+              "$ref": "#/$defs/record"
+            },
+            "NY": {
+              "$ref": "#/$defs/record"
+            },
+            "OH": {
+              "$ref": "#/$defs/record"
+            },
+            "OK": {
+              "$ref": "#/$defs/record"
+            },
+            "OR": {
+              "$ref": "#/$defs/record"
+            },
+            "PA": {
+              "$ref": "#/$defs/record"
+            },
+            "RI": {
+              "$ref": "#/$defs/record"
+            },
+            "SC": {
+              "$ref": "#/$defs/record"
+            },
+            "SD": {
+              "$ref": "#/$defs/record"
+            },
+            "TN": {
+              "$ref": "#/$defs/record"
+            },
+            "TX": {
+              "$ref": "#/$defs/record"
+            },
+            "UT": {
+              "$ref": "#/$defs/record"
+            },
+            "VA": {
+              "$ref": "#/$defs/record"
+            },
+            "VT": {
+              "$ref": "#/$defs/record"
+            },
+            "WA": {
+              "$ref": "#/$defs/record"
+            },
+            "WI": {
+              "$ref": "#/$defs/record"
+            },
+            "WV": {
+              "$ref": "#/$defs/record"
+            },
+            "WY": {
+              "$ref": "#/$defs/record"
+            }
+          },
+          "required": [
+            "AK",
+            "AL",
+            "AR",
+            "AZ",
+            "CA",
+            "CO",
+            "CT",
+            "DC",
+            "DE",
+            "FL",
+            "GA",
+            "HI",
+            "IA",
+            "ID",
+            "IL",
+            "IN",
+            "KS",
+            "KY",
+            "LA",
+            "MA",
+            "MD",
+            "ME",
+            "MI",
+            "MN",
+            "MO",
+            "MS",
+            "MT",
+            "NC",
+            "ND",
+            "NE",
+            "NH",
+            "NJ",
+            "NM",
+            "NV",
+            "NY",
+            "OH",
+            "OK",
+            "OR",
+            "PA",
+            "RI",
+            "SC",
+            "SD",
+            "TN",
+            "TX",
+            "UT",
+            "VA",
+            "VT",
+            "WA",
+            "WI",
+            "WV",
+            "WY"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "metric_version",
+        "as_of",
+        "layer",
+        "year",
+        "unit",
+        "scope",
+        "states"
+      ],
+      "additionalProperties": false
+    },
+    "ledger": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "enum": [
+            1
+          ]
+        },
+        "metric_version": {
+          "enum": [
+            "exchange-source-availability-v1"
+          ]
+        },
+        "as_of": {
+          "type": "string",
+          "format": "utc"
+        },
+        "layer": {
+          "enum": [
+            "premiums",
+            "providers",
+            "prescriptions"
+          ]
+        },
+        "year": {
+          "enum": [
+            2026,
+            2027
+          ]
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "scopes": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/issuer_scope"
+              },
+              {
+                "$ref": "#/$defs/premium_scope"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "metric_version",
+        "as_of",
+        "layer",
+        "year",
+        "inputs",
+        "scopes"
+      ],
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "properties": {
+        "numerator": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "percent_tenths": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "unknown",
+            "quarantined",
+            "not_applicable"
+          ]
+        },
+        "counts": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "active_complete": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "active_partial": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "quarantined": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "unknown": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "not_imported": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "active_complete",
+                    "active_partial",
+                    "quarantined",
+                    "unknown",
+                    "not_imported"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "verified": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "quarantined": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "unknown": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "not_imported": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "verified",
+                    "quarantined",
+                    "unknown",
+                    "not_imported"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "report_absent",
+              "denominator_unverified",
+              "supplemental_catalog",
+              "source_not_published",
+              "catalog_adapter_gap",
+              "serving_evidence_absent",
+              "inventory_empty"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "enum": [
+                  "quarantined_sources",
+                  "failed_refresh",
+                  "partial_active_sources"
+                ]
+              },
+              "actor": {
+                "enum": [
+                  "publisher_access",
+                  "source_validation",
+                  "importer_limit",
+                  "undetermined"
+                ]
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "code",
+              "actor",
+              "count"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "utc"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+          },
+          "uniqueItems": true
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "pattern": "^evidence/[0-9a-f]{64}\\.json$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "input_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "path",
+                "sha256",
+                "input_ids"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "serving_basis": {
+          "enum": [
+            "active_catalog",
+            "filed_rates",
+            "active_source_sets",
+            "unverified"
+          ]
+        }
+      },
+      "required": [
+        "numerator",
+        "denominator",
+        "percent_tenths",
+        "status",
+        "counts",
+        "reason_codes",
+        "warnings",
+        "observed_at",
+        "provenance_ids",
+        "evidence",
+        "serving_basis"
+      ],
+      "additionalProperties": false
+    },
+    "inventory": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+        },
+        "member": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "member_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "issuers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{5}$"
+          },
+          "uniqueItems": true
+        },
+        "base_plans": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "rows_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "source_id",
+        "member",
+        "member_sha256",
+        "rows",
+        "issuers",
+        "base_plans",
+        "rows_sha256"
+      ],
+      "additionalProperties": false
+    },
+    "issuer_scope": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": [
+            "AK",
+            "AL",
+            "AR",
+            "AZ",
+            "CA",
+            "CO",
+            "CT",
+            "DC",
+            "DE",
+            "FL",
+            "GA",
+            "HI",
+            "IA",
+            "ID",
+            "IL",
+            "IN",
+            "KS",
+            "KY",
+            "LA",
+            "MA",
+            "MD",
+            "ME",
+            "MI",
+            "MN",
+            "MO",
+            "MS",
+            "MT",
+            "NC",
+            "ND",
+            "NE",
+            "NH",
+            "NJ",
+            "NM",
+            "NV",
+            "NY",
+            "OH",
+            "OK",
+            "OR",
+            "PA",
+            "RI",
+            "SC",
+            "SD",
+            "TN",
+            "TX",
+            "UT",
+            "VA",
+            "VT",
+            "WA",
+            "WI",
+            "WV",
+            "WY"
+          ]
+        },
+        "year": {
+          "enum": [
+            2026,
+            2027
+          ]
+        },
+        "layer": {
+          "enum": [
+            "premiums",
+            "providers",
+            "prescriptions"
+          ]
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "utc"
+        },
+        "inventory": {
+          "$ref": "#/$defs/inventory"
+        },
+        "input_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+          },
+          "uniqueItems": true
+        },
+        "roster": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "issuer_id": {
+                "type": "string",
+                "pattern": "^[0-9]{5}$"
+              },
+              "classification": {
+                "enum": [
+                  "active_complete",
+                  "active_partial",
+                  "quarantined",
+                  "unknown",
+                  "not_imported"
+                ]
+              },
+              "validation_status": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "ACTIVE",
+                      "QUARANTINED"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "snapshot_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "active_pointer": {
+                "type": "boolean"
+              },
+              "positive_association": {
+                "type": "boolean"
+              },
+              "association_state": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "AK",
+                      "AL",
+                      "AR",
+                      "AZ",
+                      "CA",
+                      "CO",
+                      "CT",
+                      "DC",
+                      "DE",
+                      "FL",
+                      "GA",
+                      "HI",
+                      "IA",
+                      "ID",
+                      "IL",
+                      "IN",
+                      "KS",
+                      "KY",
+                      "LA",
+                      "MA",
+                      "MD",
+                      "ME",
+                      "MI",
+                      "MN",
+                      "MO",
+                      "MS",
+                      "MT",
+                      "NC",
+                      "ND",
+                      "NE",
+                      "NH",
+                      "NJ",
+                      "NM",
+                      "NV",
+                      "NY",
+                      "OH",
+                      "OK",
+                      "OR",
+                      "PA",
+                      "RI",
+                      "SC",
+                      "SD",
+                      "TN",
+                      "TX",
+                      "UT",
+                      "VA",
+                      "VT",
+                      "WA",
+                      "WI",
+                      "WV",
+                      "WY"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "association_year": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      2026,
+                      2027
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "actor": {
+                "enum": [
+                  "publisher_access",
+                  "source_validation",
+                  "importer_limit",
+                  "undetermined"
+                ]
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "utc"
+              },
+              "reason_code": {
+                "enum": [
+                  "active_validated",
+                  "attempt_failed",
+                  "publisher_denied",
+                  "adapter_unavailable",
+                  "budget_limit",
+                  "source_invalid",
+                  "unassessed"
+                ]
+              }
+            },
+            "required": [
+              "issuer_id",
+              "classification",
+              "validation_status",
+              "snapshot_sha256",
+              "active_pointer",
+              "positive_association",
+              "association_state",
+              "association_year",
+              "actor",
+              "observed_at",
+              "reason_code"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        },
+        "assessed": {
+          "type": "boolean"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "enum": [
+                  "quarantined_sources",
+                  "failed_refresh",
+                  "partial_active_sources"
+                ]
+              },
+              "actor": {
+                "enum": [
+                  "publisher_access",
+                  "source_validation",
+                  "importer_limit",
+                  "undetermined"
+                ]
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "code",
+              "actor",
+              "count"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "numerator": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "denominator": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "percent_tenths": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "status": {
+              "enum": [
+                "measured",
+                "unknown",
+                "quarantined",
+                "not_applicable"
+              ]
+            },
+            "counts": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "active_complete": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "active_partial": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "quarantined": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "unknown": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "not_imported": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "active_complete",
+                        "active_partial",
+                        "quarantined",
+                        "unknown",
+                        "not_imported"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "verified": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "quarantined": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "unknown": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "not_imported": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "verified",
+                        "quarantined",
+                        "unknown",
+                        "not_imported"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reason_codes": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "report_absent",
+                  "denominator_unverified",
+                  "supplemental_catalog",
+                  "source_not_published",
+                  "catalog_adapter_gap",
+                  "serving_evidence_absent",
+                  "inventory_empty"
+                ]
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "numerator",
+            "denominator",
+            "percent_tenths",
+            "status",
+            "counts",
+            "reason_codes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "state",
+        "year",
+        "layer",
+        "observed_at",
+        "inventory",
+        "input_ids",
+        "roster",
+        "assessed",
+        "warnings",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "premium_scope": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": [
+            "AK",
+            "AL",
+            "AR",
+            "AZ",
+            "CA",
+            "CO",
+            "CT",
+            "DC",
+            "DE",
+            "FL",
+            "GA",
+            "HI",
+            "IA",
+            "ID",
+            "IL",
+            "IN",
+            "KS",
+            "KY",
+            "LA",
+            "MA",
+            "MD",
+            "ME",
+            "MI",
+            "MN",
+            "MO",
+            "MS",
+            "MT",
+            "NC",
+            "ND",
+            "NE",
+            "NH",
+            "NJ",
+            "NM",
+            "NV",
+            "NY",
+            "OH",
+            "OK",
+            "OR",
+            "PA",
+            "RI",
+            "SC",
+            "SD",
+            "TN",
+            "TX",
+            "UT",
+            "VA",
+            "VT",
+            "WA",
+            "WI",
+            "WV",
+            "WY"
+          ]
+        },
+        "year": {
+          "enum": [
+            2026,
+            2027
+          ]
+        },
+        "layer": {
+          "enum": [
+            "premiums",
+            "providers",
+            "prescriptions"
+          ]
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "utc"
+        },
+        "inventory": {
+          "$ref": "#/$defs/inventory"
+        },
+        "input_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+          },
+          "uniqueItems": true
+        },
+        "plan_inventory": {
+          "$ref": "#/$defs/inventory"
+        },
+        "reconciliation": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "verified": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "mismatches": {
+                  "enum": [
+                    0
+                  ]
+                },
+                "catalog_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "digest": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "report_id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+                }
+              },
+              "required": [
+                "verified",
+                "mismatches",
+                "catalog_sha256",
+                "digest",
+                "report_id"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "serving": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "catalog_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "basis": {
+                  "enum": [
+                    "active_catalog"
+                  ]
+                },
+                "report_id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]{0,39}$"
+                }
+              },
+              "required": [
+                "catalog_sha256",
+                "basis",
+                "report_id"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "year",
+        "layer",
+        "observed_at",
+        "inventory",
+        "input_ids",
+        "plan_inventory",
+        "reconciliation",
+        "serving"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/$defs/index"
+    },
+    {
+      "$ref": "#/$defs/dataset"
+    },
+    {
+      "$ref": "#/$defs/ledger"
+    }
+  ]
+}
