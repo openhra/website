@@ -189,11 +189,13 @@ def check(root, previous=None):
 
 
 def committed_release(root, ref, dest):
-    result = subprocess.run(['git', '-C', str(root), 'ls-tree', '-r', '--name-only', ref, '--', 'plans/data/coverage'],
+    prefix = subprocess.check_output(['git', '-C', str(root), 'rev-parse', '--show-prefix'], text=True).strip()
+    release = prefix + 'plans/data/coverage'
+    result = subprocess.run(['git', '-C', str(root), 'ls-tree', '--full-tree', '-r', '--name-only', ref, '--', release],
                             capture_output=True, text=True)
     require(result.returncode == 0, 'refresh: cannot read committed baseline')
     for name in result.stdout.splitlines():
-        path = dest / Path(name).relative_to('plans/data/coverage')
+        path = dest / Path(name).relative_to(release)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(subprocess.check_output(['git', '-C', str(root), 'show', ref + ':' + name]))
     require((dest / 'index.json').is_file(), 'refresh: committed baseline absent')

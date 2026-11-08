@@ -1,5 +1,7 @@
 # OpenHRA websites: agent rules
 
+Incubated in the private repository’s `website/`; promoted by `scripts/export-public.sh`; lanes never edit the public clone.
+
 Agent-neutral rules for Claude Code, Codex or a person. Claude reads this through `CLAUDE.md`.
 
 - **This repository is public.** Write every file, commit message and branch name for strangers.

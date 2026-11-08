@@ -48,8 +48,13 @@ def check(root):
     css = (root / 'plans/style.css').read_text()
     assert len(css.split('/* Static coverage reader:',1)[1].encode()) <= 8*1024
     assert '.coverage { background: #ffffff;' in css, 'missing white coverage ground'
-    if root.resolve() == ROOT:
-        original = lambda name: subprocess.check_output(['git','show','main:'+name],cwd=ROOT).decode()
+    if root.resolve() == ROOT and subprocess.run(
+            ['git', '-C', str(ROOT), 'rev-parse', '--verify', 'HEAD'], capture_output=True).returncode == 0:
+        prefix = subprocess.check_output(['git', '-C', str(ROOT), 'rev-parse', '--show-prefix'], text=True).strip()
+        baseline = 'main' if subprocess.run(
+            ['git', '-C', str(ROOT), 'cat-file', '-e', 'main:' + prefix + 'plans/index.html'],
+            capture_output=True).returncode == 0 else 'HEAD'
+        original = lambda name: subprocess.check_output(['git', '-C', str(ROOT), 'show', baseline + ':' + prefix + name]).decode()
         strip = lambda text: re.sub(r'<section class="band coverage"[^>]*>.*?</section>', '', text, flags=re.S).replace('<script src="/coverage.js" defer></script>\n','')
         assert strip(page) == strip(original('plans/index.html')), 'page changed outside section 06/script reference'
         assert css.startswith(original('plans/style.css')), 'existing styles changed'

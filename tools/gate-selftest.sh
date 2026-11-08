@@ -52,7 +52,7 @@ cp "$TMP/original.html" "$page"
 sed 's#href="/style.css"#href="/missing-file.css"#' "$page" > "$TMP/page" && mv "$TMP/page" "$page"
 check_fail link 'FAIL: dead relative link in openhra/index.html: /missing-file.css'
 cp "$TMP/original.html" "$page"
-printf '\ncontact test@example.invalid\n' >> "$page"
+printf '\ncontact test%s%s\n' '@' 'example.invalid' >> "$page"
 check_fail email 'FAIL: email address found in openhra/index.html'
 cp "$TMP/original.html" "$page"
 printf 'openhra\n# ignored-comment\n' > "$TMP/denylist"

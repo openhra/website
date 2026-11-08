@@ -28,4 +28,25 @@ See [AGENTS.md](AGENTS.md).
 
 ## Checks
 
-Run `tools/gate.sh` for the offline site checks. Use `tools/gate.sh --full` to include the negative-control self-test. To scan tracked files for case-insensitive terms, set `OPENPLANS_DENYLIST_FILE` to a newline-delimited list.
+Run `tools/gate.sh` for the offline site checks. Use `tools/gate.sh --full` to include the negative-control self-test. To scan all publishable files for case-insensitive policy patterns, set `OPENPLANS_DENYLIST_FILE` to a newline-delimited regex list.
+
+## Promote committed source
+
+Develop the sites in the private incubator's `website/` directory. Lanes never edit the public
+clone directly. After committing, run `scripts/export-public.sh <destination>` with
+`OPENPLANS_DENYLIST_FILE` pointing to an external publication policy. The policy is required,
+nonempty and never bundled with the sites.
+
+The exporter refuses uncommitted website changes, archives HEAD, and runs the full offline gate
+on a disposable copy. It then syncs the untouched archive with deletion of stale public files.
+The destination's root `.git`, `.vercel`, `.lanes` and `.env*` entries are preserved. Choose the
+destination carefully: other files there are replaced. A final audit includes untracked files
+and rejects private host paths, email addresses, policy matches and symlinks. Exporting changes
+files only; committing and publishing the destination are separate owner actions.
+
+Run `PYTHONDONTWRITEBYTECODE=1 python3 scripts/test-export.py` for export integration tests.
+They use disposable Git repositories and run the real exporter, including its isolated full gate.
+They are separate from `tools/gate.sh --full` to avoid recursive export/gate invocations.
+The optional pair `--import-ref <original-import-commit> --public-source <local-public-checkout>`
+also verifies the archived import has zero diff against public commit `a055916` in a temporary
+clone. The final export includes the later incubator tooling changes as well as the original sites.

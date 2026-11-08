@@ -1,5 +1,6 @@
 #!/bin/sh
 set -eu
+export PYTHONDONTWRITEBYTECODE=1
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 FULL=0
@@ -10,9 +11,7 @@ fi
 
 if ! python3 - "$ROOT" <<'PY'
 import html.parser
-import os
 import re
-import subprocess
 import sys
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -106,31 +105,6 @@ for api in api_files:
         fail(f"contact handler must read process.env.CONTACT_EMAIL: {api.relative_to(root)}")
 print("contact env: PASS")
 
-denylist = os.environ.get("OPENPLANS_DENYLIST_FILE")
-if not denylist:
-    print("denylist: SKIP")
-else:
-    try:
-        terms = [line.strip() for line in Path(denylist).read_text(encoding="utf-8").splitlines()
-                 if line.strip() and not line.lstrip().startswith("#")]
-    except OSError as exc:
-        fail(f"cannot read denylist: {exc}")
-    if terms:
-        tracked = subprocess.run(["git", "-C", str(root), "ls-files", "-z"], check=True,
-                                 stdout=subprocess.PIPE).stdout.split(b"\0")
-        for raw in tracked:
-            if not raw:
-                continue
-            path = root / os.fsdecode(raw)
-            try:
-                data = path.read_bytes().decode("utf-8", errors="replace").casefold()
-            except OSError:
-                continue
-            for term in terms:
-                if term.casefold() in data:
-                    fail(f"denylist term found in {os.fsdecode(raw)}: {term}")
-    print("denylist: PASS")
-
 tokens = root / "plans/brand/tokens.css"
 try:
     css = tokens.read_text(encoding="utf-8")
@@ -143,6 +117,8 @@ PY
 then
   exit 1
 fi
+
+python3 "$ROOT/tools/check-neutral.py" "$ROOT"
 
 python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"
 if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
