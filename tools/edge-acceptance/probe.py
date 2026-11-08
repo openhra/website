@@ -24,10 +24,13 @@ MODERN = "2026-07-28"
 LEGACY = "2025-11-25"
 MAX_REQUESTS = 80  # Two sources, plus at most one optional signed report.
 MAX_RESPONSE = 262144
+MAX_CATALOG_RESPONSE = 8 * 1024 * 1024  # A native 50-plan page includes source evidence.
 TIMEOUT = 10
 ROUNDS = 6
 ROUND_INTERVAL = 6
 MIN_PROGRESS_LEAD = 0.025
+RATE_REQUESTS = 19
+RATE_WORKERS = 3  # Below nginx's four simultaneous /mcp connections per source.
 
 
 class CheckFailed(Exception):
@@ -75,9 +78,34 @@ class Reply:
         return json.loads(self.body)
 
 
-def rpc_result(reply, request_id=1):
+def event_message(event):
+    lines = [
+        line[5:].lstrip() for line in event.split(b"\n") if line.startswith(b"data:")
+    ]
+    return json.loads(b"\n".join(lines)) if lines else None
+
+
+def rpc_result(reply, request_id=1, allow_sse=False):
     require(reply.status == 200, "expected HTTP 200")
-    value = reply.json()
+    content_type = reply.headers.get("content-type", "").split(";")[0]
+    if allow_sse and content_type == "text/event-stream":
+        # Legacy stateless responses may use SSE even for a single result.
+        events = reply.body.replace(b"\r\n", b"\n").split(b"\n\n")
+        require(not events[-1].strip(), "incomplete SSE response")
+        messages = [
+            message for event in events[:-1]
+            if (message := event_message(event)) is not None
+        ]
+        require(
+            all(isinstance(m, dict) and m.get("jsonrpc") == "2.0" for m in messages),
+            "invalid SSE RPC envelope",
+        )
+        results = [m for m in messages if "id" in m]
+        require(len(results) == 1, "expected one SSE result")
+        value = results[0]
+    else:
+        require(content_type == "application/json", "expected JSON")
+        value = reply.json()
     require(
         value.get("jsonrpc") == "2.0" and value.get("id") == request_id,
         "response envelope or request ID differs",
@@ -195,7 +223,10 @@ class Client:
             conn.close()
             raise
 
-    def request(self, method, path, body=None, headers=None, plain=False):
+    def request(
+        self, method, path, body=None, headers=None, plain=False, *, max_response=None
+    ):
+        max_response = MAX_RESPONSE if max_response is None else max_response
         conn, response, sock, started, deadline = self.open(
             method, path, body, headers, plain
         )
@@ -206,11 +237,11 @@ class Client:
                 left = TIMEOUT - (time.monotonic() - started)
                 require(left > 0, "response deadline exceeded")
                 sock.settimeout(left)
-                part = response.read1(min(65536, MAX_RESPONSE + 1 - len(data)))
+                part = response.read1(min(65536, max_response + 1 - len(data)))
                 if not part:
                     break
                 data.extend(part)
-                require(len(data) <= MAX_RESPONSE, "response byte cap exceeded")
+                require(len(data) <= max_response, "response byte cap exceeded")
             return Reply(
                 response.status,
                 {k.lower(): v for k, v in response.getheaders()},
@@ -229,6 +260,7 @@ class Client:
         body, headers = envelope(
             "tools/call", {"name": name, "arguments": arguments}, progress=token
         )
+        headers["Accept-Encoding"] = "gzip"
         conn, response, sock, started, deadline = self.open(
             "POST", "/mcp", body, headers
         )
@@ -246,6 +278,8 @@ class Client:
                 == "text/event-stream",
                 "expected request-scoped SSE",
             )
+            require(reply.headers.get("x-accel-buffering") == "no", "SSE buffering header missing")
+            require(reply.headers.get("content-encoding") in (None, "identity"), "SSE must not be compressed")
             pending = b""
             total = 0
             progress_at = None
@@ -264,14 +298,9 @@ class Client:
                 # Parse the entire read before allowing disconnect, so coalesced finals cannot pass.
                 while b"\n\n" in pending:
                     event, pending = pending.split(b"\n\n", 1)
-                    lines = [
-                        line[5:].lstrip()
-                        for line in event.split(b"\n")
-                        if line.startswith(b"data:")
-                    ]
-                    if not lines:
+                    message = event_message(event)
+                    if message is None:
                         continue
-                    message = json.loads(b"\n".join(lines))
                     require(message.get("jsonrpc") == "2.0", "invalid SSE RPC envelope")
                     if message.get("method") == "notifications/progress":
                         require(
@@ -429,7 +458,10 @@ class Suite:
         self.check("canonical HTTP redirect", redirect)
 
         def catalog():
-            reply = c.request("GET", "/v1/plans?county=48201&year=2026")
+            reply = c.request(
+                "GET", "/v1/plans?county=48201&year=2026",
+                max_response=MAX_CATALOG_RESPONSE,
+            )
             require(
                 reply.status == 200 and bool(reply.json().get("plans")),
                 "catalog query returned no plans",
@@ -457,7 +489,8 @@ class Suite:
                                 "capabilities": {},
                             },
                             LEGACY,
-                        )
+                        ),
+                        allow_sse=True,
                     )
                     require(
                         result.get("protocolVersion") == LEGACY,
@@ -480,7 +513,9 @@ class Suite:
                 self.check("legacy initialized notification", initialized)
 
             def listing(revision=revision):
-                result = rpc_result(c.rpc("tools/list", revision=revision))
+                result = rpc_result(
+                    c.rpc("tools/list", revision=revision), allow_sse=revision == LEGACY
+                )
                 names = {tool["name"] for tool in result.get("tools", [])}
                 require("lookup_geography" in names, "catalog tool missing")
                 require(
@@ -495,15 +530,10 @@ class Suite:
                     {"name": "lookup_geography", "arguments": {"zip": "77002"}},
                     revision,
                 )
-                require(
-                    reply.headers.get("content-type", "").startswith(
-                        "application/json"
-                    ),
-                    "expected JSON",
-                )
-                tool_result(rpc_result(reply))
+                tool_result(rpc_result(reply, allow_sse=revision == LEGACY))
 
-            self.check(revision + " JSON call", call)
+            label = " JSON call" if revision == MODERN else " tool call (JSON or SSE)"
+            self.check(revision + label, call)
 
         def cors():
             reply = c.rpc(
@@ -678,9 +708,12 @@ class Suite:
 
     def streaming(self):
         def stream(disconnect):
+            # Cold plan reads do measurable work; empty name searches often finish
+            # before the first packet. Distinct limits avoid cross-runner cache hits.
+            limit = (1 if self.source == "linux" else 3) + int(disconnect)
             reply, proof = self.client.stream(
-                "search_providers",
-                {"name": "synthetic-edge-stream-" + uuid.uuid4().hex, "limit": 1},
+                "search_plans",
+                {"location": {"county": "48201"}, "year": 2026, "limit": limit},
                 "synthetic-progress-" + self.source,
                 disconnect,
             )
@@ -694,46 +727,50 @@ class Suite:
         )
 
     def rate(self):
-        # Keep the last phase below 20 requests. Real IP rotation is never attempted.
+        # One bounded burst fills the real bucket, then rotates forged headers.
+        # Fresh serial TLS requests can refill a 1r/s + burst=10 bucket indefinitely.
+        replies = []
+
         def exhaust():
-            found = False
-            for _ in range(16):
-                reply = self.client.rpc("tools/list")
+            def attempt(i):
+                forged = i >= RATE_REQUESTS - RATE_WORKERS
+                reply = self.client.rpc(
+                    "tools/list",
+                    headers={
+                        "X-Forwarded-For": f"192.0.2.{i + 1}",
+                        "X-Real-IP": f"192.0.2.{i + 1}",
+                        "X-Forwarded-Proto": "https",
+                        "X-Forwarded-Host": "openplans.openhra.com",
+                        "X-Forwarded-Port": "443",
+                    } if forged else {},
+                )
+                return forged, reply
+
+            with ThreadPoolExecutor(max_workers=RATE_WORKERS) as pool:
+                split = RATE_REQUESTS - RATE_WORKERS
+                replies.extend(pool.map(attempt, range(split)))
+                replies.extend(pool.map(attempt, range(split, RATE_REQUESTS)))
+            for _, reply in replies:
                 if reply.status == 429:
+                    require(retry_after(reply), "rate response lacks bounded Retry-After")
                     require(
-                        retry_after(reply), "rate response lacks bounded Retry-After"
+                        not concurrency_error(reply), "rate burst hit app concurrency instead"
                     )
-                    found = True
-                    break
-                rpc_result(reply)
-            require(found, "bounded burst did not observe rate 429")
+                else:
+                    rpc_result(reply)
+            require(
+                any(not forged and reply.status == 429 for forged, reply in replies),
+                "bounded burst did not observe rate 429",
+            )
 
         self.check("source rate 429 and Retry-After", exhaust)
 
         def forged():
-            def attempt(i):
-                return self.client.rpc(
-                    "tools/list",
-                    headers={
-                        "X-Forwarded-For": f"192.0.2.{i + 1}",
-                        "X-Forwarded-Proto": "https",
-                        "X-Forwarded-Host": "openplans.openhra.com",
-                        "X-Forwarded-Port": "443",
-                    },
-                )
-
-            # The edge refills one token per second. Probe rotated addresses together;
-            # a genuine refill may succeed, but a spoofed fresh bucket for every call fails.
-            with ThreadPoolExecutor(max_workers=3) as pool:
-                replies = list(pool.map(attempt, range(3)))
-            denied = 0
-            for reply in replies:
-                if reply.status == 429:
-                    require(retry_after(reply), "forged burst lacks Retry-After")
-                    denied += 1
-                else:
-                    rpc_result(reply)
-            require(denied > 0, "rotated forwarded addresses escaped source throttling")
+            require(bool(self.rows[-1][1]), "source throttling was not observed")
+            require(
+                any(forged and retry_after(reply) for forged, reply in replies),
+                "rotated forwarded addresses escaped source throttling",
+            )
 
         self.check("forwarded addresses cannot evade source rate", forged)
 

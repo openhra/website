@@ -56,6 +56,7 @@ class Fake(ThreadingHTTPServer):
         self.rate_enabled = True
         self.refilled = False
         self.envelopes = []
+        self.tool_calls = []
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -78,6 +79,20 @@ class Handler(BaseHTTPRequestHandler):
     def json(self, result=None, status=200, headers=None, error=None):
         value = {"jsonrpc": "2.0", "id": 1}
         value["error" if error else "result"] = error or result
+        if status == 200 and (self.headers.get("MCP-Protocol-Version") == probe.LEGACY or self.server.mode == "modern-sse"):
+            if self.server.mode == "legacy-id":
+                value["id"] = 2
+            if self.server.mode == "legacy-error":
+                value = {"jsonrpc": "2.0", "id": 1, "error": {"code": -32603}}
+            body = b": synthetic keepalive\r\n\r\ndata: " + json.dumps(value).encode() + b"\r\n\r\n"
+            if self.server.mode == "legacy-missing":
+                body = b": synthetic keepalive\n\n"
+            if self.server.mode == "legacy-incomplete":
+                body = body.rstrip()
+            if self.server.mode == "legacy-multiple":
+                body += body
+            self.send(status, body, {"Content-Type": "text/event-stream", **(headers or {})})
+            return
         self.send(
             status,
             json.dumps(value).encode(),
@@ -109,7 +124,9 @@ class Handler(BaseHTTPRequestHandler):
                 self.send(200, b'{"status":"ok","db":"ok"}')
             return
         if self.path.startswith("/v1/plans?"):
-            self.send(200, b'{"plans":[{"synthetic":true}]}')
+            padding = (6 * 1024 * 1024 if fake.mode == "large-catalog" else
+                       probe.MAX_CATALOG_RESPONSE if fake.mode == "giant-catalog" else 0)
+            self.send(200, json.dumps({"plans": [{"synthetic": True}], "synthetic_padding": "x" * padding}).encode())
             return
         if self.path != "/mcp":
             status = (
@@ -159,10 +176,17 @@ class Handler(BaseHTTPRequestHandler):
         source = self.headers.get("X-Synthetic-Source", "single")
         if fake.mode == "forwarded" and self.headers.get("X-Forwarded-For"):
             source = self.headers["X-Forwarded-For"]
+        if fake.mode == "latency":
+            # A serial fresh-connection probe cannot exhaust nginx's actual bucket.
+            time.sleep(0.65)
         with fake.guard:
             fake.calls += 1
-            count = fake.counts.get(source, 0) + 1
-            fake.counts[source] = count
+            now = time.monotonic()
+            previous = fake.counts.get(source)
+            excess = max(0, previous[0] + 1 - (now - previous[1])) if previous else 0
+            limited = excess > 10
+            if not limited:
+                fake.counts[source] = (excess, now)
             refill = (
                 fake.mode == "refill"
                 and self.headers.get("X-Forwarded-For")
@@ -170,7 +194,10 @@ class Handler(BaseHTTPRequestHandler):
             )
             if refill:
                 fake.refilled = True
-        if fake.rate_enabled and count > 10 and not refill:
+        if fake.rate_enabled and fake.mode != "no-rate" and limited and not refill:
+            if fake.mode == "app-rate":
+                self.json(status=429, error={"code": -32000, "message": "Concurrency limit exceeded"}, headers={"Retry-After": "1"})
+                return
             self.send(
                 429,
                 SENTINEL.encode(),
@@ -207,6 +234,8 @@ class Handler(BaseHTTPRequestHandler):
         elif value["method"] == "tools/list":
             self.json({"tools": [{"name": "lookup_geography"}]}, headers=cors)
         elif value["method"] == "tools/call":
+            with fake.guard:
+                fake.tool_calls.append(params)
             token = params.get("_meta", {}).get("progressToken")
             if token is None:
                 self.json(tool(), headers={} if fake.mode == "cors" else cors)
@@ -224,14 +253,14 @@ class Handler(BaseHTTPRequestHandler):
                     )
                     return
                 try:
-                    self.sse(token)
+                    self.sse(token, fast=fake.mode == "fast-provider" and params["name"] == "search_providers")
                 finally:
                     with fake.guard:
                         fake.active -= 1
         else:
             self.send(400)
 
-    def sse(self, token):
+    def sse(self, token, fast=False):
         def event(value):
             return b"data: " + json.dumps(value).encode() + b"\n\n"
 
@@ -245,9 +274,18 @@ class Handler(BaseHTTPRequestHandler):
         final = event({"jsonrpc": "2.0", "id": 1, "result": tool()})
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream")
+        if self.server.mode != "no-accel":
+            self.send_header("X-Accel-Buffering", "no")
+        if self.server.mode == "gzip" and self.headers.get("Accept-Encoding") == "gzip":
+            self.send_header("Content-Encoding", "gzip")
         self.send_header("Connection", "close")
         self.end_headers()
         try:
+            if fast:
+                self.wfile.write(progress + final)
+                self.wfile.flush()
+                self.close_connection = True
+                return
             if self.server.mode != "buffer":
                 self.wfile.write(progress)
                 self.wfile.flush()
@@ -356,6 +394,28 @@ class AcceptanceTests(unittest.TestCase):
         self.assertIn((probe.LEGACY, "notifications/initialized"), envelopes)
         self.assertLessEqual(result["requests"], 40)
 
+    def test_native_catalog_has_its_own_bounded_response_budget(self):
+        result, rows, _, _ = self.basics("large-catalog")
+        self.assertTrue(result["ok"], rows)
+        _, rows, _, _ = self.basics("giant-catalog")
+        catalog = next(row for row in rows if row[0] == "native public catalog")
+        self.assertFalse(catalog[1])
+        self.assertIn("byte cap", catalog[2])
+
+    def test_legacy_sse_still_requires_one_matching_successful_rpc_result(self):
+        for mode in ("legacy-id", "legacy-error", "legacy-missing", "legacy-incomplete", "legacy-multiple"):
+            with self.subTest(mode=mode):
+                _, rows, _, _ = self.basics(mode)
+                legacy = [row for row in rows if row[0].startswith(probe.LEGACY)]
+                self.assertEqual(len(legacy), 3)
+                self.assertTrue(all(not row[1] for row in legacy), rows)
+
+    def test_modern_ordinary_calls_still_require_json(self):
+        _, rows, _, _ = self.basics("modern-sse")
+        modern = [row for row in rows if row[0].startswith(probe.MODERN)]
+        self.assertEqual(len(modern), 3)
+        self.assertTrue(all(not row[1] for row in modern), rows)
+
     def test_get_200_mutant_fails(self):
         result, rows, output, _ = self.basics("get200")
         self.assertFalse(result["ok"])
@@ -414,6 +474,24 @@ class AcceptanceTests(unittest.TestCase):
             self.assertFalse(suite.rows[0][1])
             self.assertFalse(suite.rows[1][1])
 
+    def test_streaming_uses_distinct_plan_reads_instead_of_fast_empty_searches(self):
+        with server("fast-provider") as (fake, client):
+            with self.assertRaisesRegex(probe.CheckFailed, "no measurable incremental"):
+                client.stream("search_providers", {"name": "synthetic-empty", "limit": 1}, "synthetic-fast")
+            for source in ("linux", "macos"):
+                suite = probe.Suite(client, source, time.time() + 1)
+                suite.streaming()
+                self.assertTrue(all(row[1] for row in suite.rows), suite.rows)
+            self.assertEqual([(call["name"], call["arguments"]["limit"]) for call in fake.tool_calls],
+                             [("search_providers", 1)] + [("search_plans", limit) for limit in (1, 2, 3, 4)])
+
+    def test_streaming_rejects_missing_buffering_header_or_compression(self):
+        for mode in ("no-accel", "gzip"):
+            with self.subTest(mode=mode), server(mode) as (_, client):
+                suite = self.suite(client)
+                suite.streaming()
+                self.assertTrue(all(not row[1] for row in suite.rows[:2]), suite.rows)
+
     def test_rate_and_forwarded_bucket_isolation(self):
         for mode in ("good", "refill"):
             with server(mode) as (_, client):
@@ -421,11 +499,27 @@ class AcceptanceTests(unittest.TestCase):
                 suite.rate()
                 self.assertTrue(all(row[1] for row in suite.rows), suite.rows)
                 self.assertLessEqual(client.requests, 19)
-        for mode in ("retry", "forwarded"):
+        for mode in ("retry", "forwarded", "app-rate"):
             with server(mode) as (_, client):
                 suite = self.suite(client)
                 suite.rate()
                 self.assertTrue(any(not row[1] for row in suite.rows), suite.rows)
+                self.assertEqual(client.requests, probe.RATE_REQUESTS)
+        with server("no-rate") as (_, client):
+            suite = self.suite(client)
+            suite.rate()
+            self.assertTrue(all(not row[1] for row in suite.rows), suite.rows)
+
+    def test_rate_burst_exceeds_leaky_bucket_despite_connection_latency(self):
+        with server("latency") as (fake, client):
+            serial = [client.rpc("tools/list").status for _ in range(16)]
+            self.assertEqual(serial, [200] * 16)
+            with fake.guard:
+                fake.counts.clear()
+            suite = self.suite(client)
+            suite.rate()
+            self.assertTrue(all(row[1] for row in suite.rows), suite.rows)
+            self.assertEqual(client.requests, 16 + probe.RATE_REQUESTS)
 
     def test_two_sources_reach_application_concurrency(self):
         with server() as (fake, _):
