@@ -46,6 +46,7 @@ def csv_key(value):
 # serving evidence. Keep this separate from the general federal-v1 adapter.
 P6D_POINTER_REPORTS = {
     2026: "d2e81f75f0205d82528e046a486f702a23cefd9df71dc6aceff7e3d6c5a5c795",
+    2027: "2442b9f54ffd357d5f86cc05f39a10a4de571eac5f761bcc6f2890a1f48fc69e",
 }
 
 

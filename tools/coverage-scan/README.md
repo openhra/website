@@ -20,7 +20,7 @@ value must never go into a file or a commit. Paths in a selection are relative t
 that root. The checked-in `selection.example.json` is the exact, safe allowlist used
 for this release, with public archive hashes and finalized report hashes; it is an
 example of the operator interface, not a discovery rule or machine configuration.
-It selects 25 public archives, 15 evidence selections from 14 finalized reports, 80 premium source scopes and
+It selects 25 public archives, 16 evidence selections from 14 finalized reports, 80 premium source scopes and
 8 provider/formulary scopes. Historical attempts, synthetic mutants and logs are
 excluded. It does not authorize ingesting other files in those directories.
 
@@ -76,11 +76,10 @@ source; unknown and quarantined units cannot be relabelled to imply that evidenc
 Premium evidence reconciles the 49 comparable 2026 source scopes and 29 federal
 2027 scopes against the public archives. **The committed release measures 49 2026
 serving scopes:** 19 SBE declarations plus 30 federal pointer-derived oracle results.
-The source review below establishes the latter's serving lineage independently of
-their passing comparisons. The 29 federal 2027 scopes retain source denominators,
-null numerators/percentages and `serving_evidence_absent`; this review and adapter
-approval are scoped to the lane's 2026 task. Supplying audited `serving-v1` records
-below or separately reviewing the 2027 artifact can resolve that remaining gap.
+The source reviews below establish the federal serving lineage independently of
+the passing comparisons. The separate 2027 review establishes serving eligibility
+for its 29 federal scopes. Each year uses its own exact reviewed artifact and public
+source bytes; the remaining 22 premium scopes in 2027 stay Unknown.
 NY/VT supplemental checks remain supporting evidence with null denominators.
 Oregon uses only its federal 2026 scope; its SHOP-only SBE bundle is not added.
 No 2027 record borrows 2026 sources.
@@ -129,7 +128,7 @@ Those corroborate activation but are not selected as a substitute for pointer
 lineage. Batch summaries, reconciliation-only results, logs, interrupted runs and
 synthetic mutants are not serving evidence.
 
-The new adapter accepts only the exact reviewed 2026 artifact hash, requires the
+The adapter accepts only the exact reviewed per-year artifact hashes, requires the
 same artifact for reconciliation, checks state membership, catalog identity and
 observation cutoff, and retains the original oracle observation dates. It does not
 read OpenPlans source at scan time. Changed or future artifacts fail closed until
@@ -143,6 +142,40 @@ The scopes changed from Unknown to a checked numerator in 2026 are:
 AK, AL, AR, AZ, DE, FL, HI, IA, IN, KS, LA, MI, MO, MS, MT, NC, ND, NE, NH, OH,
 OK, OR, SC, SD, TN, TX, UT, WI, WV, WY. Each numerator equals its unchanged source
 row denominator, for 100.0%. Issuer figures and all 2027 values are unchanged.
+
+### Reviewed federal 2027 serving lineage
+
+The finalized `p6d-all-states-2027.json` is independently reviewed and selected as
+both `federal_oracle_2027` and `federal_pointer_2027`. Its SHA-256 is
+`2442b9f54ffd357d5f86cc05f39a10a4de571eac5f761bcc6f2890a1f48fc69e`.
+The producer files at source commit `9129518013046d50df283f5c0564fc8c37d9da51`
+have the hashes listed above. The oracle is byte-identical to its introduction at
+`c5fee4f6d58f5fe12bda5321c0a73c4f49b40417`. Its requested-year query and
+publication-enabled import path apply to 2027 independently of the 2026 results.
+The import transaction sets `puf_active_catalog` before returning; a reconciliation
+pass or historical ACTIVE status alone does not establish that lineage.
+
+All 29 aggregate state results equal their finalized `p6d-2027-STATE.json`
+counterparts. Each catalog ID matches a separate finalized PUF import JSON with
+the same state/year, `passed: true`, `status: ACTIVE` and six reconciled files.
+These corroborate activation; the reviewed oracle's pointer selection establishes
+serving eligibility. No logs, batch summaries, synthetic mutants or 2026 evidence
+are used to grant a 2027 numerator. Original oracle observations range from
+`2026-11-08T12:02:30.488Z` to `2026-11-08T12:08:02.604Z` and are retained.
+
+The 2027 scopes changed from Unknown to a checked numerator are:
+AK, AL, AR, AZ, DE, FL, HI, IA, IN, KS, LA, MI, MO, MS, MT, NC, ND, NE, NH, OH,
+OK, SC, SD, TN, TX, UT, WI, WV, WY. Their numerators total 2,115,809 rate rows;
+each equals its unchanged public source denominator, for 100.0%. Oregon is absent
+from the 2027 federal inventory and stays Unknown. This release changes no 2026
+dataset or issuer dataset. See the per-state counts and checks in the
+[2027 handoff](work-notes/premium-2027-acceptance.md).
+
+The second `p6d-pointer-v1` selection is mandatory, bound to the same per-year
+reconciliation artifact. Changed or unreviewed artifacts fail closed. A 2027
+scope with reconciled rows and no serving selection retains D and null N/percent;
+even an approved 2026 pointer cannot establish its serving evidence. The population
+remains `separate_validated_runs`, with no claim of one currently deployed snapshot.
 
 The legacy TX recovered audit corroborates the source report's ACTIVE snapshot IDs
 against its final manifest pointers, and also repeats provider source validation.
@@ -179,7 +212,7 @@ formats are closed, versioned adapters, not guessed shapes:
 - `federal-v1`: independent oracle `year`, aggregate `passed`, and state `results`.
   State results require `state`, `year`, `import_id`, `passed`, exact `base_ids` and
   `variant_ids`, and `premiums` with passing raw/stored counts and zero mismatches.
-- `p6d-pointer-v1`: the exact reviewed 2026 federal oracle artifact above, selected
+- `p6d-pointer-v1`: an exact reviewed 2026 or 2027 federal oracle artifact above, selected
   separately as a premium scope's `serving_report`. Its hash must equal the scope's
   `federal-v1` reconciliation report hash. Only this reviewed producer's pointer
   lineage grants serving eligibility; the adapter rejects arbitrary passing

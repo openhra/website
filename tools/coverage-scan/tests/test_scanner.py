@@ -56,9 +56,9 @@ class Evidence:
                 self.selection["issuer_scopes"].append(dict(state=state, year=2026, source=state.lower(), plan_member="plans.csv",
                     layer=layer, report=rid, audit=aid, observed_at=AS_OF, unassessed_issuers=ids[-unknown:] if unknown else []))
 
-    def source(self, state, ids):
+    def source(self, state, ids, year=2026):
         path = self.root / (state.lower() + ".zip")
-        rows = [[2026, state, i, i + state + "0000001"] for i in ids]
+        rows = [[year, state, i, i + state + "0000001"] for i in ids]
         out = io.StringIO(newline="")
         writer = csv.writer(out)
         writer.writerow(["BusinessYear", "StateCode", "IssuerId", "StandardComponentId"])
@@ -68,7 +68,7 @@ class Evidence:
             z.writestr("rates.csv", out.getvalue())
         sid = state.lower()
         self.selection["sources"][sid] = dict(path=path.name, sha256=sha(path.read_bytes()),
-            url=f"https://download.cms.gov/marketplace-puf/2026/{sid}-fixture.zip", title="Public fixture", vintage=2026,
+            url=f"https://download.cms.gov/marketplace-puf/{year}/{sid}-fixture.zip", title="Public fixture", vintage=year,
             retrieved_at=AS_OF, members=[dict(name="plans.csv", kind="plans")])
 
     def report(self, rid, data, fmt):
@@ -87,23 +87,23 @@ class Evidence:
     def bundle(self):
         return Bundle(self.root, self.selection, AS_OF)
 
-    def premium(self, state="OR", serving=True):
+    def premium(self, state="OR", serving=True, year=2026):
         ids = ["20000", "20001"]
-        self.source(state, ids)
+        self.source(state, ids, year)
         sid = state.lower()
         self.selection["sources"][sid]["members"].append(dict(name="rates.csv", kind="rates"))
-        row = dict(state=state, year=2026, generated_at=AS_OF, passed=True,
+        row = dict(state=state, year=year, generated_at=AS_OF, passed=True,
                    premiums=dict(passed=True, mismatch_count=0, mismatches=[], raw_rows=2, stored_rows=2),
                    base_ids=dict(passed=True, actual=2, expected=2, only_actual=[], only_expected=[]),
                    variant_ids=dict(passed=True, actual=2, expected=2, only_actual=[], only_expected=[]),
-                   import_id=f"puf-2026-{state}-fixture")
+                   import_id=f"puf-{year}-{state}-fixture")
         rid = sid + "_premium"
-        self.report(rid, dict(year=2026, passed=True, results=[row]), "federal-v1")
+        self.report(rid, dict(year=year, passed=True, results=[row]), "federal-v1")
         active_id = sid + "_serving"
         if serving:
-            self.report(active_id, dict(schema_version=1, catalogs=[dict(state=state, year=2026,
+            self.report(active_id, dict(schema_version=1, catalogs=[dict(state=state, year=year,
                 import_id=row["import_id"], status="ACTIVE", source_sha256=self.selection["sources"][sid]["sha256"], observed_at=AS_OF)]), "serving-v1")
-        spec = dict(state=state, year=2026, source=sid, plan_source=sid, rate_member="rates.csv", plan_member="plans.csv",
+        spec = dict(state=state, year=year, source=sid, plan_source=sid, rate_member="rates.csv", plan_member="plans.csv",
                     report=rid, serving_report=active_id if serving else None, observed_at=AS_OF)
         self.selection["premium_scopes"].append(spec)
         return spec
@@ -260,10 +260,10 @@ class ScannerTests(unittest.TestCase):
         with self.assertRaisesRegex(Invalid, "independent reconciliation and ACTIVE serving evidence"):
             check_scope(scope, record, loads(files["index.json"]), "premiums", 2026, "OR", ledger)
 
-    def p6d_pointer_fixture(self):
-        spec = self.e.premium(serving=False)
+    def p6d_pointer_fixture(self, year=2026, state="OR"):
+        spec = self.e.premium(state, serving=False, year=year)
         rid = spec["report"]
-        self.e.mutate_report(rid, lambda r: r.update(states=["OR"]))
+        self.e.mutate_report(rid, lambda r: r.update(states=[state]))
         report = loads((self.root / self.e.selection["reports"][rid]["path"]).read_bytes())
         self.e.report("p6d_pointer", report, "p6d-pointer-v1")
         spec["serving_report"] = "p6d_pointer"
@@ -301,6 +301,48 @@ class ScannerTests(unittest.TestCase):
             record = loads(self.build()[0]["premiums-2026.json"])["states"]["OR"]
         self.assertIsNone(record["numerator"])
         self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
+
+    def test_reviewed_2027_pointer_requires_explicit_serving_selection(self):
+        spec, digest = self.p6d_pointer_fixture(year=2027, state="AK")
+        with patch("inputs.P6D_POINTER_REPORTS", {2027: digest}):
+            files, _ = self.build()
+            record = loads(files["premiums-2027.json"])["states"]["AK"]
+            self.assertEqual((record["numerator"], record["denominator"], record["percent_tenths"]), (2, 2, 1000))
+            target = self.base / "p6d-2027-release"
+            publish(target, files)
+            self.assertTrue(check_release(target))
+            self.e.selection["reports"].pop("p6d_pointer")
+            spec["serving_report"] = None
+            files, _ = self.build()
+        record = loads(files["premiums-2027.json"])["states"]["AK"]
+        ledger = loads(files[record["evidence"]["path"]])
+        scope = ledger["scopes"]["AK"]
+        self.assertEqual(scope["reconciliation"]["verified"], 2)
+        self.assertIsNone(scope["serving"])
+        self.assertEqual(record["denominator"], 2)
+        self.assertEqual(record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0))
+        self.assertEqual(record["status"], "unknown")
+        self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
+        self.assertIsNone(record["numerator"])
+        self.assertIsNone(record["percent_tenths"])
+        record.update(numerator=2, percent_tenths=1000, status="measured",
+                      counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
+                      reason_codes=[], serving_basis="active_catalog")
+        with self.assertRaisesRegex(Invalid, "independent reconciliation and ACTIVE serving evidence"):
+            check_scope(scope, record, loads(files["index.json"]), "premiums", 2027, "AK", ledger)
+
+    def test_2027_never_borrows_reviewed_2026_pointer(self):
+        spec, digest = self.p6d_pointer_fixture(year=2027, state="AK")
+        self.e.mutate_report("p6d_pointer", lambda r: r.update(year=2026))
+        old_digest = self.e.selection["reports"]["p6d_pointer"]["sha256"]
+        with patch("inputs.P6D_POINTER_REPORTS", {2026: old_digest, 2027: digest}):
+            with self.assertRaisesRegex(Invalid, "pointer/reconciliation artifact mismatch"):
+                self.build()
+
+    def test_unreviewed_2027_pointer_is_rejected(self):
+        self.p6d_pointer_fixture(year=2027, state="AK")
+        with self.assertRaisesRegex(Invalid, "unreviewed P6d pointer artifact"):
+            self.build()
 
     def test_premium_scope_negative_controls(self):
         spec = self.e.premium()
