@@ -31,7 +31,6 @@ class PageParser(html.parser.HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if tag.lower() == "title":
-            self.title = True
             self.in_title = True
         for key, value in attrs:
             if key.lower() in ("href", "src") and value:
@@ -62,6 +61,10 @@ for page in html_files:
         source = page.read_text(encoding="utf-8")
         parser = PageParser()
         parser.feed(source)
+        # HTMLParser buffers an unfinished final tag, then emits it in pieces at
+        # close(); checking handle_data alone misses a planted trailing <broken.
+        if re.search(r"<(?:[A-Za-z][A-Za-z0-9:-]*|/[^>\s]*)\s*$", source):
+            parser.bad_tag = True
         parser.close()
     except (OSError, UnicodeError, html.parser.HTMLParseError) as exc:
         fail(f"HTML parse error in {page.relative_to(root)}: {exc}")
@@ -141,7 +144,18 @@ then
   exit 1
 fi
 
+python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"
+if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
+  python3 "$ROOT/tools/coverage-gate/check.py" --previous-ref HEAD
+else
+  # Isolated self-test copies are deliberately unborn repositories.
+  python3 "$ROOT/tools/coverage-gate/check.py"
+fi
+
 if [ "$FULL" -eq 1 ]; then
   "$ROOT/tools/gate-selftest.sh"
+  python3 "$ROOT/tools/coverage-gate/selftest.py"
+  python3 -m unittest discover -s "$ROOT/tools/coverage-scan/tests"
+  python3 "$ROOT/tools/coverage-ui-check/check.py" --selftest
 fi
 printf 'PASS\n'
