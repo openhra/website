@@ -38,7 +38,7 @@ for (const [path, source, rule] of [
 ]) {
   const [result] = await eslint.lintText(source, { filePath: path });
   assert(
-    result.errorCount > 0 &&
+    result.errorCount + result.warningCount > 0 &&
       result.messages.some((message) => message.ruleId === rule),
   );
 }
@@ -117,6 +117,18 @@ try {
     await mkdir(resolve(copyRoot, path, ".."), { recursive: true });
     await cp(resolve(packageRoot, path), resolve(copyRoot, path));
   }
+  runPython(
+    `import sys
+from pathlib import Path
+sys.path.insert(0, 'scripts')
+from public_paths import write_public_blame
+write_public_blame(Path(sys.argv[1]))`,
+    [copyRoot],
+  );
+  await cp(join(packageRoot, "node_modules"), join(copyRoot, "node_modules"), {
+    recursive: true,
+    verbatimSymlinks: true,
+  });
   const protectedBefore = await inventory(copyRoot);
   // Format only permitted source in the disposable tree. Exempt/legal bytes stay intact.
   for (const path of policy.files) {
@@ -205,6 +217,9 @@ m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
 m.reader_safety(Path(sys.argv[1]).read_text()); m.coverage_css(Path(sys.argv[2]).read_text())`,
     [join(scratch, "reader.js"), join(scratch, "style.css")],
   );
+  // Artifact audits require a tree without the tools used for validation.
+  await rm(join(copyRoot, "node_modules"), { recursive: true, force: true });
+  await rm(join(copyRoot, ".ruff_cache"), { recursive: true, force: true });
   runPython(
     `import sys
 from pathlib import Path

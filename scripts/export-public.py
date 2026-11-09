@@ -3,20 +3,20 @@
 
 import io
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import sys
 import tarfile
 import tempfile
+from pathlib import Path
 
-from public_paths import OWNER, OWNER_BYTES, public_paths
+from public_paths import OWNER, OWNER_BYTES, public_paths, write_public_blame
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def run(command):
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = subprocess.run(command, check=False, capture_output=True)
     if result.returncode:
         raise ValueError("required export command failed")
     return result.stdout
@@ -42,8 +42,8 @@ def destination(raw, repo):
         ancestor = ancestor.parent
     probe = subprocess.run(
         ["git", "-C", str(ancestor), "rev-parse", "--absolute-git-dir"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        check=False,
+        capture_output=True,
     )
     if probe.returncode == 0:
         raise ValueError("destination is inside a Git checkout")
@@ -84,6 +84,7 @@ def audit(tree, env):
             str(tree),
             "--artifact",
         ],
+        check=False,
         env=env,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -143,12 +144,24 @@ def export(raw):
                 # Git tracks executable bits, not local umasks or tar permissions.
                 member.mode = 0o755 if member.isdir() or member.mode & 0o111 else 0o644
             tar.extractall(tree)
+        # Private source revisions do not identify commits in extracted history.
+        write_public_blame(tree)
         audit(tree, env)
         expected = fingerprint(tree)
         check = work / "check"
         shutil.copytree(tree, check)
+        installed = subprocess.run(
+            [str(check / "scripts/install-tools.sh")],
+            check=False,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
+        if installed.returncode:
+            raise ValueError("isolated locked tool installation failed")
         result = subprocess.run(
             [str(check / "tools/gate.sh"), "--full"],
+            check=False,
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,

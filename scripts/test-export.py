@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Exercise the real exporter in disposable Git repositories (no network or remotes)."""
+"""Exercise the exporter in disposable repositories without touching remotes."""
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -12,7 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run(args, cwd=None, env=None, expected=None):
-    result = subprocess.run(args, cwd=cwd, env=env, capture_output=True, text=True)
+    result = subprocess.run(
+        args, check=False, cwd=cwd, env=env, capture_output=True, text=True
+    )
     if expected is None:
         assert result.returncode == 0, result.stdout + result.stderr
     else:
@@ -269,6 +272,18 @@ def main():
         actual = snapshot(dest)
         assert actual.pop(Path(OWNER))[0] == OWNER_BYTES
         expected = {Path(name): baseline[Path(name)] for name in public_paths(source)}
+        expected[Path(".git-blame-ignore-revs")] = baseline[
+            Path("scripts/public-blame-ignore-revs")
+        ]
+        path_policy = Path("scripts/public-paths.json")
+        mapped_policy = json.loads(baseline[path_policy][0])
+        mapped_policy["files"] = sorted(
+            set(mapped_policy["files"]) | {".git-blame-ignore-revs"}
+        )
+        expected[path_policy] = (
+            (json.dumps(mapped_policy, indent=2) + "\n").encode(),
+            baseline[path_policy][1],
+        )
         assert actual == expected, "artifact differs from committed public selection"
         assert snapshot(source) == baseline, "export changed source tree"
         assert not git(source, "status", "--porcelain"), (
@@ -279,7 +294,7 @@ def main():
             "work notes exported"
         )
         print(
-            "export positive: PASS (exact committed public files; private notes excluded; owned stale files removed)",
+            "export positive: PASS (exact public files and mapped blame metadata; private notes excluded; owned stale files removed)",
             flush=True,
         )
 
@@ -289,6 +304,28 @@ def main():
             ["python3", str(dest / "tools/check-neutral.py"), str(dest), "--artifact"],
             env=env,
         )
+
+        public_blame = dest / ".git-blame-ignore-revs"
+        mapped = public_blame.read_bytes()
+        public_blame.write_bytes(b"0" * 40 + b"\n")
+        run(
+            ["python3", str(dest / "tools/check-neutral.py"), str(dest), "--artifact"],
+            env=env,
+            expected="public blame revisions differ",
+        )
+        public_blame.write_bytes(mapped)
+        print("export negative: PASS (unmapped blame revision rejected)", flush=True)
+        template = dest / "scripts/public-blame-ignore-revs"
+        template.write_bytes(b"not-a-commit\n")
+        public_blame.write_bytes(template.read_bytes())
+        run(
+            ["python3", str(dest / "tools/check-neutral.py"), str(dest), "--artifact"],
+            env=env,
+            expected="invalid public blame revisions",
+        )
+        template.write_bytes(mapped)
+        public_blame.write_bytes(mapped)
+        print("export negative: PASS (invalid blame metadata rejected)", flush=True)
 
         # Installed tool files containing private paths are outside source audits.
         for directory in ("node_modules", ".venv"):
@@ -304,6 +341,7 @@ def main():
         )
         shutil.rmtree(dest / "node_modules")
         shutil.rmtree(dest / ".venv")
+        run([str(dest / "scripts/install-tools.sh")], env=env)
         output = run([str(dest / "tools/gate.sh"), "--full"], env=env)
         assert output.splitlines()[-1] == "PASS"
         assert snapshot(source) == baseline

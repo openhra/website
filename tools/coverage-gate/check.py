@@ -14,7 +14,7 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/coverage-scan"))
 from check import check_release
-from model import Invalid, VERSION, encoded, loads, require, safe_text, sha, timestamp
+from model import VERSION, Invalid, encoded, loads, require, safe_text, sha, timestamp
 
 
 def ui_check(root):
@@ -27,6 +27,7 @@ def ui_check(root):
         root.resolve() == ROOT
         and subprocess.run(
             ["git", "-C", str(root), "rev-parse", "--verify", "HEAD"],
+            check=False,
             capture_output=True,
         ).returncode
     ):
@@ -148,7 +149,7 @@ def selection_binding(root, release, index):
     )
     require(
         index["scanner"]["inputs_digest"]
-        == sha(encoded(dict(selection=selection, inputs=inputs))),
+        == sha(encoded({"selection": selection, "inputs": inputs})),
         "scanner: selected input digest mismatch",
     )
     expected_provenance = {
@@ -345,6 +346,7 @@ def committed_release(root, ref, dest):
             "--",
             release,
         ],
+        check=False,
         capture_output=True,
         text=True,
     )

@@ -8,9 +8,7 @@
       "report": "p6c_providers",
       "source": "federal_plans_2026",
       "state": "TX",
-      "unassessed_issuers": [
-        "92388"
-      ],
+      "unassessed_issuers": ["92388"],
       "year": 2026
     },
     {
@@ -21,9 +19,7 @@
       "report": "p6c_formulary",
       "source": "federal_plans_2026",
       "state": "TX",
-      "unassessed_issuers": [
-        "92388"
-      ],
+      "unassessed_issuers": ["92388"],
       "year": 2026
     },
     {

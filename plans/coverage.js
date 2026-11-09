@@ -379,19 +379,13 @@
       : `${r.numerator === null ? "Unknown" : r.numerator} / ${r.denominator} ${unit(layer)}`;
   }
   function fill(r) {
-    return r.status === "unknown"
-      ? "url(#coverage-unknown)"
-      : r.status === "quarantined"
-        ? "url(#coverage-quarantine)"
-        : r.percent_tenths === null || r.percent_tenths === 0
-          ? "white"
-          : r.percent_tenths < 250
-            ? "var(--teal-100)"
-            : r.percent_tenths < 500
-              ? "var(--teal-300)"
-              : r.percent_tenths < 750
-                ? "var(--teal-600)"
-                : "var(--teal-800)";
+    if (r.status === "unknown") return "url(#coverage-unknown)";
+    if (r.status === "quarantined") return "url(#coverage-quarantine)";
+    if (r.percent_tenths === null || r.percent_tenths === 0) return "white";
+    if (r.percent_tenths < 250) return "var(--teal-100)";
+    if (r.percent_tenths < 500) return "var(--teal-300)";
+    if (r.percent_tenths < 750) return "var(--teal-600)";
+    return "var(--teal-800)";
   }
   function link() {
     const url = new URL("/availability", location.origin);
@@ -577,7 +571,7 @@
       validateData(data, entry);
       if (id !== serial) return;
       paint(data);
-    } catch (error) {
+    } catch {
       if (id !== serial) return;
       wanted = current
         ? { layer: current.layer, year: current.year, state: $("state").value }

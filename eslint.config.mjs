@@ -26,7 +26,10 @@ export default defineConfig([
     files: ["**/*.{js,mjs,cjs}"],
     extends: [js.configs.recommended],
     languageOptions: { ecmaVersion: "latest" },
-    linterOptions: { reportUnusedDisableDirectives: "error" },
+    linterOptions: {
+      noInlineConfig: true,
+      reportUnusedDisableDirectives: "error",
+    },
     rules: { "no-nested-ternary": "error" },
   },
   {

@@ -57,3 +57,8 @@ openhra/brand/tokens.css
 
 # Functional exemptions: see DEVELOPMENT.md and check:format-budgets.
 plans/style.css
+
+# Workflow checks parse these JSON-form YAML files with the standard JSON parser.
+.github/workflows/ci.yml
+.github/workflows/edge-acceptance.yml
+.github/workflows/edge-watchdog.yml

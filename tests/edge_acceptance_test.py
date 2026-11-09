@@ -608,7 +608,9 @@ class AcceptanceTests(unittest.TestCase):
         self.assertEqual(fake.peak, 4 if expect_denial else 1)
         self.assertEqual([client.requests for client in clients], [8, 8])
         self.assertEqual(len(fake.tool_calls), 16)
-        self.assertEqual(len({call["arguments"]["query"] for call in fake.tool_calls}), 16)
+        self.assertEqual(
+            len({call["arguments"]["query"] for call in fake.tool_calls}), 16
+        )
         for call in fake.tool_calls:
             self.assertEqual(call["name"], "search")
             args = call["arguments"]
@@ -644,7 +646,9 @@ class AcceptanceTests(unittest.TestCase):
                 suite = probe.Suite(client, "macos", time.time() + 0.05)
                 reply = probe.Reply(status, {"retry-after": "60"}, body)
                 with mock.patch.object(client, "stream", return_value=(reply, None)):
-                    suite.check("synchronized four-call catalog rounds", suite.concurrency)
+                    suite.check(
+                        "synchronized four-call catalog rounds", suite.concurrency
+                    )
                 self.assertFalse(suite.sample_ok)
                 self.assertEqual(suite.denials, 0)
                 detail = suite.rows[0][2]

@@ -7,14 +7,10 @@
       "type": "object",
       "properties": {
         "schema_version": {
-          "enum": [
-            1
-          ]
+          "enum": [1]
         },
         "metric_version": {
-          "enum": [
-            "exchange-source-availability-v1"
-          ]
+          "enum": ["exchange-source-availability-v1"]
         },
         "as_of": {
           "type": "string",
@@ -25,15 +21,10 @@
           "format": "utc"
         },
         "scope": {
-          "enum": [
-            "published_exchange_inventory_all_products"
-          ]
+          "enum": ["published_exchange_inventory_all_products"]
         },
         "population": {
-          "enum": [
-            "separate_validated_runs",
-            "single_serving_snapshot"
-          ]
+          "enum": ["separate_validated_runs", "single_serving_snapshot"]
         },
         "state_codes": {
           "type": "array",
@@ -100,17 +91,10 @@
             "type": "object",
             "properties": {
               "layer": {
-                "enum": [
-                  "premiums",
-                  "providers",
-                  "prescriptions"
-                ]
+                "enum": ["premiums", "providers", "prescriptions"]
               },
               "year": {
-                "enum": [
-                  2026,
-                  2027
-                ]
+                "enum": [2026, 2027]
               },
               "path": {
                 "type": "string",
@@ -126,13 +110,7 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "layer",
-              "year",
-              "path",
-              "sha256",
-              "bytes"
-            ],
+            "required": ["layer", "year", "path", "sha256", "bytes"],
             "additionalProperties": false
           },
           "uniqueItems": true
@@ -153,10 +131,7 @@
                 "maxLength": 512
               },
               "vintage": {
-                "enum": [
-                  2026,
-                  2027
-                ]
+                "enum": [2026, 2027]
               },
               "retrieved_at": {
                 "type": "string",
@@ -167,13 +142,7 @@
                 "pattern": "^[0-9a-f]{64}$"
               }
             },
-            "required": [
-              "url",
-              "title",
-              "vintage",
-              "retrieved_at",
-              "sha256"
-            ],
+            "required": ["url", "title", "vintage", "retrieved_at", "sha256"],
             "additionalProperties": false
           }
         },
@@ -181,9 +150,7 @@
           "type": "object",
           "properties": {
             "version": {
-              "enum": [
-                "1.0.0"
-              ]
+              "enum": ["1.0.0"]
             },
             "source_commit": {
               "type": "string",
@@ -194,11 +161,7 @@
               "pattern": "^[0-9a-f]{64}$"
             }
           },
-          "required": [
-            "version",
-            "source_commit",
-            "inputs_digest"
-          ],
+          "required": ["version", "source_commit", "inputs_digest"],
           "additionalProperties": false
         }
       },
@@ -220,42 +183,26 @@
       "type": "object",
       "properties": {
         "schema_version": {
-          "enum": [
-            1
-          ]
+          "enum": [1]
         },
         "metric_version": {
-          "enum": [
-            "exchange-source-availability-v1"
-          ]
+          "enum": ["exchange-source-availability-v1"]
         },
         "as_of": {
           "type": "string",
           "format": "utc"
         },
         "layer": {
-          "enum": [
-            "premiums",
-            "providers",
-            "prescriptions"
-          ]
+          "enum": ["premiums", "providers", "prescriptions"]
         },
         "year": {
-          "enum": [
-            2026,
-            2027
-          ]
+          "enum": [2026, 2027]
         },
         "unit": {
-          "enum": [
-            "rate_rows",
-            "issuers"
-          ]
+          "enum": ["rate_rows", "issuers"]
         },
         "scope": {
-          "enum": [
-            "published_exchange_inventory_all_products"
-          ]
+          "enum": ["published_exchange_inventory_all_products"]
         },
         "states": {
           "type": "object",
@@ -486,31 +433,20 @@
       "type": "object",
       "properties": {
         "schema_version": {
-          "enum": [
-            1
-          ]
+          "enum": [1]
         },
         "metric_version": {
-          "enum": [
-            "exchange-source-availability-v1"
-          ]
+          "enum": ["exchange-source-availability-v1"]
         },
         "as_of": {
           "type": "string",
           "format": "utc"
         },
         "layer": {
-          "enum": [
-            "premiums",
-            "providers",
-            "prescriptions"
-          ]
+          "enum": ["premiums", "providers", "prescriptions"]
         },
         "year": {
-          "enum": [
-            2026,
-            2027
-          ]
+          "enum": [2026, 2027]
         },
         "inputs": {
           "type": "object",
@@ -584,12 +520,7 @@
           ]
         },
         "status": {
-          "enum": [
-            "measured",
-            "unknown",
-            "quarantined",
-            "not_applicable"
-          ]
+          "enum": ["measured", "unknown", "quarantined", "not_applicable"]
         },
         "counts": {
           "anyOf": [
@@ -713,11 +644,7 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "code",
-              "actor",
-              "count"
-            ],
+            "required": ["code", "actor", "count"],
             "additionalProperties": false
           },
           "uniqueItems": true
@@ -763,11 +690,7 @@
                   "uniqueItems": true
                 }
               },
-              "required": [
-                "path",
-                "sha256",
-                "input_ids"
-              ],
+              "required": ["path", "sha256", "input_ids"],
               "additionalProperties": false
             },
             {
@@ -908,17 +831,10 @@
           ]
         },
         "year": {
-          "enum": [
-            2026,
-            2027
-          ]
+          "enum": [2026, 2027]
         },
         "layer": {
-          "enum": [
-            "premiums",
-            "providers",
-            "prescriptions"
-          ]
+          "enum": ["premiums", "providers", "prescriptions"]
         },
         "observed_at": {
           "type": "string",
@@ -956,10 +872,7 @@
               "validation_status": {
                 "anyOf": [
                   {
-                    "enum": [
-                      "ACTIVE",
-                      "QUARANTINED"
-                    ]
+                    "enum": ["ACTIVE", "QUARANTINED"]
                   },
                   {
                     "type": "null"
@@ -1048,10 +961,7 @@
               "association_year": {
                 "anyOf": [
                   {
-                    "enum": [
-                      2026,
-                      2027
-                    ]
+                    "enum": [2026, 2027]
                   },
                   {
                     "type": "null"
@@ -1128,11 +1038,7 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "code",
-              "actor",
-              "count"
-            ],
+            "required": ["code", "actor", "count"],
             "additionalProperties": false
           },
           "uniqueItems": true
@@ -1177,12 +1083,7 @@
               ]
             },
             "status": {
-              "enum": [
-                "measured",
-                "unknown",
-                "quarantined",
-                "not_applicable"
-              ]
+              "enum": ["measured", "unknown", "quarantined", "not_applicable"]
             },
             "counts": {
               "anyOf": [
@@ -1365,17 +1266,10 @@
           ]
         },
         "year": {
-          "enum": [
-            2026,
-            2027
-          ]
+          "enum": [2026, 2027]
         },
         "layer": {
-          "enum": [
-            "premiums",
-            "providers",
-            "prescriptions"
-          ]
+          "enum": ["premiums", "providers", "prescriptions"]
         },
         "observed_at": {
           "type": "string",
@@ -1406,9 +1300,7 @@
                   "maximum": 9007199254740991
                 },
                 "mismatches": {
-                  "enum": [
-                    0
-                  ]
+                  "enum": [0]
                 },
                 "catalog_sha256": {
                   "type": "string",
@@ -1447,20 +1339,14 @@
                   "pattern": "^[0-9a-f]{64}$"
                 },
                 "basis": {
-                  "enum": [
-                    "active_catalog"
-                  ]
+                  "enum": ["active_catalog"]
                 },
                 "report_id": {
                   "type": "string",
                   "pattern": "^[a-z][a-z0-9_-]{0,39}$"
                 }
               },
-              "required": [
-                "catalog_sha256",
-                "basis",
-                "report_id"
-              ],
+              "required": ["catalog_sha256", "basis", "report_id"],
               "additionalProperties": false
             },
             {

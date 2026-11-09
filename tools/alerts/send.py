@@ -6,12 +6,12 @@ import hashlib
 import hmac
 import json
 import os
-from pathlib import Path
 import sys
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 MAX_BYTES = 8192
 

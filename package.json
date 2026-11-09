@@ -7,8 +7,8 @@
   "packageManager": "npm@10.9.10",
   "scripts": {
     "format": "prettier --ignore-path .prettierignore --write . && python3 -m ruff format .",
-    "format:check": "prettier --ignore-path .prettierignore --check . && python3 -m ruff format --check .",
-    "lint": "eslint . --max-warnings 0 && python3 -m ruff check .",
+    "format:check": "prettier --ignore-path .prettierignore --check . && python3 -m ruff format --check --no-cache .",
+    "lint": "eslint . --max-warnings 0 && python3 scripts/check-lint-policy.py && python3 -m ruff check --no-cache --ignore-noqa .",
     "check:lint-setup": "node scripts/lint-setup-selftest.mjs",
     "format:inventory": "node scripts/format-inventory.mjs",
     "check:format-budgets": "node scripts/format-budgets.mjs"

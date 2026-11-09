@@ -5,9 +5,9 @@ import argparse
 import copy
 import json
 import os
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 JOBS = {"linux": "ubuntu-24.04", "macos": "macos-15", "python39": "ubuntu-24.04"}
@@ -148,7 +148,19 @@ def selftest(workflow):
             pass
         else:
             raise ValueError("absent job result was accepted")
-    print("CI contract selftest: PASS (missing jobs and non-success results rejected)")
+    ci = (ROOT / "scripts/ci.sh").read_text()
+    require(
+        "scripts/install-tools.sh" in ci, "CI must install locked development tools"
+    )
+    installer = (ROOT / "scripts/install-tools.sh").read_text()
+    require("npm ci --ignore-scripts" in installer, "CI must use the npm lockfile")
+    require(
+        "--require-hashes -r requirements-dev.txt" in installer,
+        "CI must use hashed Python requirements",
+    )
+    print(
+        "CI contract selftest: PASS (required jobs, results and locked tool installs)"
+    )
 
 
 if __name__ == "__main__":

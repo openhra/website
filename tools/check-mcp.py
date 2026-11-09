@@ -14,7 +14,7 @@ REPO = "https://github.com/openhra/openplans"
 NO_RELEASE = "No tagged release yet"
 # Owner rule: public pages never compare OpenPlans with another service.
 FORBIDDEN_COMPARISON = re.compile(
-    r"commercial[\s_-]+reference|reference[\s_-]+api\b|parity\s+with", re.I
+    r"commercial[\s_-]+reference|reference[\s_-]+api\b|parity\s+with", re.IGNORECASE
 )
 TOOLS = {
     "search",
@@ -96,7 +96,7 @@ def visible(node):
             or re.search(
                 r"display\s*:\s*none|visibility\s*:\s*hidden",
                 node.attrs.get("style", ""),
-                re.I,
+                re.IGNORECASE,
             )
         ):
             return False
@@ -177,10 +177,12 @@ def check_page(source, site):
         require(
             visible(status)
             and status.find(
-                lambda n: n.tag == "a"
-                and n.attrs.get("href") == REPO
-                and n.text() == NO_RELEASE
-                and visible(n)
+                lambda n: (
+                    n.tag == "a"
+                    and n.attrs.get("href") == REPO
+                    and n.text() == NO_RELEASE
+                    and visible(n)
+                )
             ),
             "release status must say No tagged release yet and link to the repository",
         )
@@ -317,10 +319,12 @@ def check_page(source, site):
                 for label in ["code", "docs", "issues", "releases", NO_RELEASE.lower()]
             )
             and directory.find(
-                lambda n: n.tag == "a"
-                and n.attrs.get("href") == REPO
-                and NO_RELEASE in n.text()
-                and visible(n)
+                lambda n: (
+                    n.tag == "a"
+                    and n.attrs.get("href") == REPO
+                    and NO_RELEASE in n.text()
+                    and visible(n)
+                )
             ),
             "repository contents/release status missing",
         )
@@ -603,7 +607,9 @@ def selftest(root):
                     lambda s, claim=claim: s.replace(
                         "Coverage is limited.", "Coverage is limited. " + claim + "."
                     ),
-                    "GA claim" if claim == "GA" else (
+                    "GA claim"
+                    if claim == "GA"
+                    else (
                         "release claimed" if claim == "released" else "release claim"
                     ),
                 )

@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 from pathlib import Path, PurePosixPath
 
 OWNER = ".website-export-owned"
@@ -70,6 +71,28 @@ def selected_files(root):
         yield path
 
 
+def public_blame_bytes(root):
+    content = (root / "scripts/public-blame-ignore-revs").read_bytes()
+    revisions = [
+        line for line in content.splitlines() if line and not line.startswith(b"#")
+    ]
+    if not revisions or any(
+        re.fullmatch(rb"[0-9a-f]{40}", line) is None for line in revisions
+    ):
+        raise ValueError("invalid public blame revisions")
+    return content
+
+
+def write_public_blame(root):
+    target = root / ".git-blame-ignore-revs"
+    target.write_bytes(public_blame_bytes(root))
+    target.chmod(0o644)
+    path = root / "scripts/public-paths.json"
+    policy = json.loads(path.read_text())
+    policy["files"] = sorted(set(policy["files"]) | {".git-blame-ignore-revs"})
+    path.write_text(json.dumps(policy, indent=2) + "\n")
+
+
 def artifact_files(root):
     expected = set(public_paths(root))
     directories = {
@@ -95,4 +118,8 @@ def artifact_files(root):
                 actual.add(relative)
     if actual != expected:
         raise ValueError("required public file missing")
+    if ".git-blame-ignore-revs" in expected and (
+        (root / ".git-blame-ignore-revs").read_bytes() != public_blame_bytes(root)
+    ):
+        raise ValueError("public blame revisions differ from mapped metadata")
     return list(selected_files(root))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline production markup/data/geometry parity, with isolated negative controls."""
+"""Check production markup, data and geometry with isolated negative controls."""
 
 import argparse
 import json
@@ -9,8 +9,8 @@ import subprocess
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
-from pathlib import Path
 from html.parser import HTMLParser
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools/coverage-scan"))
@@ -63,7 +63,7 @@ def coverage_css(css):
         "coverage CSS budget"
     )
     rules = re.findall(
-        r"(?m)([^{}]+)\{([^{}]*)\}", re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+        r"(?m)([^{}]+)\{([^{}]*)\}", re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
     )
     backgrounds = []
     for selector, body in rules:
@@ -80,7 +80,7 @@ MCP_COPY_SCRIPT = '<script src="/mcp-copy.js" defer></script>'
 
 
 def scripts_with_mcp(source):
-    scripts = re.findall(r"<script\b[^>]*>.*?</script>", source, re.S)
+    scripts = re.findall(r"<script\b[^>]*>.*?</script>", source, re.DOTALL)
     if MCP_COPY_SCRIPT not in scripts:
         scripts.insert(1, MCP_COPY_SCRIPT)
     return scripts
@@ -88,9 +88,9 @@ def scripts_with_mcp(source):
 
 def check_scripts(source, baseline, diagnostic="page scripts changed"):
     # Preserve every existing tag and its order; allow only the exact local addition.
-    assert re.findall(r"<script\b[^>]*>.*?</script>", source, re.S) == scripts_with_mcp(
-        baseline
-    ), diagnostic
+    assert re.findall(
+        r"<script\b[^>]*>.*?</script>", source, re.DOTALL
+    ) == scripts_with_mcp(baseline), diagnostic
 
 
 def script_negatives(root):
@@ -161,7 +161,9 @@ def check(root):
         for name in pages:
             page = (root / "plans" / name).read_text()
             saved = re.findall(
-                r'<div\b[^>]*\bid=["\']coverage-table["\'][^>]*>(.*?)</div>', page, re.S
+                r'<div\b[^>]*\bid=["\']coverage-table["\'][^>]*>(.*?)</div>',
+                page,
+                re.DOTALL,
             )
             assert (
                 len(saved) == 1 and Markup(saved[0]).events == Markup(fragment).events
@@ -273,7 +275,7 @@ def check(root):
     ), "Census geometry differs"
     assert len(actual.findall(".//s:path[@data-state]", ns)) == 51
     for source in (page, full):
-        embedded = ET.fromstring(re.search(r"<svg\b.*?</svg>", source, re.S)[0])
+        embedded = ET.fromstring(re.search(r"<svg\b.*?</svg>", source, re.DOTALL)[0])
         assert geometry(embedded) == geometry(actual), "embedded map differs"
         for shape in embedded.findall(".//s:path[@data-state]", ns):
             record = dataset["states"][shape.attrib["data-state"]]
@@ -299,6 +301,7 @@ def check(root):
         root.resolve() == ROOT
         and subprocess.run(
             ["git", "-C", str(ROOT), "rev-parse", "--verify", "HEAD"],
+            check=False,
             capture_output=True,
         ).returncode
         == 0
@@ -317,6 +320,7 @@ def check(root):
                     "-e",
                     "main:" + prefix + "plans/index.html",
                 ],
+                check=False,
                 capture_output=True,
             ).returncode
             == 0
@@ -336,8 +340,8 @@ def check(root):
             r"<p>This product uses publicly available data.*?</p>",
         )
         for pattern in protected_sections:
-            before = re.search(pattern, baseline_page, re.S)
-            after = re.search(pattern, page, re.S)
+            before = re.search(pattern, baseline_page, re.DOTALL)
+            after = re.search(pattern, page, re.DOTALL)
             assert before and after and before[0] == after[0], (
                 "protected page block changed: " + pattern
             )
@@ -350,8 +354,8 @@ def check(root):
             r"<footer>.*?</footer>",
         ):
             assert (
-                re.search(pattern, organisation, re.S)[0]
-                == re.search(pattern, original_organisation, re.S)[0]
+                re.search(pattern, organisation, re.DOTALL)[0]
+                == re.search(pattern, original_organisation, re.DOTALL)[0]
             ), "organisation protected block changed"
         check_scripts(
             organisation, original_organisation, "organisation scripts changed"
@@ -374,6 +378,7 @@ def check(root):
 
     result = subprocess.run(
         ["node", str(Path(__file__).with_name("selection-test.mjs")), str(root)],
+        check=False,
         capture_output=True,
         text=True,
     )
@@ -387,7 +392,7 @@ def negatives(root=ROOT):
             r'<tr>\s*<th\s+scope=["\']row["\']>Alaska</th>.*?</tr>\s*',
             "",
             s,
-            flags=re.S,
+            flags=re.DOTALL,
         ),
         "default value changed": lambda s: s.replace(
             "203592/203592 (100.0%)", "203591/203592 (100.0%)"

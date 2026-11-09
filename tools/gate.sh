@@ -23,6 +23,11 @@ if [ "$FULL" -eq 1 ]; then
   export OPENPLANS_DENYLIST_FILE
 fi
 
+if [ -x "$ROOT/.venv/bin/python3" ]; then
+  PATH="$ROOT/.venv/bin:$PATH"
+  export PATH
+fi
+
 if ! python3 - "$ROOT" <<'PY'
 import html.parser
 import re
@@ -142,6 +147,15 @@ fi
 python3 "$ROOT/tools/check-private-paths.py" "$ROOT"
 python3 "$ROOT/tools/check-neutral.py" "$ROOT"
 python3 "$ROOT/tools/check-mcp.py" "$ROOT"
+
+if [ "$FULL" -eq 1 ]; then
+  (
+    cd "$ROOT"
+    npm run format:check
+    npm run lint
+    node scripts/lint-selftest.mjs
+  )
+fi
 
 node --test "$ROOT/tests/alerts.test.mjs"
 python3 -m unittest discover -s "$ROOT/tests" -p 'test_alert_sender.py'

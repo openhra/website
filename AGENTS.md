@@ -19,3 +19,14 @@ Agent-neutral rules for Claude Code, Codex or a person. Claude reads this throug
   `vercel.json` as strict as it is.
 - **Facts only.** Copy states only what the projects actually do; no invented users, numbers or
   claims.
+
+## Code style
+
+Use names that explain the value or action. Keep functions focused, and use
+comments to explain constraints or decisions that the code cannot express.
+Prefer an early return or named helper to a nested conditional expression.
+
+Run `npm run format:check` and `npm run lint` before committing. The full gate
+runs both checks. Keep browser globals out of API handlers and Node globals out
+of browser scripts. Fix lint findings in the code; inline lint exceptions fail
+the gate. Preserve the generated and legal files listed in `.prettierignore`.

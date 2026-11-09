@@ -18,7 +18,7 @@ def check(root, artifact=False):
     if policy:
         try:
             terms = [
-                re.compile(line.strip(), re.I)
+                re.compile(line.strip(), re.IGNORECASE)
                 for line in Path(policy).read_text().splitlines()
                 if line.strip() and not line.lstrip().startswith("#")
             ]
@@ -27,8 +27,8 @@ def check(root, artifact=False):
         if not terms:
             raise ValueError("publication denylist must contain at least one pattern")
     # Split the host path markers so this checker contains no forbidden literal.
-    private = re.compile("/" + r"(?:Volumes|Users)/", re.I)
-    email = re.compile(r"[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}", re.I)
+    private = re.compile("/" + r"(?:Volumes|Users)/", re.IGNORECASE)
+    email = re.compile(r"[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}", re.IGNORECASE)
     count = 0
     files = artifact_files(root) if artifact else selected_files(root)
     for path in files:

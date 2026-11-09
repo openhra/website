@@ -12,7 +12,59 @@ METRIC = "exchange-source-availability-v1"
 SCOPE = "published_exchange_inventory_all_products"
 STATES = dict(
     zip(
-        "AK AL AR AZ CA CO CT DC DE FL GA HI IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA RI SC SD TN TX UT VA VT WA WI WV WY".split(),
+        [
+            "AK",
+            "AL",
+            "AR",
+            "AZ",
+            "CA",
+            "CO",
+            "CT",
+            "DC",
+            "DE",
+            "FL",
+            "GA",
+            "HI",
+            "IA",
+            "ID",
+            "IL",
+            "IN",
+            "KS",
+            "KY",
+            "LA",
+            "MA",
+            "MD",
+            "ME",
+            "MI",
+            "MN",
+            "MO",
+            "MS",
+            "MT",
+            "NC",
+            "ND",
+            "NE",
+            "NH",
+            "NJ",
+            "NM",
+            "NV",
+            "NY",
+            "OH",
+            "OK",
+            "OR",
+            "PA",
+            "RI",
+            "SC",
+            "SD",
+            "TN",
+            "TX",
+            "UT",
+            "VA",
+            "VT",
+            "WA",
+            "WI",
+            "WV",
+            "WY",
+        ],
         [
             "Alaska",
             "Alabama",
@@ -226,26 +278,26 @@ def safe_text(value):
             not re.search(
                 r"[\w.+%-]+@[\w.-]+\.[A-Za-z]{2,}|(?:/(?:Volumes|Users|home|tmp)/|[A-Za-z]:\\)|(?:postgres(?:ql)?|mysql|mongodb)://|(?:api[_-]?key|password|secret|token)=",
                 value,
-                re.I,
+                re.IGNORECASE,
             ),
             "privacy: private path, address or secret",
         )
 
 
 def blank_state(reason="denominator_unverified"):
-    return dict(
-        numerator=None,
-        denominator=None,
-        percent_tenths=None,
-        status="unknown",
-        counts=None,
-        reason_codes=[reason],
-        warnings=[],
-        observed_at=None,
-        provenance_ids=[],
-        evidence=None,
-        serving_basis="unverified",
-    )
+    return {
+        "numerator": None,
+        "denominator": None,
+        "percent_tenths": None,
+        "status": "unknown",
+        "counts": None,
+        "reason_codes": [reason],
+        "warnings": [],
+        "observed_at": None,
+        "provenance_ids": [],
+        "evidence": None,
+        "serving_basis": "unverified",
+    }
 
 
 def issuer_result(roster, assessed):
@@ -255,25 +307,25 @@ def issuer_result(roster, assessed):
         counts[row["classification"]] += 1
     d = len(roster)
     if not d:
-        return dict(
-            numerator=None,
-            denominator=0,
-            percent_tenths=None,
-            status="not_applicable",
-            counts=counts,
-            reason_codes=["inventory_empty"],
-        )
+        return {
+            "numerator": None,
+            "denominator": 0,
+            "percent_tenths": None,
+            "status": "not_applicable",
+            "counts": counts,
+            "reason_codes": ["inventory_empty"],
+        }
     n = counts["active_complete"] + counts["active_partial"] if assessed else None
     status = (
         "unknown"
         if n is None
         else ("quarantined" if counts["quarantined"] == d else "measured")
     )
-    return dict(
-        numerator=n,
-        denominator=d,
-        percent_tenths=percentage(n, d) if n is not None else None,
-        status=status,
-        counts=counts,
-        reason_codes=[] if assessed else ["report_absent"],
-    )
+    return {
+        "numerator": n,
+        "denominator": d,
+        "percent_tenths": percentage(n, d) if n is not None else None,
+        "status": status,
+        "counts": counts,
+        "reason_codes": [] if assessed else ["report_absent"],
+    }

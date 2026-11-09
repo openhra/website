@@ -16,7 +16,7 @@ sys.path.insert(0, str(TOOLS))
 from check import check_record, check_release, check_scope, schemas, validate
 from inputs import Bundle, inventory, relative_file, sbe_declaration
 from model import Invalid, encoded, loads, percentage, sha, timestamp
-from scan import publish, release, table
+from scan import publish, release
 
 FIXTURE = json.loads((Path(__file__).parent / "fixtures/scopes.json").read_text())
 AS_OF = FIXTURE["as_of"]
@@ -27,15 +27,15 @@ class Evidence:
 
     def __init__(self, root):
         self.root = root
-        self.selection = dict(
-            schema_version=1,
-            source_commit="a" * 40,
-            population="separate_validated_runs",
-            sources={},
-            reports={},
-            premium_scopes=[],
-            issuer_scopes=[],
-        )
+        self.selection = {
+            "schema_version": 1,
+            "source_commit": "a" * 40,
+            "population": "separate_validated_runs",
+            "sources": {},
+            "reports": {},
+            "premium_scopes": [],
+            "issuer_scopes": [],
+        }
         for scope in FIXTURE["scopes"]:
             state = scope["state"]
             ids = [str(10000 + n) for n in range(scope["denominator"])]
@@ -53,63 +53,63 @@ class Evidence:
                     is_active = completeness != "unknown"
                     snapshot = f"{'provider' if kind == 'provider' else 'formulary'}:{i}:2026:{state}:fixture"
                     rows.append(
-                        dict(
-                            issuer=i,
-                            state=state,
-                            year=2026,
-                            snapshot_id=snapshot,
-                            status="ACTIVE" if is_active else "QUARANTINED",
-                            completeness=completeness,
-                            edges=2 if is_active else 0,
-                            expected_children=1,
-                            complete_children=1 if is_active else 0,
-                            reason="catalog_not_available"
+                        {
+                            "issuer": i,
+                            "state": state,
+                            "year": 2026,
+                            "snapshot_id": snapshot,
+                            "status": "ACTIVE" if is_active else "QUARANTINED",
+                            "completeness": completeness,
+                            "edges": 2 if is_active else 0,
+                            "expected_children": 1,
+                            "complete_children": 1 if is_active else 0,
+                            "reason": "catalog_not_available"
                             if state == "GA"
                             else "index_connect_timeout",
-                        )
+                        }
                     )
                     manifest.append(
-                        dict(
-                            issuer_id=i,
-                            state=state,
-                            plan_year=2026,
-                            kind=kind,
-                            snapshot_id=snapshot,
-                            status=completeness,
-                            reason=rows[-1]["reason"],
-                            validation_state=rows[-1]["status"],
-                        )
+                        {
+                            "issuer_id": i,
+                            "state": state,
+                            "plan_year": 2026,
+                            "kind": kind,
+                            "snapshot_id": snapshot,
+                            "status": completeness,
+                            "reason": rows[-1]["reason"],
+                            "validation_state": rows[-1]["status"],
+                        }
                     )
                     if is_active:
                         active.append(
-                            dict(issuer_id=i, kind=kind, snapshot_id=snapshot)
+                            {"issuer_id": i, "kind": kind, "snapshot_id": snapshot}
                         )
                 rid = state.lower() + "_" + layer
                 aid = rid + "_audit"
                 self.report(
                     rid,
-                    dict(
-                        state=state,
-                        year=2026,
-                        kind="providers" if layer == "providers" else "formulary",
-                        issuers=rows,
-                        running=False,
-                    ),
+                    {
+                        "state": state,
+                        "year": 2026,
+                        "kind": "providers" if layer == "providers" else "formulary",
+                        "issuers": rows,
+                        "running": False,
+                    },
                     "issuer-v1",
                 )
-                self.report(aid, dict(manifest=manifest, active=active), "audit-v1")
+                self.report(aid, {"manifest": manifest, "active": active}, "audit-v1")
                 self.selection["issuer_scopes"].append(
-                    dict(
-                        state=state,
-                        year=2026,
-                        source=state.lower(),
-                        plan_member="plans.csv",
-                        layer=layer,
-                        report=rid,
-                        audit=aid,
-                        observed_at=AS_OF,
-                        unassessed_issuers=ids[-unknown:] if unknown else [],
-                    )
+                    {
+                        "state": state,
+                        "year": 2026,
+                        "source": state.lower(),
+                        "plan_member": "plans.csv",
+                        "layer": layer,
+                        "report": rid,
+                        "audit": aid,
+                        "observed_at": AS_OF,
+                        "unassessed_issuers": ids[-unknown:] if unknown else [],
+                    }
                 )
 
     def source(self, state, ids, year=2026):
@@ -125,22 +125,25 @@ class Evidence:
             z.writestr("plans.csv", out.getvalue())
             z.writestr("rates.csv", out.getvalue())
         sid = state.lower()
-        self.selection["sources"][sid] = dict(
-            path=path.name,
-            sha256=sha(path.read_bytes()),
-            url=f"https://download.cms.gov/marketplace-puf/{year}/{sid}-fixture.zip",
-            title="Public fixture",
-            vintage=year,
-            retrieved_at=AS_OF,
-            members=[dict(name="plans.csv", kind="plans")],
-        )
+        self.selection["sources"][sid] = {
+            "path": path.name,
+            "sha256": sha(path.read_bytes()),
+            "url": f"https://download.cms.gov/marketplace-puf/{year}/{sid}-fixture.zip",
+            "title": "Public fixture",
+            "vintage": year,
+            "retrieved_at": AS_OF,
+            "members": [{"name": "plans.csv", "kind": "plans"}],
+        }
 
     def report(self, rid, data, fmt):
         path = self.root / (rid + ".json")
         path.write_bytes(encoded(data))
-        self.selection["reports"][rid] = dict(
-            path=path.name, sha256=sha(path.read_bytes()), format=fmt, finalized=True
-        )
+        self.selection["reports"][rid] = {
+            "path": path.name,
+            "sha256": sha(path.read_bytes()),
+            "format": fmt,
+            "finalized": True,
+        }
 
     def mutate_report(self, rid, edit):
         spec = self.selection["reports"][rid]
@@ -158,56 +161,68 @@ class Evidence:
         self.source(state, ids, year)
         sid = state.lower()
         self.selection["sources"][sid]["members"].append(
-            dict(name="rates.csv", kind="rates")
+            {"name": "rates.csv", "kind": "rates"}
         )
-        row = dict(
-            state=state,
-            year=year,
-            generated_at=AS_OF,
-            passed=True,
-            premiums=dict(
-                passed=True, mismatch_count=0, mismatches=[], raw_rows=2, stored_rows=2
-            ),
-            base_ids=dict(
-                passed=True, actual=2, expected=2, only_actual=[], only_expected=[]
-            ),
-            variant_ids=dict(
-                passed=True, actual=2, expected=2, only_actual=[], only_expected=[]
-            ),
-            import_id=f"puf-{year}-{state}-fixture",
-        )
+        row = {
+            "state": state,
+            "year": year,
+            "generated_at": AS_OF,
+            "passed": True,
+            "premiums": {
+                "passed": True,
+                "mismatch_count": 0,
+                "mismatches": [],
+                "raw_rows": 2,
+                "stored_rows": 2,
+            },
+            "base_ids": {
+                "passed": True,
+                "actual": 2,
+                "expected": 2,
+                "only_actual": [],
+                "only_expected": [],
+            },
+            "variant_ids": {
+                "passed": True,
+                "actual": 2,
+                "expected": 2,
+                "only_actual": [],
+                "only_expected": [],
+            },
+            "import_id": f"puf-{year}-{state}-fixture",
+        }
         rid = sid + "_premium"
-        self.report(rid, dict(year=year, passed=True, results=[row]), "federal-v1")
+        self.report(rid, {"year": year, "passed": True, "results": [row]}, "federal-v1")
         active_id = sid + "_serving"
         if serving:
             self.report(
                 active_id,
-                dict(
-                    schema_version=1,
-                    catalogs=[
-                        dict(
-                            state=state,
-                            year=year,
-                            import_id=row["import_id"],
-                            status="ACTIVE",
-                            source_sha256=self.selection["sources"][sid]["sha256"],
-                            observed_at=AS_OF,
-                        )
+                {
+                    "schema_version": 1,
+                    "catalogs": [
+                        {
+                            "state": state,
+                            "year": year,
+                            "import_id": row["import_id"],
+                            "status": "ACTIVE",
+                            "source_sha256": self.selection["sources"][sid]["sha256"],
+                            "observed_at": AS_OF,
+                        }
                     ],
-                ),
+                },
                 "serving-v1",
             )
-        spec = dict(
-            state=state,
-            year=year,
-            source=sid,
-            plan_source=sid,
-            rate_member="rates.csv",
-            plan_member="plans.csv",
-            report=rid,
-            serving_report=active_id if serving else None,
-            observed_at=AS_OF,
-        )
+        spec = {
+            "state": state,
+            "year": year,
+            "source": sid,
+            "plan_source": sid,
+            "rate_member": "rates.csv",
+            "plan_member": "plans.csv",
+            "report": rid,
+            "serving_report": active_id if serving else None,
+            "observed_at": AS_OF,
+        }
         self.selection["premium_scopes"].append(spec)
         return spec
 
@@ -401,7 +416,8 @@ class ScannerTests(unittest.TestCase):
         r = data["states"]["TX"]
         self.assertEqual(r["numerator"], 14)
         self.assertIn(
-            dict(code="failed_refresh", actor="undetermined", count=1), r["warnings"]
+            {"code": "failed_refresh", "actor": "undetermined", "count": 1},
+            r["warnings"],
         )
 
     def test_absent_report_is_unknown_not_zero(self):
@@ -438,7 +454,8 @@ class ScannerTests(unittest.TestCase):
         self.assertIsNone(scope["serving"])
         self.assertEqual(record["denominator"], 2)
         self.assertEqual(
-            record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0)
+            record["counts"],
+            {"verified": 0, "quarantined": 0, "unknown": 2, "not_imported": 0},
         )
         self.assertEqual(record["status"], "unknown")
         self.assertEqual(record["serving_basis"], "unverified")
@@ -450,7 +467,7 @@ class ScannerTests(unittest.TestCase):
             numerator=2,
             percent_tenths=1000,
             status="measured",
-            counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
+            counts={"verified": 2, "quarantined": 0, "unknown": 0, "not_imported": 0},
             reason_codes=[],
             serving_basis="active_catalog",
         )
@@ -543,7 +560,8 @@ class ScannerTests(unittest.TestCase):
         self.assertIsNone(scope["serving"])
         self.assertEqual(record["denominator"], 2)
         self.assertEqual(
-            record["counts"], dict(verified=0, quarantined=0, unknown=2, not_imported=0)
+            record["counts"],
+            {"verified": 0, "quarantined": 0, "unknown": 2, "not_imported": 0},
         )
         self.assertEqual(record["status"], "unknown")
         self.assertEqual(record["reason_codes"], ["serving_evidence_absent"])
@@ -553,7 +571,7 @@ class ScannerTests(unittest.TestCase):
             numerator=2,
             percent_tenths=1000,
             status="measured",
-            counts=dict(verified=2, quarantined=0, unknown=0, not_imported=0),
+            counts={"verified": 2, "quarantined": 0, "unknown": 0, "not_imported": 0},
             reason_codes=[],
             serving_basis="active_catalog",
         )
@@ -571,14 +589,14 @@ class ScannerTests(unittest.TestCase):
             )
 
     def test_2027_never_borrows_reviewed_2026_pointer(self):
-        spec, digest = self.p6d_pointer_fixture(year=2027, state="AK")
+        _spec, digest = self.p6d_pointer_fixture(year=2027, state="AK")
         self.e.mutate_report("p6d_pointer", lambda r: r.update(year=2026))
         old_digest = self.e.selection["reports"]["p6d_pointer"]["sha256"]
-        with patch("inputs.P6D_POINTER_REPORTS", {2026: old_digest, 2027: digest}):
-            with self.assertRaisesRegex(
-                Invalid, "pointer/reconciliation artifact mismatch"
-            ):
-                self.build()
+        with (
+            patch("inputs.P6D_POINTER_REPORTS", {2026: old_digest, 2027: digest}),
+            self.assertRaisesRegex(Invalid, "pointer/reconciliation artifact mismatch"),
+        ):
+            self.build()
 
     def test_unreviewed_2027_pointer_is_rejected(self):
         self.p6d_pointer_fixture(year=2027, state="AK")
@@ -639,7 +657,7 @@ class ScannerTests(unittest.TestCase):
             self.e.bundle()
 
     def test_release_tampering_and_failed_publication_preserves_snapshot(self):
-        files, fragment = self.build()
+        files, _fragment = self.build()
         target = self.base / "output"
         publish(target, files)
         old = (target / "index.json").read_bytes()
@@ -821,7 +839,27 @@ class ScannerTests(unittest.TestCase):
             inventory(archive, "plans.csv", 2026, "plans")
 
     def test_serving_declaration_checks_actual_state_membership(self):
-        states = "CA CO CT DC GA ID IL KY MA MD ME MN NJ NM NV PA RI VA WA".split()
+        states = [
+            "CA",
+            "CO",
+            "CT",
+            "DC",
+            "GA",
+            "ID",
+            "IL",
+            "KY",
+            "MA",
+            "MD",
+            "ME",
+            "MN",
+            "NJ",
+            "NM",
+            "NV",
+            "PA",
+            "RI",
+            "VA",
+            "WA",
+        ]
         text = "Nineteen individual-exchange state catalogs serve. Oregon is SHOP-only. NY/VT bundles are validated supplemental.\n"
         for state in states + ["NY", "VT", "OR"]:
             basis = (
@@ -887,6 +925,7 @@ print('boundary: PASS')
                 str(self.root),
                 str(self.base / "output"),
             ],
+            check=False,
             capture_output=True,
             text=True,
         )

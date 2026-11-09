@@ -13,13 +13,13 @@ from pathlib import Path
 
 from inputs import Bundle
 from model import (
-    Invalid,
     LAYERS,
     METRIC,
     RATE_BUCKETS,
     SCOPE,
     STATES,
     VERSION,
+    Invalid,
     blank_state,
     encoded,
     loads,
@@ -106,15 +106,15 @@ def release(bundle, scopes, as_of, generated_at):
                 key=lambda s: s["state"],
             )
             input_ids = sorted({i for s in selected for i in s["input_ids"]})
-            ledger = dict(
-                schema_version=1,
-                metric_version=METRIC,
-                as_of=as_of,
-                layer=layer,
-                year=y,
-                inputs={i: bundle.input_hashes[i] for i in input_ids},
-                scopes={s["state"]: s for s in selected},
-            )
+            ledger = {
+                "schema_version": 1,
+                "metric_version": METRIC,
+                "as_of": as_of,
+                "layer": layer,
+                "year": y,
+                "inputs": {i: bundle.input_hashes[i] for i in input_ids},
+                "scopes": {s["state"]: s for s in selected},
+            }
             ledger_bytes = encoded(ledger)
             ledger_hash = sha(ledger_bytes)
             ledger_path = "evidence/" + ledger_hash + ".json"
@@ -157,54 +157,54 @@ def release(bundle, scopes, as_of, generated_at):
                         serving_basis="active_catalog" if verified else "unverified",
                     )
                     r["counts"]["verified" if verified else "unknown"] = d
-                r["evidence"] = dict(
-                    path=ledger_path,
-                    sha256=ledger_hash,
-                    input_ids=sorted(s["input_ids"]),
-                )
-            data = dict(
-                schema_version=1,
-                metric_version=METRIC,
-                as_of=as_of,
-                layer=layer,
-                year=y,
-                unit="rate_rows" if layer == "premiums" else "issuers",
-                scope=SCOPE,
-                states=records,
-            )
+                r["evidence"] = {
+                    "path": ledger_path,
+                    "sha256": ledger_hash,
+                    "input_ids": sorted(s["input_ids"]),
+                }
+            data = {
+                "schema_version": 1,
+                "metric_version": METRIC,
+                "as_of": as_of,
+                "layer": layer,
+                "year": y,
+                "unit": "rate_rows" if layer == "premiums" else "issuers",
+                "scope": SCOPE,
+                "states": records,
+            }
             path = f"{layer}-{y}.json"
             content = encoded(data)
             files[path] = content
             datasets.append(
-                dict(
-                    layer=layer,
-                    year=y,
-                    path=path,
-                    sha256=sha(content),
-                    bytes=len(content),
-                )
+                {
+                    "layer": layer,
+                    "year": y,
+                    "path": path,
+                    "sha256": sha(content),
+                    "bytes": len(content),
+                }
             )
             if layer == "providers" and y == 2026:
                 fragment = table(data)
     datasets.sort(key=lambda d: (d["year"], d["layer"]))
-    index = dict(
-        schema_version=1,
-        metric_version=METRIC,
-        as_of=as_of,
-        generated_at=generated_at,
-        scope=SCOPE,
-        population=bundle.selection["population"],
-        state_codes=list(STATES),
-        datasets=datasets,
-        provenance=bundle.provenance,
-        scanner=dict(
-            version=VERSION,
-            source_commit=bundle.selection["source_commit"],
-            inputs_digest=sha(
-                encoded(dict(selection=bundle.selection, inputs=bundle.input_hashes))
+    index = {
+        "schema_version": 1,
+        "metric_version": METRIC,
+        "as_of": as_of,
+        "generated_at": generated_at,
+        "scope": SCOPE,
+        "population": bundle.selection["population"],
+        "state_codes": list(STATES),
+        "datasets": datasets,
+        "provenance": bundle.provenance,
+        "scanner": {
+            "version": VERSION,
+            "source_commit": bundle.selection["source_commit"],
+            "inputs_digest": sha(
+                encoded({"selection": bundle.selection, "inputs": bundle.input_hashes})
             ),
-        ),
-    )
+        },
+    }
     files["index.json"] = encoded(index)
     return files, fragment
 

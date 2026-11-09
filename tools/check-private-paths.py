@@ -13,7 +13,7 @@ def check(root):
     # Keep the forbidden examples out of this source so the checker can scan itself.
     roots = ("Vol" + "umes", "Us" + "ers", "home", "private" + "/" + "tmp")
     pattern = re.compile(
-        "/" + "(?:" + "|".join(map(re.escape, roots)) + ")" + "/", re.I
+        "/" + "(?:" + "|".join(map(re.escape, roots)) + ")" + "/", re.IGNORECASE
     )
     count = 0
     for path in selected_files(root):

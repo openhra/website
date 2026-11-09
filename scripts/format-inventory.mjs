@@ -8,7 +8,6 @@ export const packageRoot = fileURLToPath(new URL("..", import.meta.url));
 const skipped = new Set([
   "node_modules",
   "dist",
-  "coverage",
   ".git",
   ".venv",
   "venv",

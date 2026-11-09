@@ -112,14 +112,14 @@ def sbe_declaration(text):
             "serving: malformed SBE scope counts",
         )
         counts = [int(cell.replace(",", "")) for cell in cells[2:]]
-        scopes[state] = dict(
-            url=public_url(url),
-            basis=cells[1],
-            issuers=counts[0],
-            base_plans=counts[1],
-            attribute_rows=counts[2],
-            rate_rows=counts[3],
-        )
+        scopes[state] = {
+            "url": public_url(url),
+            "basis": cells[1],
+            "issuers": counts[0],
+            "base_plans": counts[1],
+            "attribute_rows": counts[2],
+            "rate_rows": counts[3],
+        }
     require(
         len(scopes) == 22
         and sum(v["basis"].startswith("SBE") for v in scopes.values()) == 19,
@@ -201,7 +201,12 @@ def inventory(path, member, year, kind):
                 )
                 entry = by_state.setdefault(
                     state,
-                    dict(rows=0, issuers=set(), plans=set(), digest=hashlib.sha256()),
+                    {
+                        "rows": 0,
+                        "issuers": set(),
+                        "plans": set(),
+                        "digest": hashlib.sha256(),
+                    },
                 )
                 entry["rows"] += 1
                 entry["issuers"].add(issuer)
@@ -209,12 +214,12 @@ def inventory(path, member, year, kind):
                 # Physical row identity plus all original cells, including empty rate cells.
                 entry["digest"].update(encoded([line, list(row.values())]))
     return digest.hexdigest(), {
-        s: dict(
-            rows=v["rows"],
-            issuers=sorted(v["issuers"]),
-            base_plans=len(v["plans"]),
-            rows_sha256=v["digest"].hexdigest(),
-        )
+        s: {
+            "rows": v["rows"],
+            "issuers": sorted(v["issuers"]),
+            "base_plans": len(v["plans"]),
+            "rows_sha256": v["digest"].hexdigest(),
+        }
         for s, v in by_state.items()
     }
 
@@ -266,7 +271,7 @@ class Bundle:
                 not re.search(
                     r"mutant|before-recovery|interrupted|checkpoint|synthetic",
                     spec["path"],
-                    re.I,
+                    re.IGNORECASE,
                 ),
                 "report: historical or synthetic evidence rejected",
             )
@@ -331,12 +336,12 @@ class Bundle:
                 member_sha, scopes = inventory(
                     path, m["name"], spec["vintage"], m["kind"]
                 )
-                self.members[key] = dict(
-                    kind=m["kind"],
-                    sha256=member_sha,
-                    scopes=scopes,
-                    year=spec["vintage"],
-                )
+                self.members[key] = {
+                    "kind": m["kind"],
+                    "sha256": member_sha,
+                    "scopes": scopes,
+                    "year": spec["vintage"],
+                }
             final_stat = path.stat()
             require(
                 (initial_stat.st_size, initial_stat.st_mtime_ns, initial_stat.st_ino)
@@ -391,17 +396,17 @@ class Bundle:
         )
         observed = self.observed(spec["observed_at"])
         ids = sorted({sid, spec["plan_source"]})
-        result = dict(
-            state=s,
-            year=y,
-            layer="premiums",
-            observed_at=observed,
-            inventory=rate,
-            plan_inventory=plans,
-            input_ids=ids,
-            reconciliation=None,
-            serving=None,
-        )
+        result = {
+            "state": s,
+            "year": y,
+            "layer": "premiums",
+            "observed_at": observed,
+            "inventory": rate,
+            "plan_inventory": plans,
+            "input_ids": ids,
+            "reconciliation": None,
+            "serving": None,
+        }
         if spec["report"] is None:
             return result
         rid = spec["report"]
@@ -480,13 +485,13 @@ class Bundle:
             "premium: catalog identity scope mismatch",
         )
         result["input_ids"].append(rid)
-        result["reconciliation"] = dict(
-            verified=rate["rows"],
-            mismatches=0,
-            catalog_sha256=sha(import_id.encode()),
-            digest=sha(encoded(row)),
-            report_id=rid,
-        )
+        result["reconciliation"] = {
+            "verified": rate["rows"],
+            "mismatches": 0,
+            "catalog_sha256": sha(import_id.encode()),
+            "digest": sha(encoded(row)),
+            "report_id": rid,
+        }
         serving_id = spec["serving_report"]
         if serving_id is not None:
             serving_format = self.reports.get(serving_id, (None,))[0]
@@ -517,11 +522,11 @@ class Bundle:
                 require(
                     s not in ("NY", "VT"), "serving: supplemental catalog forbidden"
                 )
-                result["serving"] = dict(
-                    catalog_sha256=sha(import_id.encode()),
-                    basis="active_catalog",
-                    report_id=serving_id,
-                )
+                result["serving"] = {
+                    "catalog_sha256": sha(import_id.encode()),
+                    "basis": "active_catalog",
+                    "report_id": serving_id,
+                }
             elif serving_format == "sbe-declaration-v1":
                 declaration = self.report(serving_id, "sbe-declaration-v1")
                 require(
@@ -541,11 +546,11 @@ class Bundle:
                     and declared["attribute_rows"] == plans["rows"],
                     "serving: declaration/public catalog scope mismatch",
                 )
-                result["serving"] = dict(
-                    catalog_sha256=sha(import_id.encode()),
-                    basis="active_catalog",
-                    report_id=serving_id,
-                )
+                result["serving"] = {
+                    "catalog_sha256": sha(import_id.encode()),
+                    "basis": "active_catalog",
+                    "report_id": serving_id,
+                }
             else:
                 serving = self.report(serving_id, "serving-v1")
                 exact_keys(serving, "schema_version catalogs", "serving report")
@@ -578,11 +583,11 @@ class Bundle:
                     s not in ("NY", "VT") and not (s == "OR" and fmt == "sbe-v1"),
                     "serving: supplemental or SHOP catalog forbidden",
                 )
-                result["serving"] = dict(
-                    catalog_sha256=sha(import_id.encode()),
-                    basis="active_catalog",
-                    report_id=serving_id,
-                )
+                result["serving"] = {
+                    "catalog_sha256": sha(import_id.encode()),
+                    "basis": "active_catalog",
+                    "report_id": serving_id,
+                }
             result["input_ids"].append(serving_id)
         result["input_ids"] = sorted(set(result["input_ids"]))
         return result
@@ -677,16 +682,16 @@ class Bundle:
                     "issuer: source report absent; active evidence cannot be inferred",
                 )
                 reports = [
-                    dict(
-                        issuer=m["issuer_id"],
-                        state=s,
-                        year=y,
-                        snapshot_id=m["snapshot_id"],
-                        status=m.get("validation_state"),
-                        completeness="unknown",
-                        edges=0,
-                        reason=m["reason"],
-                    )
+                    {
+                        "issuer": m["issuer_id"],
+                        "state": s,
+                        "year": y,
+                        "snapshot_id": m["snapshot_id"],
+                        "status": m.get("validation_state"),
+                        "completeness": "unknown",
+                        "edges": 0,
+                        "reason": m["reason"],
+                    }
                     for m in manifest
                 ]
                 require(
@@ -778,7 +783,11 @@ class Bundle:
                     classification = "active_" + r["completeness"]
                     if m["snapshot_id"] != r["snapshot_id"] or m["status"] == "failed":
                         warnings.append(
-                            dict(code="failed_refresh", actor="undetermined", count=1)
+                            {
+                                "code": "failed_refresh",
+                                "actor": "undetermined",
+                                "count": 1,
+                            }
                         )
                 else:
                     require(
@@ -814,22 +823,22 @@ class Bundle:
                         actor == "importer_limit",
                         "issuer: adapter failure is not publisher denial",
                     )
-                rows[issuer] = dict(
-                    issuer_id=issuer,
-                    classification=classification,
-                    validation_status=r["status"],
-                    snapshot_sha256=sha(r["snapshot_id"].encode()),
-                    active_pointer=pointer,
-                    positive_association=is_active and edges > 0,
-                    association_state=s if is_active else None,
-                    association_year=y if is_active else None,
-                    actor=actor,
-                    reason_code=reason_code,
-                    observed_at=row_observed,
-                )
+                rows[issuer] = {
+                    "issuer_id": issuer,
+                    "classification": classification,
+                    "validation_status": r["status"],
+                    "snapshot_sha256": sha(r["snapshot_id"].encode()),
+                    "active_pointer": pointer,
+                    "positive_association": is_active and edges > 0,
+                    "association_state": s if is_active else None,
+                    "association_year": y if is_active else None,
+                    "actor": actor,
+                    "reason_code": reason_code,
+                    "observed_at": row_observed,
+                }
                 if not is_active:
                     warnings.append(
-                        dict(code="quarantined_sources", actor=actor, count=1)
+                        {"code": "quarantined_sources", "actor": actor, "count": 1}
                     )
         else:
             require(
@@ -838,19 +847,19 @@ class Bundle:
         roster = [
             rows.get(
                 i,
-                dict(
-                    issuer_id=i,
-                    classification="unknown",
-                    validation_status=None,
-                    snapshot_sha256=None,
-                    active_pointer=False,
-                    positive_association=False,
-                    association_state=None,
-                    association_year=None,
-                    actor="undetermined",
-                    reason_code="unassessed",
-                    observed_at=self.provenance[spec["source"]]["retrieved_at"],
-                ),
+                {
+                    "issuer_id": i,
+                    "classification": "unknown",
+                    "validation_status": None,
+                    "snapshot_sha256": None,
+                    "active_pointer": False,
+                    "positive_association": False,
+                    "association_state": None,
+                    "association_year": None,
+                    "actor": "undetermined",
+                    "reason_code": "unassessed",
+                    "observed_at": self.provenance[spec["source"]]["retrieved_at"],
+                },
             )
             for i in inv["issuers"]
         ]
@@ -860,20 +869,21 @@ class Bundle:
         partial = sum(r["classification"] == "active_partial" for r in roster)
         if partial:
             counts[("partial_active_sources", "undetermined")] = partial
-        return dict(
-            state=s,
-            year=y,
-            layer=layer,
-            inventory=inv,
-            roster=roster,
-            observed_at=observed,
-            input_ids=sorted(ids),
-            assessed=spec["audit"] is not None,
-            warnings=[
-                dict(code=c, actor=a, count=n) for (c, a), n in sorted(counts.items())
+        return {
+            "state": s,
+            "year": y,
+            "layer": layer,
+            "inventory": inv,
+            "roster": roster,
+            "observed_at": observed,
+            "input_ids": sorted(ids),
+            "assessed": spec["audit"] is not None,
+            "warnings": [
+                {"code": c, "actor": a, "count": n}
+                for (c, a), n in sorted(counts.items())
             ],
-            result=issuer_result(roster, spec["audit"] is not None),
-        )
+            "result": issuer_result(roster, spec["audit"] is not None),
+        }
 
     def reconcile(self):
         scopes = []

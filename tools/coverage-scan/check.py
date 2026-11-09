@@ -14,7 +14,6 @@ from model import (
     STATES,
     Invalid,
     encoded,
-    integer,
     issuer_result,
     loads,
     percentage,

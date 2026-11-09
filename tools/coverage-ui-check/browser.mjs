@@ -359,16 +359,12 @@ try {
   const typeAhead = async (text) => {
     // Native select search buffers expire after one second on Chrome/macOS.
     await pause(1100);
-    for (const char of text)
-      await key(
-        char,
-        char === " "
-          ? "Space"
-          : /\d/.test(char)
-            ? "Digit" + char
-            : "Key" + char.toUpperCase(),
-        char.toUpperCase().charCodeAt(0),
-      );
+    for (const char of text) {
+      let code = "Key" + char.toUpperCase();
+      if (char === " ") code = "Space";
+      else if (/\d/.test(char)) code = "Digit" + char;
+      await key(char, code, char.toUpperCase().charCodeAt(0));
+    }
   };
   for (const year of [2027, 2026]) {
     await typeAhead(String(year));

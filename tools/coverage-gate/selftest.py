@@ -78,11 +78,11 @@ def replace_pattern(root, filename, pattern, replacement):
 
 def promote(root, state):
     def serving(ledger, scope):
-        scope["serving"] = dict(
-            basis="active_catalog",
-            catalog_sha256=scope["reconciliation"]["catalog_sha256"],
-            report_id=scope["reconciliation"]["report_id"],
-        )
+        scope["serving"] = {
+            "basis": "active_catalog",
+            "catalog_sha256": scope["reconciliation"]["catalog_sha256"],
+            "report_id": scope["reconciliation"]["report_id"],
+        }
 
     def measured(record, scope):
         rows = scope["inventory"]["rows"]
@@ -92,7 +92,12 @@ def promote(root, state):
             percent_tenths=1000,
             status="measured",
             reason_codes=[],
-            counts=dict(verified=rows, quarantined=0, unknown=0, not_imported=0),
+            counts={
+                "verified": rows,
+                "quarantined": 0,
+                "unknown": 0,
+                "not_imported": 0,
+            },
             serving_basis="active_catalog",
         )
 
@@ -534,7 +539,9 @@ def main():
         ]
 
         def run():
-            result = subprocess.run(command, capture_output=True, text=True)
+            result = subprocess.run(
+                command, check=False, capture_output=True, text=True
+            )
             return result.returncode, result.stdout + result.stderr
 
         code, output = run()

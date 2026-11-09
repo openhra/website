@@ -8,6 +8,9 @@ trap 'rm -rf "$TMP"' EXIT HUP INT TERM
 export OPENPLANS_DENYLIST_FILE="$TMP/synthetic-policy"
 printf '%s%s\n' 'SyntheticCI' 'BlockedTerm42' > "$OPENPLANS_DENYLIST_FILE"
 cd "$ROOT"
+scripts/install-tools.sh
+PATH="$ROOT/.venv/bin:$PATH"
+export PATH
 python3 scripts/check-ci.py --selftest
 python3 --version
 node --version
