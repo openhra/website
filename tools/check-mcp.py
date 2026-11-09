@@ -10,8 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-# No OpenPlans release is tagged. Status links point to the repository.
-NO_RELEASE = "No tagged release yet"
+RELEASE = "v0.1.2"
+RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 FORBIDDEN_COMPARISON = re.compile(
     r"commercial[\s_-]+reference|reference[\s_-]+api\b|parity\s+with", re.IGNORECASE
@@ -109,9 +109,13 @@ def check_page(source, site):
         not FORBIDDEN_COMPARISON.search(source),
         "forbidden comparison text",
     )
+    release_links = re.findall(
+        r"https://github\.com/openhra/openplans/releases/(?:tag|download)/[^\"'\s<>]+",
+        source,
+    )
     require(
-        not re.search(r"/releases/(?:tag|download)/", source),
-        "release-tag link while no release exists",
+        all(link == RELEASE_URL for link in release_links),
+        "unexpected release-tag link",
     )
     root = Page(source).root
     all_text = normalized(root.text())
@@ -134,10 +138,9 @@ def check_page(source, site):
         not re.search(r"\b(?:stable|production(?:[ -]ready)?)\b", claims),
         "unsupported release claim",
     )
-    # No release is tagged, so nothing on the page may claim one.
     require(
-        not re.search(r"\breleased\b|\bv\d+\.\d+\.\d+\b", claims),
-        "release claimed while no release exists",
+        RELEASE.lower() in claims,
+        "v0.1.2 release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -179,12 +182,12 @@ def check_page(source, site):
             and status.find(
                 lambda n: (
                     n.tag == "a"
-                    and n.attrs.get("href") == REPO
-                    and n.text() == NO_RELEASE
+                    and n.attrs.get("href") == RELEASE_URL
+                    and n.text() == RELEASE
                     and visible(n)
                 )
             ),
-            "release status must say No tagged release yet and link to the repository",
+            "release status must link to v0.1.2",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -316,13 +319,13 @@ def check_page(source, site):
         require(
             all(
                 label in normalized(directory.text())
-                for label in ["code", "docs", "issues", "releases", NO_RELEASE.lower()]
+                for label in ["code", "docs", "issues", "releases", RELEASE]
             )
             and directory.find(
                 lambda n: (
                     n.tag == "a"
-                    and n.attrs.get("href") == REPO
-                    and NO_RELEASE in n.text()
+                    and n.attrs.get("href") == RELEASE_URL
+                    and RELEASE in n.text()
                     and visible(n)
                 )
             ),
@@ -421,7 +424,7 @@ def run(root):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (no tagged release, no comparison text, Public preview, live catalog endpoint, 11 public tools + self-host estimates, GitHub-first, handoff copies identical)"
+        "mcp: PASS (v0.1.2 release link, no comparison text, Public preview, live catalog endpoint, 11 public tools + self-host estimates, GitHub-first, handoff copies identical)"
     )
 
 
@@ -509,34 +512,30 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "release-tag link added",
-                    lambda s: s.replace(
-                        '<a href="' + REPO + '">' + NO_RELEASE,
-                        '<a href="' + REPO + '/releases/tag/v9.9.9">' + NO_RELEASE,
-                        1,
-                    ),
-                    "release-tag link",
+                    "wrong release tag v0.1.1",
+                    lambda s: s.replace(RELEASE_URL, REPO + "/releases/tag/v0.1.1"),
+                    "unexpected release-tag link",
                 ),
                 (
                     site,
-                    "version claimed in status",
-                    lambda s: s.replace(NO_RELEASE + "</a>", "v9.9.9</a>"),
-                    "release claimed",
+                    "v0.1.2 link removed",
+                    lambda s: s.replace(RELEASE_URL, REPO),
+                    "release status must link to v0.1.2",
                 ),
                 (
                     site,
-                    "no-release status removed",
-                    lambda s: s.replace(NO_RELEASE, "Repository"),
-                    "No tagged release yet",
+                    "v0.1.2 status text removed",
+                    lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
+                    "release status must link to v0.1.2",
                 ),
                 (
                     site,
                     "status links elsewhere",
                     lambda s: s.replace(
-                        '<a href="' + REPO + '">' + NO_RELEASE,
-                        '<a href="https://example.invalid/">' + NO_RELEASE,
+                        '<a href="' + RELEASE_URL + '">' + RELEASE,
+                        '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "No tagged release yet",
+                    "release status must link to v0.1.2",
                 ),
                 (
                     site,
@@ -545,7 +544,7 @@ def selftest(root):
                         "Coverage is limited.",
                         "Coverage is limited. The public endpoint is production.",
                     ),
-                    "release claim",
+                    "unsupported release claim",
                 ),
                 (
                     site,
@@ -599,7 +598,7 @@ def selftest(root):
                 ),
             ]
         )
-        for claim in ["stable", "GA", "production-ready", "released"]:
+        for claim in ["stable", "GA", "production-ready", "production"]:
             mutants.append(
                 (
                     site,
@@ -610,7 +609,9 @@ def selftest(root):
                     "GA claim"
                     if claim == "GA"
                     else (
-                        "release claimed" if claim == "released" else "release claim"
+                        "unsupported GA claim"
+                        if claim == "GA"
+                        else "unsupported release claim"
                     ),
                 )
             )

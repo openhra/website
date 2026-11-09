@@ -15,6 +15,7 @@ ACTIONS = {
     "checkout": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
     "node": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
     "python": "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "cache": "actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9",
 }
 
 
@@ -49,7 +50,11 @@ def check(workflow):
             set(job) == {"name", "runs-on", "timeout-minutes", "steps"},
             "check jobs cannot be conditional or depend on other jobs",
         )
-        require(job["timeout-minutes"] == 20, "check timeout must be bounded")
+        expected_timeout = 30 if key == "macos" else 20
+        require(
+            job["timeout-minutes"] == expected_timeout,
+            "check timeout must be bounded (macOS receives cold-cache headroom)",
+        )
         steps = job["steps"]
         python_input = (
             {"python-version": "3.9.25"}
@@ -57,7 +62,8 @@ def check(workflow):
             else {"python-version-file": ".python-version"}
         )
         require(
-            steps
+            len(steps) == 5
+            and steps[:3]
             == [
                 {"uses": ACTIONS["checkout"], "with": {"persist-credentials": False}},
                 {
@@ -65,8 +71,14 @@ def check(workflow):
                     "with": {"node-version-file": ".node-version"},
                 },
                 {"uses": ACTIONS["python"], "with": python_input},
-                {"run": "scripts/ci.sh"},
-            ],
+            ]
+            and steps[3].get("name") == "Restore website tool caches"
+            and steps[3].get("uses") == ACTIONS["cache"]
+            and steps[3].get("with", {}).get("path")
+            == "node_modules\n.venv\n.cache/ruff-wheels"
+            and "package-lock.json" in steps[3].get("with", {}).get("key", "")
+            and "requirements-dev.txt" in steps[3].get("with", {}).get("key", "")
+            and steps[4] == {"run": "scripts/ci.sh"},
             "check steps must use pinned tools and the standalone CI command",
         )
     required = jobs["required"]

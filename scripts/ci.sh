@@ -8,7 +8,8 @@ trap 'rm -rf "$TMP"' EXIT HUP INT TERM
 export OPENPLANS_DENYLIST_FILE="$TMP/synthetic-policy"
 printf '%s%s\n' 'SyntheticCI' 'BlockedTerm42' > "$OPENPLANS_DENYLIST_FILE"
 cd "$ROOT"
-scripts/install-tools.sh
+printf 'website CI phase: install tools\n'
+time scripts/install-tools.sh
 PATH="$ROOT/.venv/bin:$PATH"
 export PATH
 python3 scripts/check-ci.py --selftest
@@ -16,6 +17,8 @@ python3 --version
 node --version
 git --version
 printf 'website CI: synthetic policy; publication approval requires private validation\n'
-tools/gate.sh --full
+printf 'website CI phase: full gate\n'
+time tools/gate.sh --full
+printf 'website CI phase: public export check\n'
 python3 scripts/test-export.py --public
 printf 'website CI: PASS (public checks only)\n'

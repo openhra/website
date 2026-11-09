@@ -151,6 +151,12 @@ python3 "$ROOT/tools/check-mcp.py" "$ROOT"
 if [ "$FULL" -eq 1 ]; then
   (
     cd "$ROOT"
+    if ! "$ROOT/scripts/install-tools.sh"; then
+      printf 'FAIL: website lint/format tools unavailable; scripts/install-tools.sh could not provide the pinned tools\n' >&2
+      exit 1
+    fi
+    PATH="$ROOT/.venv/bin:$PATH"
+    export PATH
     npm run format:check
     npm run lint
     node scripts/lint-selftest.mjs
