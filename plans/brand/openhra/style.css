@@ -230,6 +230,10 @@
   margin-top: 28px;
   font-size: 13px;
 }
+.choice-data {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
 .agent-route {
   border-top: 3px solid var(--accent);
   padding-top: 24px;
