@@ -15,7 +15,7 @@ ACTIONS = {
     "checkout": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
     "node": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
     "python": "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
-    "cache": "actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9",
+    "cache": "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
 }
 
 
