@@ -4,6 +4,7 @@
 import argparse
 import json
 import re
+import shlex
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -102,6 +103,84 @@ def visible(node):
             return False
         node = node.parent
     return True
+
+
+def check_app(root):
+    sections = root.find(lambda n: n.attrs.get("id") == "connect-app")
+    require(len(sections) == 1, "app connection section missing")
+    section = sections[0]
+    heading = section.find(lambda n: n.attrs.get("id") == "app-connect-title")
+    require(
+        section.tag == "section"
+        and section.attrs.get("aria-labelledby") == "app-connect-title"
+        and len(heading) == 1
+        and heading[0].tag == "h3"
+        and heading[0].text() == "Connect your app"
+        and visible(section),
+        "app connection region must be labelled",
+    )
+    siblings = section.parent.children
+    position = siblings.index(section)
+    require(
+        position > 0
+        and siblings[position - 1].attrs.get("aria-labelledby")
+        == "agent-connect-title",
+        "app connection must follow agent connection",
+    )
+    require(
+        root.find(lambda n: n.tag == "a" and n.attrs.get("href") == "#connect-app"),
+        "app navigation missing",
+    )
+    copy = normalized(section.text())
+    require(
+        all(
+            term in copy
+            for term in (
+                "native json api",
+                "a compatibility api for existing quoting integrations",
+                "public preview",
+                "read-only",
+                "anonymous",
+                "catalog-only",
+                "texas and florida",
+                "2026–2027",
+                "no account or api key",
+                "household quotes require self-hosting with credentials",
+                "not offered on the public endpoint",
+            )
+        ),
+        "app scope or self-host restriction missing",
+    )
+    commands = section.find(lambda n: n.tag == "pre")
+    require(len(commands) == 2, "app base path or request missing")
+    require(
+        commands[0].text() == "https://openplans.openhra.com/v1",
+        "app base path differs",
+    )
+    command = commands[1].text().replace("\\\n", " ")
+    require(
+        shlex.split(command)
+        == [
+            "curl",
+            "--get",
+            "https://openplans.openhra.com/v1/plans",
+            "--data-urlencode",
+            "zip=77002",
+            "--data-urlencode",
+            "year=2026",
+        ],
+        "app example must use the verified read-only catalog request",
+    )
+    links = {n.attrs.get("href") for n in section.find(lambda n: n.tag == "a")}
+    require(
+        {
+            REPO + "/blob/main/src/api/README.md",
+            REPO + "#readme",
+            REPO + "/blob/main/docs/self-host.md",
+        }
+        <= links,
+        "app API or self-host documentation missing",
+    )
 
 
 def check_page(source, site):
@@ -336,6 +415,7 @@ def check_page(source, site):
         "clone command missing",
     )
     if site == "plans":
+        check_app(root)
         directory = root.find(lambda n: classed(n, "tool-directory"))[0]
         public, private = [], []
         for group in directory.children:
@@ -368,7 +448,14 @@ def check_page(source, site):
             ),
             "agent exchange must be labelled illustrative",
         )
-        panels = root.find(lambda n: classed(n, "connection-panel"))
+        connections = root.find(
+            lambda n: (
+                n.tag == "section"
+                and n.attrs.get("aria-labelledby") == "agent-connect-title"
+            )
+        )
+        require(len(connections) == 1, "agent connection region missing")
+        panels = connections[0].find(lambda n: classed(n, "connection-panel"))
         require(len(panels) == 2, "connection options missing")
         raw = panels[0].find(lambda n: n.tag == "pre")[0].text()
         config = json.loads(raw)
@@ -453,7 +540,7 @@ def selftest(root):
                 (
                     site,
                     "metadata stale",
-                    lambda s: s.replace("MCP Public preview", "MCP planned"),
+                    lambda s: re.sub(r"(<title>.*?)Public preview", r"\1Planned", s),
                     "metadata",
                 ),
                 (
@@ -576,7 +663,7 @@ def selftest(root):
                         'name="description" content="',
                         'name="description" content="Public household quotes are available. ',
                     ),
-                    "claimed public" if site == "plans" else "self-host only",
+                    "claimed public",
                 ),
                 (
                     site,
@@ -725,6 +812,43 @@ def selftest(root):
                     1,
                 ),
                 "hero actions",
+            ),
+        ]
+    )
+    mutants.extend(
+        [
+            (
+                "plans",
+                "app request posts instead of reads",
+                lambda s: s.replace("curl --get", "curl --request POST"),
+                "verified read-only catalog request",
+            ),
+            (
+                "plans",
+                "app request uses a household route",
+                lambda s: s.replace("/v1/plans'", "/v1/premium-estimates'"),
+                "verified read-only catalog request",
+            ),
+            (
+                "plans",
+                "app public scope removed",
+                lambda s: s.replace(
+                    "The public preview is catalog-only",
+                    "The public preview is unrestricted",
+                ),
+                "app scope",
+            ),
+            (
+                "plans",
+                "app accessible label missing",
+                lambda s: s.replace('aria-labelledby="app-connect-title"', ""),
+                "app connection region must be labelled",
+            ),
+            (
+                "plans",
+                "app navigation missing",
+                lambda s: s.replace('href="#connect-app"', 'href="#api"'),
+                "app navigation missing",
             ),
         ]
     )

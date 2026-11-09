@@ -86,7 +86,7 @@ def years(root, index):
         )
         if filename == "coverage-table.html":
             require(
-                page.one("title") == f"Providers / plan year {year} — OpenPlans",
+                page.one("title") == f"Providers / plan year {year} · OpenPlans",
                 "year reference: fallback page title differs from dataset",
             )
         else:

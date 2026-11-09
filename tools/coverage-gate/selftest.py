@@ -426,8 +426,8 @@ def cases():
         lambda r: replace(
             r,
             "plans/coverage-table.html",
-            "Providers / plan year 2026 —",
-            "Providers / plan year 2027 —",
+            "Providers / plan year 2026 ·",
+            "Providers / plan year 2027 ·",
         ),
         "year reference: fallback page title differs",
     )
