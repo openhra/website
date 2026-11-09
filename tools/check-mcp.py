@@ -9,7 +9,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
-RELEASE = "https://github.com/openhra/openplans/releases/tag/v0.1.1"
+REPO = "https://github.com/openhra/openplans"
+# No OpenPlans release is tagged. Status links point to the repository.
+NO_RELEASE = "No tagged release yet"
+# Owner rule: public pages never compare OpenPlans with another service.
+FORBIDDEN_COMPARISON = re.compile(
+    r"commercial[\s_-]+reference|reference[\s_-]+api\b|parity\s+with", re.I
+)
 TOOLS = {
     "search",
     "fetch",
@@ -99,6 +105,14 @@ def visible(node):
 
 
 def check_page(source, site):
+    require(
+        not FORBIDDEN_COMPARISON.search(source),
+        "forbidden comparison text",
+    )
+    require(
+        not re.search(r"/releases/(?:tag|download)/", source),
+        "release-tag link while no release exists",
+    )
     root = Page(source).root
     all_text = normalized(root.text())
     metadata = root.find(
@@ -120,26 +134,10 @@ def check_page(source, site):
         not re.search(r"\b(?:stable|production(?:[ -]ready)?)\b", claims),
         "unsupported release claim",
     )
-    # A tagged source release does not change the hosted endpoint's status.
-    release_units = root.find(
-        lambda n: n.tag in {"p", "dd", "li", "h1", "h2", "h3", "h4", "title"}
-    )
-    for unit in release_units:
-        text = normalized(unit.text())
-        for sentence in re.split(r"(?<=[.!?])\s+", text):
-            if re.search(r"\breleased\b", sentence):
-                require(
-                    "openplans v0.1.1" in sentence
-                    and "github" in sentence
-                    and not re.search(r"\b(?:endpoint|mcp)\b", sentence)
-                    and unit.find(
-                        lambda n: n.tag == "a" and n.attrs.get("href") == RELEASE
-                    ),
-                    "released must refer to the GitHub source release",
-                )
+    # No release is tagged, so nothing on the page may claim one.
     require(
-        not re.search(r"\breleased\b", normalized(metadata[0].attrs["content"])),
-        "released must refer to the GitHub source release",
+        not re.search(r"\breleased\b|\bv\d+\.\d+\.\d+\b", claims),
+        "release claimed while no release exists",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -173,10 +171,6 @@ def check_page(source, site):
         any(normalized(n.text()) == "public preview" and visible(n) for n in badge),
         "navigation must show Public preview",
     )
-    require(
-        not re.search(r"\bno (?:tagged )?(?:openplans )?release\b", all_text),
-        "stale no-release status",
-    )
     statuses = root.find(lambda n: classed(n, "repo-status"))
     require(statuses, "release status missing")
     for status in statuses:
@@ -184,11 +178,11 @@ def check_page(source, site):
             visible(status)
             and status.find(
                 lambda n: n.tag == "a"
-                and n.attrs.get("href") == RELEASE
-                and n.text() == "v0.1.1"
+                and n.attrs.get("href") == REPO
+                and n.text() == NO_RELEASE
                 and visible(n)
             ),
-            "release status must link to v0.1.1",
+            "release status must say No tagged release yet and link to the repository",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -320,12 +314,12 @@ def check_page(source, site):
         require(
             all(
                 label in normalized(directory.text())
-                for label in ["code", "docs", "issues", "releases", "v0.1.1"]
+                for label in ["code", "docs", "issues", "releases", NO_RELEASE.lower()]
             )
             and directory.find(
                 lambda n: n.tag == "a"
-                and n.attrs.get("href") == RELEASE
-                and "v0.1.1" in n.text()
+                and n.attrs.get("href") == REPO
+                and NO_RELEASE in n.text()
                 and visible(n)
             ),
             "repository contents/release status missing",
@@ -423,7 +417,7 @@ def run(root):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.1.1 source release, Public preview, live catalog endpoint, 11 public tools + self-host estimates, GitHub-first, handoff parity)"
+        "mcp: PASS (no tagged release, no comparison text, Public preview, live catalog endpoint, 11 public tools + self-host estimates, GitHub-first, handoff copies identical)"
     )
 
 
@@ -511,15 +505,34 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "release links changed",
-                    lambda s: s.replace(RELEASE, RELEASE.replace("v0.1.1", "v0.1.0")),
-                    "GitHub source release",
+                    "release-tag link added",
+                    lambda s: s.replace(
+                        '<a href="' + REPO + '">' + NO_RELEASE,
+                        '<a href="' + REPO + '/releases/tag/v9.9.9">' + NO_RELEASE,
+                        1,
+                    ),
+                    "release-tag link",
                 ),
                 (
                     site,
-                    "stale release status",
-                    lambda s: s.replace("Source available ·", "No release yet ·"),
-                    "stale no-release",
+                    "version claimed in status",
+                    lambda s: s.replace(NO_RELEASE + "</a>", "v9.9.9</a>"),
+                    "release claimed",
+                ),
+                (
+                    site,
+                    "no-release status removed",
+                    lambda s: s.replace(NO_RELEASE, "Repository"),
+                    "No tagged release yet",
+                ),
+                (
+                    site,
+                    "status links elsewhere",
+                    lambda s: s.replace(
+                        '<a href="' + REPO + '">' + NO_RELEASE,
+                        '<a href="https://example.invalid/">' + NO_RELEASE,
+                    ),
+                    "No tagged release yet",
                 ),
                 (
                     site,
@@ -529,15 +542,6 @@ def selftest(root):
                         "Coverage is limited. The public endpoint is production.",
                     ),
                     "release claim",
-                ),
-                (
-                    site,
-                    "public endpoint claimed released beside source release",
-                    lambda s: s.replace(
-                        "is released on GitHub.",
-                        "is released on GitHub. The public MCP endpoint is released too.",
-                    ),
-                    "GitHub source release",
                 ),
                 (
                     site,
@@ -600,10 +604,35 @@ def selftest(root):
                         "Coverage is limited.", "Coverage is limited. " + claim + "."
                     ),
                     "GA claim" if claim == "GA" else (
-                        "GitHub source release" if claim == "released" else "release claim"
+                        "release claimed" if claim == "released" else "release claim"
                     ),
                 )
             )
+        for text in [
+            "Compared with a Commercial-Reference catalog.",
+            "Matches the reference_API totals.",
+            "Built for parity\twith another service.",
+        ]:
+            mutants.append(
+                (
+                    site,
+                    "comparison text: " + text,
+                    lambda s, text=text: s.replace(
+                        "Coverage is limited.", "Coverage is limited. " + text
+                    ),
+                    "forbidden comparison",
+                )
+            )
+        mutants.append(
+            (
+                site,
+                "comparison in a hidden comment",
+                lambda s: s.replace(
+                    "</body>", "<!-- commercial_reference check --></body>"
+                ),
+                "forbidden comparison",
+            )
+        )
     mutants.extend(
         [
             (
