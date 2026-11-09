@@ -2,7 +2,7 @@
 
 ## Positioning
 
-OpenHRA builds open-source, self-hosted tools for individual coverage HRAs and health benefits. It uses public data and keeps the sources. Its first project, OpenPlans, turns public health-plan files into an API for plans, premiums, subsidy estimates, drugs and providers. It states data gaps and current coverage limits.
+OpenHRA builds open-source, self-hosted tools for individual coverage HRAs and health benefits. It uses public data and keeps the sources. Its first project, OpenPlans, turns public health-plan files into an API for plans, premium quotes, subsidy estimates, drugs and providers. It states data gaps and current coverage limits.
 
 Each project's public repository is its main page. Websites introduce the work and point to the source. See [Repository first](REPO-FIRST.md) for page hierarchy, documentation ownership and repository artwork.
 

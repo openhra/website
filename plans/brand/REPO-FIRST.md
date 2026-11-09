@@ -14,13 +14,13 @@ The November 8, 2026 owner direction adds GitHub naming, MCP tools and setup sni
 
 ## MCP is a public preview
 
-MCP is the main feature on the project site. The live endpoint is `https://openplans.openhra.com/mcp`. Label it "Public preview" wherever MCP appears. It serves the public catalog only, for Texas and Florida in 2026–2027. The 11 public tools are read-only and anonymous, over stateless Streamable HTTP.
+MCP is the main feature on the project site. The live endpoint is `https://openplans.openhra.com/mcp`. Label it "Public preview" wherever MCP appears. It serves the public catalog and quotes by age and ZIP, for Texas and Florida in 2026–2027. The 12 public tools are read-only and anonymous, over stateless Streamable HTTP.
 
-List the 11 public tools separately from `estimate_premiums`. Household quotes require self-hosting with credentials; that tool is not offered on the public endpoint. Provider and drug results may be `unknown`. Missing evidence never means "not covered".
+List the 12 public tools separately from `quote_premiums`. Household quotes require self-hosting with credentials; that tool is not offered on the public endpoint. Provider and drug results may be `unknown`. Missing evidence never means "not covered".
 
 Show the live URL as selectable text with a local copy button and an accessible "Copied" announcement. Include the live client configuration, HTTP headers and self-hosted stdio option. Protocol 2026-07-28 and 2025-11-25 clients are served. Browser clients can connect through CORS from the allowed origin. Keep the detailed setup instructions in the repository.
 
-Coverage is limited and an outside acceptance run is pending. OpenPlans v0.1.2 is available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
+Coverage is limited and an outside acceptance run is pending. OpenPlans v0.2.0 is available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
 
 OpenHRA introduces the public preview, shows the endpoint and its limits, and links to OpenPlans for the full tool list and connection details.
 

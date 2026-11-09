@@ -558,7 +558,8 @@ class Suite:
                 names = {tool["name"] for tool in result.get("tools", [])}
                 require("lookup_geography" in names, "catalog tool missing")
                 require(
-                    "estimate_premiums" not in names, "personalized tool advertised"
+                    not names & {"quote_premiums", "estimate_premiums"},
+                    "personalized or removed tool advertised",
                 )
 
             self.check(revision + " list catalog tools", listing)

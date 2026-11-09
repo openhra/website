@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-RELEASE = "v0.1.2"
+RELEASE = "v0.2.0"
 RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 FORBIDDEN_COMPARISON = re.compile(
@@ -29,7 +29,16 @@ TOOLS = {
     "lookup_geography",
     "list_carriers_networks",
     "get_data_status",
+    "quote_plans",
 }
+PUBLIC_TOOL_COUNT = 12
+# Household quotes stay self-host only.
+SELF_HOST_TOOL = "quote_premiums"
+PERSONALIZED_TOOLS = (SELF_HOST_TOOL,)
+# Old household names, removed from the product; pages must not offer them.
+REMOVED_NAMES = ("estimate_premiums", "premium-estimates")
+# Income and subsidies belong to household quotes, which are self-host only.
+HOUSEHOLD_TERMS = re.compile(r"household|income|subsid")
 
 
 class Node:
@@ -141,7 +150,8 @@ def check_app(root):
                 "public preview",
                 "read-only",
                 "anonymous",
-                "catalog-only",
+                "quotes by age and zip",
+                "post /v1/quotes",
                 "texas and florida",
                 "2026–2027",
                 "no account or api key",
@@ -196,6 +206,10 @@ def check_page(source, site):
         all(link == RELEASE_URL for link in release_links),
         "unexpected release-tag link",
     )
+    require(
+        not any(name in source for name in REMOVED_NAMES),
+        "removed name offered: estimate_premiums or /v1/premium-estimates",
+    )
     root = Page(source).root
     all_text = normalized(root.text())
     metadata = root.find(
@@ -219,7 +233,7 @@ def check_page(source, site):
     )
     require(
         RELEASE.lower() in claims,
-        "v0.1.2 release status missing",
+        "v0.2.0 release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -266,7 +280,7 @@ def check_page(source, site):
                     and visible(n)
                 )
             ),
-            "release status must link to v0.1.2",
+            "release status must link to v0.2.0",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -308,10 +322,10 @@ def check_page(source, site):
         and all(
             term in normalized(scope[0].text())
             for term in [
-                "catalog only",
+                "catalog and quotes by age and zip",
                 "texas and florida",
                 "2026–2027",
-                "11 tools",
+                f"{PUBLIC_TOOL_COUNT} tools",
                 "household quotes need self-hosting with credentials",
             ]
         ),
@@ -355,31 +369,42 @@ def check_page(source, site):
         )
     for unit in units:
         text = normalized(unit.text())
-        if "household" in text or "estimate_premiums" in text:
+        personal = HOUSEHOLD_TERMS.search(text) or any(
+            tool in text for tool in PERSONALIZED_TOOLS
+        )
+        if personal:
             require("self-host" in text, "household quotes must be self-host only")
+        if "quote_plans" in text:
+            require(
+                "household" not in text, "quote_plans described as a household quote"
+            )
         for sentence in re.split(r"[.!?]", text):
             if (
-                "household" in sentence or "estimate_premiums" in sentence
+                HOUSEHOLD_TERMS.search(sentence)
+                or any(tool in sentence for tool in PERSONALIZED_TOOLS)
             ) and "public" in sentence:
                 require(
                     "not offered on the public endpoint" in sentence
                     or "not available on the public endpoint" in sentence,
                     "household quotes claimed public",
                 )
-    estimates = mcp[0].find(
-        lambda n: n.tag == "code" and n.text() == "estimate_premiums"
+    personalized = mcp[0].find(
+        lambda n: n.tag == "code" and n.text() in PERSONALIZED_TOOLS
     )
-    require(estimates, "self-host estimate_premiums missing")
-    for estimate in estimates:
-        context = estimate.parent
+    require(
+        any(n.text() == SELF_HOST_TOOL for n in personalized),
+        "self-host quote_premiums missing",
+    )
+    for tool in personalized:
+        context = tool.parent
         if context.tag == "dt":
             context = context.parent
         require(
-            visible(estimate)
+            visible(tool)
             and "self-host" in normalized(context.text())
             and "credentials" in normalized(context.text())
             and "not offered on the public endpoint" in normalized(context.text()),
-            "estimate_premiums must be self-host only with credentials",
+            "quote_premiums must be self-host only with credentials",
         )
     target = "https://github.com/openhra" + ("/openplans" if site == "plans" else "")
     first = nav.find(lambda n: n.tag == "ul")[0].find(lambda n: n.tag == "a")[0]
@@ -417,23 +442,45 @@ def check_page(source, site):
     if site == "plans":
         check_app(root)
         directory = root.find(lambda n: classed(n, "tool-directory"))[0]
-        public, private = [], []
+        public, private, aliases = [], [], []
         for group in directory.children:
             codes = group.find(lambda n: n.tag == "code")
+            names = [
+                n.text()
+                for n in group.find(lambda n: n.tag == "dt")[0].find(
+                    lambda n: n.tag == "code"
+                )
+            ]
             require(all(visible(n) for n in codes), "tool inventory hidden")
             if group.attrs.get("data-tool-access") == "self-host":
-                private.extend(n.text() for n in codes)
+                private.extend(names)
+                aliases.extend(n.text() for n in codes if n.text() not in names)
                 require(
                     "self-host only" in normalized(group.text()),
                     "self-host tool label missing",
                 )
             else:
-                public.extend(n.text() for n in codes)
+                require(
+                    len(names) == len(codes),
+                    "tool inventory mentions a tool outside its name",
+                )
+                public.extend(names)
+                quoted = normalized(group.text())
+                if "quote_plans" in names:
+                    require(
+                        "household" not in quoted,
+                        "quote_plans described as a household quote",
+                    )
+                if HOUSEHOLD_TERMS.search(quoted):
+                    require(
+                        "self-host" in quoted, "public tool claims income or subsidies"
+                    )
         require(
-            len(public) == 11
+            len(public) == PUBLIC_TOOL_COUNT
             and set(public) == TOOLS
-            and private == ["estimate_premiums"],
-            "tool inventory must contain exactly 11 public tools and one self-host estimate_premiums",
+            and private == [SELF_HOST_TOOL]
+            and aliases == [],
+            "tool inventory must contain exactly 12 public tools and one self-host quote_premiums",
         )
         example = root.find(lambda n: classed(n, "agent-example"))[0].text().lower()
         require(
@@ -511,7 +558,7 @@ def run(root):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.1.2 release link, no comparison text, Public preview, live catalog endpoint, 11 public tools + self-host estimates, GitHub-first, handoff copies identical)"
+        "mcp: PASS (v0.2.0 release link, no comparison text, Public preview, live catalog and quote endpoint, 12 public tools + self-host household quotes, GitHub-first, handoff copies identical)"
     )
 
 
@@ -552,7 +599,9 @@ def selftest(root):
                 (
                     site,
                     "catalog-only limit removed",
-                    lambda s: s.replace("Catalog only", "All data"),
+                    lambda s: s.replace(
+                        "Catalog and quotes by age and ZIP ·", "All data ·"
+                    ),
                     "catalog scope",
                 ),
                 (
@@ -570,7 +619,7 @@ def selftest(root):
                 (
                     site,
                     "wrong public tool count",
-                    lambda s: s.replace("11 tools", "12 tools"),
+                    lambda s: s.replace("12 tools", "11 tools"),
                     "catalog scope",
                 ),
                 (
@@ -599,21 +648,21 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "wrong release tag v0.1.1",
-                    lambda s: s.replace(RELEASE_URL, REPO + "/releases/tag/v0.1.1"),
+                    "wrong release tag v0.1.2",
+                    lambda s: s.replace(RELEASE_URL, REPO + "/releases/tag/v0.1.2"),
                     "unexpected release-tag link",
                 ),
                 (
                     site,
-                    "v0.1.2 link removed",
+                    "v0.2.0 link removed",
                     lambda s: s.replace(RELEASE_URL, REPO),
-                    "release status must link to v0.1.2",
+                    "release status must link to v0.2.0",
                 ),
                 (
                     site,
-                    "v0.1.2 status text removed",
+                    "v0.2.0 status text removed",
                     lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
-                    "release status must link to v0.1.2",
+                    "release status must link to v0.2.0",
                 ),
                 (
                     site,
@@ -622,7 +671,7 @@ def selftest(root):
                         '<a href="' + RELEASE_URL + '">' + RELEASE,
                         '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "release status must link to v0.1.2",
+                    "release status must link to v0.2.0",
                 ),
                 (
                     site,
@@ -643,9 +692,18 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "estimate tool label removed",
-                    lambda s: s.replace("estimate_premiums", "estimate_costs"),
-                    "estimate_premiums",
+                    "household tool label removed",
+                    lambda s: s.replace("quote_premiums", "quote_costs"),
+                    "quote_premiums",
+                ),
+                (
+                    site,
+                    "removed tool name offered",
+                    lambda s: s.replace(
+                        "Coverage is limited.",
+                        "Coverage is limited. <code>estimate_premiums</code> also works.",
+                    ),
+                    "removed name",
                 ),
                 (
                     site,
@@ -679,7 +737,7 @@ def selftest(root):
                     "public estimate claim",
                     lambda s: s.replace(
                         "Coverage is limited.",
-                        "Coverage is limited. The public endpoint offers estimate_premiums, as does self-hosting.",
+                        "Coverage is limited. The public endpoint offers quote_premiums, as does self-hosting.",
                     ),
                     "claimed public",
                 ),
@@ -776,6 +834,51 @@ def selftest(root):
             ),
             (
                 "plans",
+                "public row claims income",
+                lambda s: s.replace(
+                    "Search the plan catalog and inspect one plan.",
+                    "Search the plan catalog with income-based prices.",
+                ),
+                "self-host",
+            ),
+            (
+                "plans",
+                "public row claims a subsidy",
+                lambda s: s.replace(
+                    "Find drugs and check published formulary evidence.",
+                    "Find drugs and estimate a subsidy.",
+                ),
+                "self-host",
+            ),
+            (
+                "plans",
+                "quote_plans row says household",
+                lambda s: s.replace(
+                    "Quote plans by age and ZIP, with provider",
+                    "Quote household plans by age and ZIP, with provider",
+                ),
+                "household",
+            ),
+            (
+                "plans",
+                "quote_premiums row without self-host",
+                lambda s: s.replace(
+                    "Household quotes with income and subsidies require self-hosting with credentials. Not offered on the public endpoint.",
+                    "Household quotes with income and subsidies, with credentials.",
+                ),
+                "self-host",
+            ),
+            (
+                "plans",
+                "quote_plans offered as self-host",
+                lambda s: s.replace(
+                    "<div><dt><code>quote_plans</code></dt>",
+                    '<div data-tool-access="self-host"><dt><span>Self-host only</span><code>quote_plans</code></dt>',
+                ),
+                "tool inventory",
+            ),
+            (
+                "plans",
                 "example label removed",
                 lambda s: s.replace("Illustrative only", "Live reply"),
                 "labelled illustrative",
@@ -826,14 +929,14 @@ def selftest(root):
             (
                 "plans",
                 "app request uses a household route",
-                lambda s: s.replace("/v1/plans'", "/v1/premium-estimates'"),
+                lambda s: s.replace("/v1/plans'", "/v1/premium-quotes'"),
                 "verified read-only catalog request",
             ),
             (
                 "plans",
                 "app public scope removed",
                 lambda s: s.replace(
-                    "The public preview is catalog-only",
+                    "The public preview offers the catalog and quotes by age and ZIP",
                     "The public preview is unrestricted",
                 ),
                 "app scope",
