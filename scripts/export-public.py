@@ -150,9 +150,15 @@ def export(raw):
         expected = fingerprint(tree)
         check = work / "check"
         shutil.copytree(tree, check)
+        # Install only in the validation copy; the assembled tree stays untouched.
+        # Ruff must come from its venv, even if the caller exports Python paths.
+        env.pop("PYTHONPATH", None)
+        env.pop("PYTHONHOME", None)
+        env["PYTHONNOUSERSITE"] = "1"
         installed = subprocess.run(
             [str(check / "scripts/install-tools.sh")],
             check=False,
+            cwd=check,
             env=env,
             capture_output=True,
             text=True,
@@ -162,6 +168,7 @@ def export(raw):
         result = subprocess.run(
             [str(check / "tools/gate.sh"), "--full"],
             check=False,
+            cwd=check,
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,

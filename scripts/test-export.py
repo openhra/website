@@ -245,6 +245,18 @@ def main():
         path_policy.write_bytes(policy_bytes)
         commit(source)
 
+        # The committed npm lock must agree with the manifest, even when tools
+        # happen to be installed on the host running the exporter.
+        lockfile = source / "package-lock.json"
+        lock_bytes = lockfile.read_bytes()
+        mutant = json.loads(lock_bytes)
+        mutant["packages"]["node_modules/prettier"]["version"] = "0.0.0"
+        lockfile.write_text(json.dumps(mutant, indent=2) + "\n")
+        commit(source)
+        rejected(command, "isolated locked tool installation failed")
+        lockfile.write_bytes(lock_bytes)
+        commit(source)
+
         # Real copying completes, then a benign untracked note is planted. Path-set
         # validation must reject it before replacing any destination bytes.
         wrapper = base / "bin"
@@ -263,12 +275,43 @@ def main():
 
         shutil.rmtree(dest)
         dest.mkdir()
+        assert not (source / "node_modules").exists()
+        assert not (source / ".venv").exists()
         output = run(command, env=env)
         assert output.splitlines()[-1] == "website-export: PASS"
-        print("export positive: PASS (empty staging)", flush=True)
+        print(
+            "export positive: PASS (clean source without installed tools)", flush=True
+        )
         (dest / "stale-public-file").write_text("synthetic stale public content\n")
-        output = run(command, env=env)
+        # The first export warmed both caches. A second clean validation copy
+        # must pass even when npm and pip are forbidden to use package indexes.
+        global_tools = base / "global-tools"
+        global_tools.mkdir()
+        for name in ("prettier", "eslint", "ruff"):
+            tool = global_tools / name
+            tool.write_text("#!/bin/sh\necho 'global tool used' >&2\nexit 1\n")
+            tool.chmod(0o755)
+        global_python = base / "global-python"
+        global_python.mkdir()
+        (global_python / "ruff.py").write_text(
+            "raise RuntimeError('global Python tool used')\n"
+        )
+        cached = dict(
+            env,
+            npm_config_offline="true",
+            PIP_NO_INDEX="1",
+            NODE_ENV="production",
+            PATH=str(global_tools) + os.pathsep + env["PATH"],
+            PYTHONPATH=str(global_python),
+        )
+        output = run(command, env=cached)
         assert output.splitlines()[-1] == "website-export: PASS"
+        assert not (dest / "node_modules").exists()
+        assert not (dest / ".venv").exists()
+        print(
+            "export positive: PASS (cached tools with package indexes disabled and global tool traps)",
+            flush=True,
+        )
         actual = snapshot(dest)
         assert actual.pop(Path(OWNER))[0] == OWNER_BYTES
         expected = {Path(name): baseline[Path(name)] for name in public_paths(source)}
