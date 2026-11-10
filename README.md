@@ -1,7 +1,7 @@
 # OpenHRA websites
 
-This repository holds the two public OpenHRA sites. Both use static HTML and CSS, with one small
-serverless function per site for the contact form. There is no build step.
+This repository holds the two public OpenHRA sites. Both use static HTML and CSS with serverless contact functions. The organization
+site also has signed alert and heartbeat handlers. There is no site build step.
 
 | Folder     | Site                         | What it is                                                                                                    |
 | ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -32,8 +32,7 @@ community spaces. Report security problems through [SECURITY.md](SECURITY.md).
 ## Checks
 
 See [DEVELOPMENT.md](DEVELOPMENT.md) for the pinned formatter and lint tools,
-protected paths and migration checks. Tool setup leaves existing source formatting
-unchanged; gate enforcement follows the formatting pass.
+protected paths and migration checks. The contributor checks enforce the committed formatting and lint configuration.
 
 Run `tools/gate.sh` for the offline site checks. The full gate includes the
 negative-control suites and requires `OPENPLANS_DENYLIST_FILE` to point to an
