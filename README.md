@@ -22,9 +22,12 @@ and `RECAPTCHA_SECRET_KEY`. Never commit their values. Do not put an email addre
 Serve a site folder with any static file server, for example `python3 -m http.server -d plans 8000`.
 The contact form needs the serverless function and shows "not available" locally.
 
-## Rules
+## Contributing
 
-See [AGENTS.md](AGENTS.md).
+Read [AGENTS.md](AGENTS.md) and [DEVELOPMENT.md](DEVELOPMENT.md) before making a
+change. Open pull requests against `develop` and run `scripts/ci.sh` before submitting.
+Follow the [Code of Conduct](CODE_OF_CONDUCT.md) in issues, pull requests and other
+community spaces. Report security problems through [SECURITY.md](SECURITY.md).
 
 ## Checks
 

@@ -66,11 +66,96 @@ async function invoke(value = event(), options = {}) {
     },
   };
   const before = logs.length;
-  await handler(req, res);
+  await (options.handler ?? handler)(req, res);
   assert.equal(res.headers["Cache-Control"], "no-store");
   if (res.code !== 204 && !options.concurrent)
     assert.equal(logs.length, before, "rejected input must not be logged");
   return res;
+}
+
+async function heartbeatContract(handle) {
+  clock = baseTime;
+  const call = (value, options = {}) =>
+    invoke(value, { ...options, handler: handle });
+  const read = (options = {}) =>
+    call({ action: "heartbeat-age", event_id: randomUUID() }, options);
+  const age = async (expected) => {
+    const response = await read();
+    assert.equal(response.code, 200);
+    assert.deepEqual(response.body, {
+      storage_kind: "instance-memory",
+      age_seconds: expected,
+    });
+  };
+  await age(null);
+  for (const overrides of [
+    { source: "watchdog", check: "edge-01.heartbeat", severity: "info" },
+    { source: "acme-renew", check: "edge-01.heartbeat", severity: "info" },
+    { check: "edge-01.trust", severity: "info" },
+    { check: "edge-01.heartbeat", severity: "recovery" },
+    { check: "other.heartbeat", severity: "info" },
+  ]) {
+    assert.equal((await call(event(overrides))).code, 204);
+    await age(null);
+  }
+  const heartbeat = event({
+    check: "edge-01.heartbeat",
+    severity: "info",
+    status: "fail",
+    at: "2020-01-01T00:00:00Z",
+  });
+  assert.equal((await call(heartbeat)).code, 204);
+  await age(0);
+  clock += 1800;
+  await age(1800);
+  clock += 1;
+  await age(1801);
+  const query = { action: "heartbeat-age", event_id: randomUUID() };
+  assert.equal((await call(query)).code, 200);
+  assert.equal((await call(query)).code, 409);
+  assert.equal(
+    (await call({ ...query, event_id: query.event_id.toUpperCase() })).code,
+    409,
+  );
+  for (const value of [
+    query,
+    event({ check: "edge-01.heartbeat", severity: "info" }),
+  ]) {
+    for (const options of [
+      { headers: { "x-openhra-signature": undefined } },
+      { headers: { "x-openhra-signature": "sha256=" + "0".repeat(64) } },
+      { timestamp: clock - 301 },
+      { timestamp: clock + 301 },
+    ])
+      assert.equal((await call(value, options)).code, 401);
+  }
+  await age(1801);
+  for (const value of [
+    { action: "heartbeat-age", event_id: "bad" },
+    { action: "heartbeat-age", event_id: randomUUID(), extra: 1 },
+    { action: "other", event_id: randomUUID() },
+  ])
+    assert.equal((await call(value)).code, 400);
+  const renewed = event({
+    check: "edge-02.heartbeat",
+    severity: "info",
+    status: "unknown",
+  });
+  assert.equal((await call(renewed)).code, 204);
+  clock += 60;
+  assert.equal((await call(renewed)).code, 409);
+  await age(60);
+  clock -= 61;
+  await age(null);
+  clock = baseTime;
+}
+
+async function isolatedHandler(code, label) {
+  const module = await import(
+    "data:text/javascript;base64," +
+      Buffer.from(code + "\n// " + label).toString("base64")
+  );
+  return module.handler;
 }
 
 test("alert receiver offline contract and rejection controls", async (t) => {
@@ -86,6 +171,55 @@ test("alert receiver offline contract and rejection controls", async (t) => {
   for (const level of ["log", "warn", "error"])
     console[level] = (...args) => logs.push({ level, args });
   try {
+    await t.test(
+      "signed heartbeat age uses arrival time and fails closed",
+      async () => {
+        await heartbeatContract(
+          await isolatedHandler(source, "heartbeat baseline"),
+        );
+        // A fresh function instance has no evidence from the other instance.
+        const cold = await invoke(
+          { action: "heartbeat-age", event_id: randomUUID() },
+          { handler: await isolatedHandler(source, "cold instance") },
+        );
+        assert.equal(cold.code, 200);
+        assert.deepEqual(cold.body, {
+          storage_kind: "instance-memory",
+          age_seconds: null,
+        });
+      },
+    );
+    await t.test(
+      "heartbeat contract kills planted receiver source mutants",
+      async () => {
+        const mutations = [
+          ['storage_kind: "instance-memory"', 'storage_kind: "durable-shared"'],
+          [
+            '!timingSafeEqual(expected, Buffer.from(signature.slice(7), "hex"))',
+            "false",
+          ],
+          ["seen.has(id)", "false"],
+          ["now - lastHeartbeatReceivedAt", "0"],
+          ['event.source === "acme-validate"', "true"],
+          [
+            "Math.max(lastHeartbeatReceivedAt ?? now, now)",
+            "Math.floor(Date.parse(event.at) / 1000)",
+          ],
+        ];
+        for (const [index, [before, after]] of mutations.entries()) {
+          assert.ok(source.includes(before), "mutation target exists");
+          const handle = await isolatedHandler(
+            source.replace(before, after),
+            "mutant " + index,
+          );
+          await assert.rejects(
+            () => heartbeatContract(handle),
+            assert.AssertionError,
+          );
+        }
+        clock = baseTime;
+      },
+    );
     await t.test(
       "fetch entry point bypasses body parsing and passes exact bytes to the handler",
       async () => {
@@ -292,6 +426,7 @@ test("alert receiver offline contract and rejection controls", async (t) => {
       "closed schema rejects unknown keys, invalid types and nested details",
       async () => {
         const mutations = [
+          ['storage_kind: "instance-memory"', 'storage_kind: "durable-shared"'],
           { extra: "synthetic-unvalidated-DO-NOT-LOG" },
           { received_at: "2026-11-08T00:00:00Z" },
           { event_id: "not-a-uuid" },

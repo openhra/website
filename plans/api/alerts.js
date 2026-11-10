@@ -5,6 +5,8 @@ const MAX_BYTES = 8192,
   SKEW_SECONDS = 300,
   MAX_REPLAYS = 10000;
 const seen = new Map();
+let lastHeartbeatReceivedAt = null;
+const uuid = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 const required = [
   "event_id",
   "source",
@@ -70,7 +72,7 @@ function valid(event) {
       (key) => required.includes(key) || key === "details",
     ) &&
     typeof event.event_id === "string" &&
-    /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(event.event_id) &&
+    uuid.test(event.event_id) &&
     sources.includes(event.source) &&
     typeof event.check === "string" &&
     /^[a-z0-9][a-z0-9._-]{0,63}$/i.test(event.check) &&
@@ -144,13 +146,37 @@ export async function handler(req, res) {
   } catch {
     return res.status(400).json({ error: "invalid_json" });
   }
-  if (!valid(event)) return res.status(400).json({ error: "invalid_event" });
+  const ageRead =
+    object(event) &&
+    Object.keys(event).length === 2 &&
+    event.action === "heartbeat-age" &&
+    typeof event.event_id === "string" &&
+    uuid.test(event.event_id);
+  if (!ageRead && !valid(event))
+    return res.status(400).json({ error: "invalid_event" });
 
   for (const [id, expires] of seen) if (expires < now) seen.delete(id);
   const id = event.event_id.toLowerCase();
   if (seen.has(id)) return res.status(409).json({ error: "replayed_event" });
   if (seen.size >= MAX_REPLAYS) seen.delete(seen.keys().next().value);
   seen.set(id, Math.max(now, Number(timestamp)) + SKEW_SECONDS);
+
+  if (ageRead) {
+    let age = null;
+    if (lastHeartbeatReceivedAt !== null && now >= lastHeartbeatReceivedAt)
+      age = now - lastHeartbeatReceivedAt;
+    return res
+      .status(200)
+      .json({ storage_kind: "instance-memory", age_seconds: age });
+  }
+
+  // A failed validator check still proves the Mac can report. Watchdog events do not.
+  if (
+    event.source === "acme-validate" &&
+    /^edge-[a-z0-9]{2,16}\.heartbeat$/.test(event.check) &&
+    event.severity === "info"
+  )
+    lastHeartbeatReceivedAt = Math.max(lastHeartbeatReceivedAt ?? now, now);
 
   const line = JSON.stringify({
     ...event,

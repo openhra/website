@@ -1,0 +1,41 @@
+name: Feature request
+description: Propose a change to the OpenHRA or OpenPlans website.
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues are public. Do not include personal health information, household details,
+        credentials or contact addresses. Remove them from URLs, screenshots and logs.
+        Report security problems through [the security policy](https://github.com/openhra/website/blob/main/SECURITY.md).
+  - type: input
+    id: page
+    attributes:
+      label: Related page URL
+      description: Link the relevant page if there is one. Remove query values that contain private data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the task and where the website falls short. Use no personal health information or other private data.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What should change?
+      description: Describe the behavior you want and how you would use it.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What have you tried?
+      description: Describe any workarounds or other approaches you considered.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed personal health information, household details, credentials and contact addresses.
+          required: true

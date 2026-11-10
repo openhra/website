@@ -1,0 +1,45 @@
+name: Content correction
+description: Report website text or coverage information that needs a correction.
+title: "[Content] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues are public. Do not include personal health information, household details,
+        credentials or contact addresses. Remove them from URLs, screenshots and logs.
+        Report security problems through [the security policy](https://github.com/openhra/website/blob/main/SECURITY.md).
+  - type: input
+    id: page
+    attributes:
+      label: Page URL
+      description: Link the page that needs a correction. Remove query values that contain private data.
+    validations:
+      required: true
+  - type: textarea
+    id: text
+    attributes:
+      label: Which text needs a correction?
+      description: Quote the website text and name its section. For coverage information, include the state and plan year.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: What does the public source say?
+      description: Link the public source and quote the relevant passage or field. Include its date if known. If evidence is missing, say it is unknown. Do not include private records.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested correction
+      description: Explain what the page should say. Missing evidence stays unknown.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed personal health information, household details, credentials and contact addresses.
+          required: true

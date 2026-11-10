@@ -343,9 +343,44 @@ def main():
 
         # Bare-artifact auditing excludes the staging ownership control.
         (dest / OWNER).unlink()
-        run(
-            ["python3", str(dest / "tools/check-neutral.py"), str(dest), "--artifact"],
-            env=env,
+        audit = [
+            "python3",
+            str(dest / "tools/check-neutral.py"),
+            str(dest),
+            "--artifact",
+        ]
+        run(audit, env=env)
+
+        community_files = (
+            "CODE_OF_CONDUCT.md",
+            "SECURITY.md",
+            ".github/ISSUE_TEMPLATE/site_problem.yml",
+            ".github/ISSUE_TEMPLATE/content_correction.yml",
+            ".github/ISSUE_TEMPLATE/feature_request.yml",
+            ".github/ISSUE_TEMPLATE/config.yml",
+            ".github/pull_request_template.md",
+        )
+        for name in community_files:
+            assert (dest / name).read_bytes() == (source / name).read_bytes(), (
+                "community file differs from committed source"
+            )
+        print("export positive: PASS (all community files preserved)", flush=True)
+        covenant = dest / "CODE_OF_CONDUCT.md"
+        covenant_bytes = covenant.read_bytes()
+        covenant.unlink()
+        run(audit, env=env, expected="required public file missing")
+        covenant.write_bytes(covenant_bytes)
+        print("export negative: PASS (missing Covenant rejected)", flush=True)
+        form = dest / ".github/ISSUE_TEMPLATE/site_problem.yml"
+        form_bytes = form.read_bytes()
+        form.write_bytes(
+            form_bytes + ("\n# synthetic" + "@" + "example.invalid\n").encode()
+        )
+        run(audit, env=env, expected="email address found")
+        form.write_bytes(form_bytes)
+        run(audit, env=env)
+        print(
+            "export negative: PASS (contact address in issue form rejected)", flush=True
         )
 
         public_blame = dest / ".git-blame-ignore-revs"
