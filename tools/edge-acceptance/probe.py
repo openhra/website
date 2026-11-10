@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import http.client
+import importlib.util
 import json
 import os
 import socket
@@ -38,6 +39,53 @@ RATE_WORKERS = 3  # Below nginx's four simultaneous /mcp connections per source.
 
 class CheckFailed(Exception):
     pass
+
+
+def expected_catalog_tools():
+    """Load the public catalog maintained by the website MCP checker."""
+    checker = Path(__file__).resolve().parents[1] / "check-mcp.py"
+    spec = importlib.util.spec_from_file_location("website_check_mcp", checker)
+    require(spec is not None and spec.loader is not None, "catalog checker unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return set(module.TOOLS)
+
+
+def list_catalog_tools(fetch_page):
+    """Read every tools/list page and return its names."""
+    names = set()
+    cursor = None
+    seen_cursors = set()
+    while True:
+        result = fetch_page(cursor)
+        tools = result.get("tools", [])
+        require(isinstance(tools, list), "catalog tools are missing")
+        for tool in tools:
+            require(
+                isinstance(tool, dict) and isinstance(tool.get("name"), str),
+                "invalid catalog tool",
+            )
+            names.add(tool["name"])
+        cursor = result.get("nextCursor")
+        if cursor is None:
+            return names
+        require(isinstance(cursor, str) and cursor, "invalid catalog cursor")
+        require(cursor not in seen_cursors, "catalog cursor repeated")
+        seen_cursors.add(cursor)
+
+
+def check_catalog_tools(names):
+    require(not names.intersection(expected_removed_tools()), "removed tool advertised")
+    require(names == expected_catalog_tools(), "catalog tool set differs")
+
+
+def expected_removed_tools():
+    checker = Path(__file__).resolve().parents[1] / "check-mcp.py"
+    spec = importlib.util.spec_from_file_location("website_check_mcp", checker)
+    require(spec is not None and spec.loader is not None, "catalog checker unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return set(module.REMOVED_NAMES)
 
 
 def require(condition, reason):
@@ -552,15 +600,17 @@ class Suite:
                 self.check("legacy initialized notification", initialized)
 
             def listing(revision=revision):
-                result = rpc_result(
-                    c.rpc("tools/list", revision=revision), allow_sse=revision == LEGACY
+                names = list_catalog_tools(
+                    lambda cursor: rpc_result(
+                        c.rpc(
+                            "tools/list",
+                            {"cursor": cursor} if cursor is not None else {},
+                            revision=revision,
+                        ),
+                        allow_sse=revision == LEGACY,
+                    )
                 )
-                names = {tool["name"] for tool in result.get("tools", [])}
-                require("lookup_geography" in names, "catalog tool missing")
-                require(
-                    not names & {"quote_premiums", "estimate_premiums"},
-                    "personalized or removed tool advertised",
-                )
+                check_catalog_tools(names)
 
             self.check(revision + " list catalog tools", listing)
 

@@ -293,7 +293,15 @@ class Handler(BaseHTTPRequestHandler):
         elif value["method"] == "notifications/initialized":
             self.send(202)
         elif value["method"] == "tools/list":
-            self.json({"tools": [{"name": "lookup_geography"}]}, headers=cors)
+            self.json(
+                {
+                    "tools": [
+                        {"name": name}
+                        for name in sorted(probe.expected_catalog_tools())
+                    ]
+                },
+                headers=cors,
+            )
         elif value["method"] == "tools/call":
             with fake.guard:
                 fake.tool_calls.append(params)
@@ -403,6 +411,26 @@ def server(mode="good"):
 
 
 class AcceptanceTests(unittest.TestCase):
+    def test_catalog_tool_set_accepts_public_tools_and_rejects_removed_tool(self):
+        names = probe.expected_catalog_tools()
+        self.assertEqual(len(names), 15)
+        self.assertIn("quote_premiums", names)
+        probe.check_catalog_tools(names)
+        with self.assertRaisesRegex(probe.CheckFailed, "removed tool advertised"):
+            probe.check_catalog_tools(names | {"estimate_premiums"})
+
+    def test_catalog_listing_reads_every_page(self):
+        calls = []
+
+        def fetch(cursor):
+            calls.append(cursor)
+            if cursor is None:
+                return {"tools": [{"name": "search"}], "nextCursor": "page-2"}
+            return {"tools": [{"name": "quote_premiums"}]}
+
+        self.assertEqual(probe.list_catalog_tools(fetch), {"search", "quote_premiums"})
+        self.assertEqual(calls, [None, "page-2"])
+
     def suite(self, client):
         return probe.Suite(client, "linux", time.time() + 1)
 
