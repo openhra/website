@@ -50,7 +50,7 @@ def check(workflow):
             set(job) == {"name", "runs-on", "timeout-minutes", "steps"},
             "check jobs cannot be conditional or depend on other jobs",
         )
-        expected_timeout = 30 if key == "macos" else 20
+        expected_timeout = 45 if key == "macos" else 20
         require(
             job["timeout-minutes"] == expected_timeout,
             "check timeout must be bounded (macOS receives cold-cache headroom)",
