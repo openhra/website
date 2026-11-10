@@ -147,6 +147,44 @@ class Handler(BaseHTTPRequestHandler):
                 ).encode(),
             )
             return
+        if self.path.split("?", 1)[0] == "/v1/benchmark":
+            if fake.mode == "benchmark-404":
+                self.send(404, SENTINEL.encode())
+            else:
+                self.send(
+                    200,
+                    json.dumps(
+                        {
+                            "status": "synthetic-status",
+                            "benchmark_plan_ids": [],
+                            "lowest_silver_plans": [],
+                        }
+                    ).encode(),
+                    {"Content-Type": "application/json"},
+                )
+            return
+        if self.path.startswith("/compat/v1/carriers") and self.command == "GET":
+            if fake.mode == "compat-carriers-404":
+                self.send(404, SENTINEL.encode())
+            else:
+                self.send(
+                    200,
+                    json.dumps({"meta": {"total": 0}, "carriers": []}).encode(),
+                    {"Content-Type": "application/json"},
+                )
+            return
+        if self.path == "/compat/v1/plans/medical/search" and self.command == "POST":
+            if fake.mode == "compat-search-404":
+                self.send(404, SENTINEL.encode())
+            elif fake.mode == "compat-post":
+                self.send(200, SENTINEL.encode())
+            else:
+                self.send(
+                    200,
+                    json.dumps({"meta": {"total": 0}, "plans": []}).encode(),
+                    {"Content-Type": "application/json"},
+                )
+            return
         if self.path != "/mcp":
             status = (
                 200
@@ -480,6 +518,30 @@ class AcceptanceTests(unittest.TestCase):
             with self.subTest(mode=mode):
                 result, _, _, _ = self.basics(mode)
                 self.assertFalse(result["ok"])
+
+    def test_newly_open_routes_require_success_status_and_minimal_shapes(self):
+        result, rows, _, _ = self.basics("good")
+        self.assertTrue(result["ok"], rows)
+        for mode, row_name in (
+            ("benchmark-404", "GET /v1/benchmark"),
+            ("compat-carriers-404", "GET /compat/v1/carriers"),
+            ("compat-search-404", "POST /compat/v1/plans/medical/search"),
+        ):
+            with self.subTest(mode=mode):
+                result, rows, _, _ = self.basics(mode)
+                self.assertFalse(result["ok"])
+                self.assertIn((row_name, False), [row[:2] for row in rows])
+
+    def test_rate_expectation_keeps_open_routes_out_of_the_mcp_burst(self):
+        # Each new open route gets one shape request. The edge allows 30/minute
+        # with burst=5 there; the existing 19-request burst stays on /mcp.
+        result, _, _, _ = self.basics("good")
+        self.assertTrue(result["ok"])
+        with server("good") as (_, client):
+            suite = self.suite(client)
+            suite.rate()
+            self.assertTrue(all(row[1] for row in suite.rows), suite.rows)
+            self.assertEqual(client.requests, probe.RATE_REQUESTS)
 
     def test_stream_arrival_and_disconnect(self):
         with server() as (fake, client):

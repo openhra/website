@@ -708,12 +708,10 @@ class Suite:
         paths = (
             "/v1/premium-estimates",
             "/v1/premium-estimates/",
-            "/v1/benchmark",
             "/v1/benchmark/",
             "/v1/cache-stats",
             "/v1/cache-stats/",
             "/compat/v1/plans/medical/search",
-            "/compat/v1/carriers",
             "/.env",
             "/.git/config",
             "/api/v1/repos",
@@ -726,10 +724,12 @@ class Suite:
                 require(reply.status == 404, "protected path did not return 404")
 
             self.check("denied " + path, hidden)
+        self.check("GET /v1/benchmark", self.public_benchmark)
+        self.check("GET /compat/v1/carriers", self.compat_carriers)
+        self.check("POST /compat/v1/plans/medical/search", self.compat_search)
         for path in (
             "/v1/premium-estimates",
             "/v1/premium-estimates/",
-            "/compat/v1/plans/medical/search",
         ):
 
             def post_hidden(path=path):
@@ -745,6 +745,60 @@ class Suite:
             lambda: c.unknown_sni("edge-acceptance.invalid"),
         )
         self.check("absent SNI refuses handshake", lambda: c.unknown_sni(None))
+
+    def public_benchmark(self):
+        reply = self.client.request(
+            "GET", "/v1/benchmark?county=48201&year=2026&ages=40"
+        )
+        require(reply.status == 200, "benchmark did not return HTTP 200")
+        value = reply.json()
+        require(isinstance(value, dict), "benchmark response is not an object")
+        require(
+            isinstance(value.get("status"), str)
+            and isinstance(value.get("benchmark_plan_ids"), list)
+            and isinstance(value.get("lowest_silver_plans"), list),
+            "benchmark response shape is incomplete",
+        )
+
+    def compat_carriers(self):
+        reply = self.client.request(
+            "GET", "/compat/v1/carriers?state=TX&year=2026&page=1&per_page=1"
+        )
+        require(reply.status == 200, "compatibility carriers did not return HTTP 200")
+        value = reply.json()
+        require(
+            isinstance(value, dict)
+            and isinstance(value.get("carriers"), list)
+            and isinstance(value.get("meta"), dict)
+            and type(value["meta"].get("total")) is int
+            and value["meta"]["total"] >= 0,
+            "compatibility carriers response shape is incomplete",
+        )
+
+    def compat_search(self):
+        reply = self.client.request(
+            "POST",
+            "/compat/v1/plans/medical/search",
+            json.dumps(
+                {
+                    "fips_code": "48201",
+                    "market": "individual",
+                    "applicants": [{"age": 35, "smoker": False, "child": False}],
+                    "per_page": 1,
+                }
+            ).encode(),
+            {"Content-Type": "application/json"},
+        )
+        require(reply.status == 200, "compatibility search did not return HTTP 200")
+        value = reply.json()
+        require(
+            isinstance(value, dict)
+            and isinstance(value.get("plans"), list)
+            and isinstance(value.get("meta"), dict)
+            and type(value["meta"].get("total")) is int
+            and value["meta"]["total"] >= 0,
+            "compatibility search response shape is incomplete",
+        )
 
     def streaming(self):
         def stream(disconnect):

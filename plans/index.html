@@ -36,7 +36,7 @@
     <p class="lede">Query public health-plan files through one API. Look up plans, providers and drugs, and quote plans by age and ZIP or for a household with income and subsidy estimates. Every answer keeps its evidence from the source.</p>
     <p class="hero-preview" data-mcp-preview><strong>MCP · Public preview</strong> Connect your agent to the hosted preview. It has the plan catalog, quotes by age and ZIP and household quotes for Texas and Florida, 2026 and 2027, through 15 read-only tools. Run your own copy to load other federal-platform states or a state exchange.</p>
     <div class="actions"><a class="button" href="https://github.com/openhra/openplans">Open on GitHub <span aria-hidden="true">↗</span></a><a class="text-link" href="https://github.com/openhra/openplans#readme">Read the README <span aria-hidden="true">↗</span></a></div>
-    <p class="repo-status">Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.0">v0.3.0</a></p>
+    <p class="repo-status">Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.1">v0.3.1</a></p>
   </div>
   <aside class="repo-home project-home" aria-label="OpenPlans on GitHub">
     <div class="repo-home-top"><span class="eyebrow">Source / OpenPlans</span><img src="/brand/mark-openplans.svg" width="48" height="48" alt=""></div>
@@ -47,7 +47,7 @@
       <li><a href="https://github.com/openhra/openplans"><span>Code</span><span>Inspect and self-host ↗</span></a></li>
       <li><a href="https://github.com/openhra/openplans#readme"><span>Docs</span><span>Setup and API guides ↗</span></a></li>
       <li><a href="https://github.com/openhra/openplans/issues"><span>Issues</span><span>Track development ↗</span></a></li>
-      <li><a href="https://github.com/openhra/openplans/releases/tag/v0.3.0"><span>Releases</span><span>v0.3.0</span></a></li>
+      <li><a href="https://github.com/openhra/openplans/releases/tag/v0.3.1"><span>Releases</span><span>v0.3.1</span></a></li>
     </ul>
     <div class="repo-home-bottom"><span>Open source</span><span>Self-hosted</span></div>
   </aside>
@@ -84,7 +84,7 @@
         <p class="feature-lede">A catalog your agent can query.</p>
         <p>The Model Context Protocol server is live as a public preview. Search the plan catalog, quote plans by age and ZIP, and look up provider and drug evidence with 15 read-only tools.</p>
         <p>Answers include provenance. Provider and drug results may be <code>unknown</code>. Unknown never means "not covered".</p>
-        <p class="development-note"><strong>Public preview.</strong> Coverage is limited. An outside acceptance run is still pending. OpenPlans v0.3.0 is available. The source is on <a href="https://github.com/openhra/openplans">GitHub</a>.</p>
+        <p class="development-note"><strong>Public preview.</strong> Coverage is limited. An outside acceptance run is still pending. OpenPlans v0.3.1 is available. The source is on <a href="https://github.com/openhra/openplans">GitHub</a>.</p>
         <ul class="protocol-facts" aria-label="Public preview MCP transport"><li>Streamable HTTP</li><li>Stateless</li><li>Read-only tools</li></ul>
         <a class="text-link" href="https://github.com/openhra/openplans">Read the source on GitHub <span aria-hidden="true">↗</span></a>
       </div>
@@ -148,7 +148,7 @@ MCP-Protocol-Version: 2026-07-28</code></pre>
       </div>
     </div>
     <div class="actions"><a class="button" href="https://github.com/openhra/openplans">Open the MCP source <span aria-hidden="true">↗</span></a><a class="text-link" href="https://github.com/openhra/openplans#readme">Read the README <span aria-hidden="true">↗</span></a></div>
-    <p class="repo-status">MCP · Public preview · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.0">v0.3.0</a></p>
+    <p class="repo-status">MCP · Public preview · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.1">v0.3.1</a></p>
     </section>
     <section class="connection-section" id="connect-app" aria-labelledby="app-connect-title">
       <div class="connect-heading">
@@ -217,7 +217,7 @@ MCP-Protocol-Version: 2026-07-28</code></pre>
     <p>Start with the README to configure Docker Compose and the data directory. A fresh database is empty. Import public-source snapshots before making API requests.</p>
     <div class="setup-grid">
       <div><h3>Get the code</h3><pre><code>git clone https://github.com/openhra/openplans.git
-cd openplans</code></pre><p>Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.0">v0.3.0</a>. Use the README for the current setup steps.</p></div>
+cd openplans</code></pre><p>Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.1">v0.3.1</a>. Use the README for the current setup steps.</p></div>
       <div><h3>Import public data</h3><pre><code>OPENPLANS_RAW_READ_ONLY=false docker compose run --build --rm worker bootstrap --states TX,FL --years 2026,2027</code></pre><p>After setup, this command imports two federal-platform states. Swap in any state from the CMS exchange files, for one year or both. A small first run is <code>--states DE --years 2026</code>. A state missing from the publication fails with a message instead of becoming an empty catalog. The README explains how to start the HTTP or stdio server.</p></div>
       <div><h3>Import a state exchange</h3><pre><code>OPENPLANS_RAW_READ_ONLY=false docker compose run --build --rm worker bootstrap --states GA --years 2026</code></pre><p>State-exchange states use the same command with the 2026 files. Give the year when you mix them with federal-platform states. The hosted preview holds only Texas and Florida, not Georgia.</p></div>
     </div>
