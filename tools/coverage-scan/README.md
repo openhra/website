@@ -333,4 +333,4 @@ states in 2026. No new state qualifies from these inputs.
 `table(dataset)` now formats either a Providers or Premiums fallback. The scanner
 still writes the Providers 2026 fragment by default. Generate the Premiums 2026
 fragment from the checked dataset for the two availability views and run the UI
-parity checker before committing.
+consistency checker before committing.

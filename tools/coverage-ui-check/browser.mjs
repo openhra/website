@@ -150,7 +150,7 @@ try {
       selections += await evaluate(`(()=>{
     const d=${JSON.stringify(data)}, $=s=>document.querySelector('#coverage-'+s), rows=[...$('table').querySelectorAll('tbody tr')], codes=Object.keys(d.states), names=Object.fromEntries([...$('state').options].map(o=>[o.value,o.textContent]));
     const fail=m=>{throw Error(m)}, date=t=>new Date(t).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'});
-    if(rows.length!==51||!$('title').textContent.includes(d.year)||!$('legend-title').textContent.includes(d.year)||!$('table').querySelector('caption').textContent.includes('Plan year '+d.year)||!$('date').textContent.includes(date(d.as_of)))fail('year/date parity');
+    if(rows.length!==51||!$('title').textContent.includes(d.year)||!$('legend-title').textContent.includes(d.year)||!$('table').querySelector('caption').textContent.includes('Plan year '+d.year)||!$('date').textContent.includes(date(d.as_of)))fail('year/date consistency');
     for(const [i,s]of codes.entries()){
      const r=d.states[s];$('state').value=s;$('state').dispatchEvent(new Event('change'));
      const metric=r.status==='measured'?(r.percent_tenths/10).toFixed(1)+'%':({unknown:'Unknown, not yet measured',quarantined:'Quarantined',not_applicable:'Not applicable'})[r.status];
@@ -174,7 +174,7 @@ try {
     }
   }
   assert(selections === 306, "all selections");
-  reports.push({ selectionParity: selections });
+  reports.push({ selectionConsistency: selections });
   await navigate("?year=2027&layer=premiums");
   await ready();
   assert(

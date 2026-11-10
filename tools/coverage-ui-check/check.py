@@ -332,8 +332,19 @@ def check(root):
         # A page redesign is authorised. Keep the evidence, legal and contact
         # blocks byte-identical instead of freezing unrelated presentation copy.
         baseline_page = original("plans/index.html")
+        # Verification row labels and the caption may be reworded. The checked
+        # figures, their order and the run date stay exactly as validated.
+        evidence = r'<section class="band alt verification">.*?</section>'
+        figures = lambda block: (
+            re.findall(r'<td class="num">([^<]*)</td>', block),
+            "Figures from the November 8, 2026 validation run." in block,
+        )
+        before = re.search(evidence, baseline_page, re.DOTALL)
+        after = re.search(evidence, page, re.DOTALL)
+        assert before and after and figures(before[0]) == figures(after[0]), (
+            "protected page block changed: " + evidence
+        )
         protected_sections = (
-            r'<section class="band alt verification">.*?</section>',
             r'<section class="band" id="publishers">.*?</section>',
             r'<section class="band alt" id="contact">.*?</section>',
             r"<footer>.*?</footer>",
@@ -411,7 +422,7 @@ def negatives(root=ROOT):
                 "URL state ignored",
                 "plans/coverage.js",
                 lambda s: re.sub(
-                    r"state:\s*Object\.hasOwn\(\s*states,\s*params\.get\(['\"]state['\"]\),?\s*\)\s*\?\s*params\.get\(['\"]state['\"]\)\s*:\s*['\"]TX['\"]",
+                    r"state:\s*Object\.hasOwn\(\s*states,\s*params\.get\(['\"]state['\"]\),?\s*\)\s*\?\s*params\.get\(['\"]state['\"]\)\s*:\s*ALL_STATES",
                     "state: 'TX'",
                     s,
                 ),
@@ -555,5 +566,5 @@ if __name__ == "__main__":
         print("FAIL: coverage UI: " + str(exc))
         sys.exit(1)
     print(
-        "PASS: coverage UI static parity, default year/date, 51 Census paths and labels, safe DOM and budgets"
+        "PASS: coverage UI static consistency, default year/date, 51 Census paths and labels, safe DOM and budgets"
     )

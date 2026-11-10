@@ -108,7 +108,11 @@ async function fixture(search, native = false) {
       "share-message",
     ].map((id) => [id, new Element()]),
   );
-  ids.state.options = codes.map((code) => ({ value: code, textContent: code }));
+  // Like the page, the first option is the all-states summary. State names are codes here.
+  ids.state.options = [
+    { value: "ALL", textContent: "All states" },
+    ...codes.map((code) => ({ value: code, textContent: code })),
+  ];
   const layers = ["providers", "prescriptions", "premiums"].map((layer) => {
     const e = new Element();
     e.dataset.coverageLayer = layer;
@@ -279,7 +283,34 @@ try {
     "native share selection",
   );
   const fallback = await fixture("?layer=invalid&year=9999&state=ZZ");
-  selected(fallback, "premiums", 2026, "TX");
+  assert(
+    fallback.ids.state.value === "ALL" &&
+      fallback.ids["state-name"].textContent ===
+        "All states · Premiums · Plan year 2026" &&
+      fallback.ids.metric.textContent === "49 of 51 measured" &&
+      fallback.ids.breakdown.textContent === "Not yet measured: NY and VT." &&
+      !new URL(fallback.location.href).searchParams.has("state"),
+    "invalid or missing state must open the all-states summary",
+  );
+  assert(
+    Object.values(fallback.paths).every((p) => p.dataset.selected === false),
+    "all-states summary must not highlight one state",
+  );
+  await fallback.ids.share.events.click();
+  assert(
+    !new URL(fallback.copied[0]).searchParams.has("state"),
+    "all-states share link must not name a state",
+  );
+  const providers = await fixture("?layer=providers&year=2026");
+  assert(
+    providers.ids.state.value === "ALL" &&
+      providers.ids.summary.textContent.includes(
+        "Providers: 3 of 51 states measured, in FL, NC and TX. Quarantined: GA.",
+      ) &&
+      providers.ids.breakdown.textContent ===
+        "Measured: FL, NC and TX. Quarantined: GA.",
+    "summary must name the few measured and quarantined states",
+  );
   console.log(
     "PASS: coverage selection URL load/replace/history, measured counts, native share, clipboard confirmation and unknown states",
   );

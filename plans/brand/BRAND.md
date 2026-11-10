@@ -14,16 +14,16 @@ Write OpenPlans with a capital O and capital P in page copy, headings, metadata,
 
 Calm, precise and useful. Write for people evaluating an integration, operating a service or understanding a request in their server logs. Treat insurers and other data publishers as partners. Their files make this work possible.
 
-| Rule                                | Do                                                                          | Don't                            |
-| ----------------------------------- | --------------------------------------------------------------------------- | -------------------------------- |
-| Lead with what exists               | "US health plan data. On your server."                                      | "The future of health benefits." |
-| Make provenance concrete            | "Every answer can be traced to the public file it came from."               | "Data you can always trust."     |
-| State limits alongside capabilities | "Texas and Florida, for every insurer whose published files could be read." | "Complete nationwide coverage."  |
-| Describe missing data honestly      | "Unknown stays unknown."                                                    | "We fill every gap."             |
-| Respect publishers                  | "It downloads only files you publish for the public."                       | "We break through the barriers." |
-| Prefer facts to competition         | "Built from public sources."                                                | "Taking on the insurers."        |
-| Keep invitations practical          | "Open the repository."                                                      | "Transform your business today." |
-| Keep status visible                 | "Public preview."                                                           | "Production-ready."              |
+| Rule                                | Do                                                                           | Don't                            |
+| ----------------------------------- | ---------------------------------------------------------------------------- | -------------------------------- |
+| Lead with what exists               | "US health plan data. On your server."                                       | "The future of health benefits." |
+| Make provenance concrete            | "Every answer can be traced to the public file it came from."                | "Data you can always trust."     |
+| State limits alongside capabilities | "Catalogs for 48 states and DC. Provider feeds read in three states so far." | "Complete nationwide coverage."  |
+| Describe missing data honestly      | "Unknown stays unknown."                                                     | "We fill every gap."             |
+| Respect publishers                  | "It downloads only files you publish for the public."                        | "We break through the barriers." |
+| Prefer facts to competition         | "Built from public sources."                                                 | "Taking on the insurers."        |
+| Keep invitations practical          | "Open the repository."                                                       | "Transform your business today." |
+| Keep status visible                 | "Public preview."                                                            | "Production-ready."              |
 
 Use sentence case for headings, short paragraphs and descriptive links. Keep identifiers, flags and API paths exact; set them in monospace. Explain ICHRA before using it with a general audience. Numbers need a source and date. Never invent adoption, performance, endorsements or road-map commitments. Never publish contact addresses in source or docs; retain the existing contact verification flow.
 

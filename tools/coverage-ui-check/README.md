@@ -59,7 +59,7 @@ distinct fills and labels.
 
 The landing table and detailed source links are native disclosures. The full page
 shows the table, state detail, source links and methodology. Both default to
-Premiums 2026 because 49 states are measured, compared with 29 in Premiums 2027.
+Premiums 2026 because it measures 49 states. Premiums 2027 measures 29.
 Unknown stays not yet measured. Quarantined units remain in the denominator.
 
 No contact form is submitted and no CAPTCHA challenge is solved by these checks.

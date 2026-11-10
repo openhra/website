@@ -32,7 +32,7 @@
   <div class="wrap">
     <p class="eyebrow section-label">OpenPlans / Availability</p>
     <h1 id="coverage-heading">Data availability by state</h1>
-    <p>Public-source data by state. These figures describe separate validated runs, not insurance market share.</p>
+    <p>Where OpenPlans has data, by state and plan year. Premiums count rate rows imported and checked against the public file. Providers and prescriptions count insurers whose published feeds OpenPlans could read. Each layer is a separate validated run, not market share, and the three never add up to one number. The hosted preview at openplans.openhra.com holds Texas and Florida only, with no provider or drug files.</p>
     <div class="coverage-actions"><a class="text-link" href="/#availability">Back to OpenPlans</a><button id="coverage-share" type="button" disabled>Share this view</button><span id="coverage-share-message" role="status" aria-live="polite" aria-atomic="true"></span></div>
     <div class="coverage-controls" aria-label="Coverage selection">
       <div class="coverage-layers" role="group" aria-label="Data layer">
@@ -41,9 +41,9 @@
         <button type="button" data-coverage-layer="premiums" aria-pressed="true" disabled>Premiums</button>
       </div>
       <label>Plan year <select id="coverage-year" disabled><option value="2026">2026</option></select></label>
-      <label>State <select id="coverage-state" disabled><option value="AK">Alaska</option><option value="AL">Alabama</option><option value="AR">Arkansas</option><option value="AZ">Arizona</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DC">District of Columbia</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="IA">Iowa</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="MA">Massachusetts</option><option value="MD">Maryland</option><option value="ME">Maine</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MO">Missouri</option><option value="MS">Mississippi</option><option value="MT">Montana</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="NE">Nebraska</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NV">Nevada</option><option value="NY">New York</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX" selected>Texas</option><option value="UT">Utah</option><option value="VA">Virginia</option><option value="VT">Vermont</option><option value="WA">Washington</option><option value="WI">Wisconsin</option><option value="WV">West Virginia</option><option value="WY">Wyoming</option></select></label>
+      <label>State <select id="coverage-state" disabled><option value="ALL" selected>All states</option><option value="AK">Alaska</option><option value="AL">Alabama</option><option value="AR">Arkansas</option><option value="AZ">Arizona</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DC">District of Columbia</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="IA">Iowa</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="MA">Massachusetts</option><option value="MD">Maryland</option><option value="ME">Maine</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MO">Missouri</option><option value="MS">Mississippi</option><option value="MT">Montana</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="NE">Nebraska</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NV">Nevada</option><option value="NY">New York</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX" selected>Texas</option><option value="UT">Utah</option><option value="VA">Virginia</option><option value="VT">Vermont</option><option value="WA">Washington</option><option value="WI">Wisconsin</option><option value="WV">West Virginia</option><option value="WY">Wyoming</option></select></label>
     </div>
-    <p id="coverage-summary" class="coverage-summary">Providers: 3 of 51 states measured. Prescriptions: 3 of 51 states measured. Premiums: 49 of 51 states measured. Includes DC. Unknown states are not yet measured.</p>
+    <p id="coverage-summary" class="coverage-summary">Providers: 3 of 51 states measured, in Florida, North Carolina and Texas. Quarantined: Georgia. Prescriptions: 3 of 51 states measured, in Florida, North Carolina and Texas. Quarantined: Georgia. Premiums: 49 of 51 states measured. Includes DC. Unknown states are not yet measured, which is not zero.</p>
     <p id="coverage-scope">Published exchange inventory, all products including dental and SHOP. Unit: rate rows imported and checked. This does not measure household quote support.</p>
     <div class="coverage-workspace">
       <div class="coverage-map">
@@ -66,14 +66,14 @@
         <p class="coverage-note">Map: <a href="https://www.census.gov/geographies/mapping-files/2024/geo/carto-boundary-file.html">U.S. Census Bureau, 2024 cartographic boundaries</a> (public domain).</p>
       </div>
       <aside class="coverage-detail" aria-labelledby="coverage-state-name">
-        <h2 id="coverage-state-name">Texas · Premiums · Plan year 2026</h2>
-        <p id="coverage-metric">100.0%</p>
-        <p id="coverage-fraction">203592 / 203592 rate rows imported and checked</p>
-        <p id="coverage-breakdown">203592 verified; 0 quarantined; 0 unknown; 0 not imported.</p>
-        <p id="coverage-observed">State observation: November 8, 2026</p>
-        <p id="coverage-reasons">No recorded source limitations.</p>
-        <p id="coverage-detail-scope">Published exchange inventory, all products including dental and SHOP. Source rows do not measure household quote support.</p>
-        <p id="coverage-provenance"><a href="data/coverage/premiums-2026.json" download>Default state records (JSON)</a></p>
+        <h2 id="coverage-state-name">All states · Premiums · Plan year 2026</h2>
+        <p id="coverage-metric">49 of 51 measured</p>
+        <p id="coverage-fraction">49 measured; 0 quarantined; 2 not yet measured. Includes DC.</p>
+        <p id="coverage-breakdown">Not yet measured: New York and Vermont.</p>
+        <p id="coverage-observed">Figures as of November 8, 2026</p>
+        <p id="coverage-reasons">Pick a state for its counts, limits and sources.</p>
+        <p id="coverage-detail-scope">Published exchange inventory, all products including dental and SHOP. Unit: rate rows imported and checked. This does not measure household quote support.</p>
+        <p id="coverage-provenance"><a href="data/coverage/premiums-2026.json">All state records (JSON)</a></p>
       </aside>
     </div>
     <p id="coverage-message" role="status" aria-live="polite" aria-atomic="true">Saved Premiums / plan year 2026 snapshot. Controls become available after validation. If loading fails, the saved view remains.</p>

@@ -76,6 +76,7 @@
     "plans/data/coverage/prescriptions-2027.json",
     "plans/data/coverage/providers-2026.json",
     "plans/data/coverage/providers-2027.json",
+    "plans/data/hosted-preview.json",
     "plans/favicon.svg",
     "plans/index.html",
     "plans/mcp-copy.js",
@@ -129,6 +130,8 @@
     "tools/edge-acceptance/README.md",
     "tools/edge-acceptance/probe.py",
     "tools/gate-selftest.sh",
-    "tools/gate.sh"
+    "tools/gate.sh",
+    "tools/hosted-preview/check.py",
+    "tools/hosted-preview/reduce.py"
   ]
 }

@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "source": "https://openplans.openhra.com/v1/data-availability",
+  "as_of": "2026-11-10",
+  "catalog_states": ["FL", "TX"],
+  "catalog_years": [2026, 2027],
+  "provider_evidence_states": [],
+  "formulary_evidence_states": []
+}

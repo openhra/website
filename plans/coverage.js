@@ -5,8 +5,12 @@
   if (!root) return;
   const $ = (id) => root.querySelector("#coverage-" + id);
   const buttons = [...root.querySelectorAll("[data-coverage-layer]")];
+  // The national summary is the default view; it is not a state code.
+  const ALL_STATES = "ALL";
   const states = Object.fromEntries(
-    [...$("state").options].map((o) => [o.value, o.textContent]),
+    [...$("state").options]
+      .filter((o) => o.value !== ALL_STATES)
+      .map((o) => [o.value, o.textContent]),
   );
   const codes = Object.keys(states).sort();
   const labels = {
@@ -391,14 +395,18 @@
     const url = new URL("/availability", location.origin);
     url.searchParams.set("layer", current.layer);
     url.searchParams.set("year", current.year);
-    url.searchParams.set("state", $("state").value);
+    if ($("state").value !== ALL_STATES)
+      url.searchParams.set("state", $("state").value);
     return url;
   }
   function remember() {
     const url = new URL(location.href),
       selected = link();
-    for (const key of ["layer", "year", "state"])
-      url.searchParams.set(key, selected.searchParams.get(key));
+    for (const key of ["layer", "year", "state"]) {
+      const value = selected.searchParams.get(key);
+      if (value === null) url.searchParams.delete(key);
+      else url.searchParams.set(key, value);
+    }
     history.replaceState(null, "", url);
     if ($("full-page")) $("full-page").href = selected.href;
     $("share-message").textContent = "";
@@ -416,7 +424,7 @@
       ...choice,
       state: Object.hasOwn(states, params.get("state"))
         ? params.get("state")
-        : "TX",
+        : ALL_STATES,
     };
   }
   async function share() {
@@ -441,20 +449,74 @@
       }
     }
   }
+  function names(d, status) {
+    const found = codes
+      .filter((s) => d.states[s].status === status)
+      .map((s) => states[s])
+      .sort();
+    return found.length > 1
+      ? found.slice(0, -1).join(", ") + " and " + found.at(-1)
+      : found.join("");
+  }
+  function count(d, status) {
+    return codes.filter((s) => d.states[s].status === status).length;
+  }
+  // Name the states when only a few are measured, so readers need not guess.
+  function few(d, status) {
+    const n = count(d, status);
+    return n && n <= 5 ? names(d, status) : "";
+  }
   function summary(year) {
     const lines = Object.keys(labels).map((layer) => {
       const d = datasets.get(`${layer}-${year}`),
-        records = Object.values(d.states);
-      const measured = records.filter((r) => r.status === "measured").length;
-      return `${labels[layer]}: ${measured} of ${codes.length} states measured`;
+        measured = few(d, "measured"),
+        held = few(d, "quarantined");
+      return (
+        `${labels[layer]}: ${count(d, "measured")} of ${codes.length} states measured` +
+        (measured ? `, in ${measured}` : "") +
+        (held ? `. Quarantined: ${held}` : "")
+      );
     });
     $("summary").textContent =
-      lines.join(". ") + ". Includes DC. Unknown states are not yet measured.";
+      lines.join(". ") +
+      ". Includes DC. Unknown states are not yet measured, which is not zero.";
+  }
+  function national(layer, year) {
+    const d = current,
+      unknown = count(d, "unknown"),
+      listed = [
+        ["Measured", few(d, "measured")],
+        ["Quarantined", few(d, "quarantined")],
+        ["Not yet measured", few(d, "unknown")],
+      ].filter(([, text]) => text);
+    $("state-name").textContent =
+      `All states · ${labels[layer]} · Plan year ${year}`;
+    $("metric").textContent =
+      `${count(d, "measured")} of ${codes.length} measured`;
+    $("fraction").textContent =
+      `${count(d, "measured")} measured; ${count(d, "quarantined")} quarantined; ${unknown} not yet measured. Includes DC.`;
+    $("breakdown").textContent =
+      listed.map(([label, text]) => `${label}: ${text}.`).join(" ") ||
+      "Pick a state for its counts.";
+    $("observed").textContent = "Figures as of " + date(d.as_of);
+    $("reasons").textContent =
+      "Pick a state for its counts, limits and sources.";
+    $("detail-scope").textContent = $("scope").textContent;
+    const a = document.createElement("a");
+    a.href = `data/coverage/${layer}-${year}.json`;
+    a.textContent = "All state records (JSON)";
+    $("provenance").replaceChildren(a);
+    for (const p of root.querySelectorAll("[data-state]"))
+      p.dataset.selected = false;
+    remember();
+    $("message").textContent =
+      `${labels[layer]}, plan year ${year}. All states: ${count(d, "measured")} of ${codes.length} measured. Figures as of ${date(d.as_of)}.`;
   }
   function selection() {
     const { layer, year } = current,
       state = $("state").value,
       r = current.states[state];
+    if (state === ALL_STATES) return national(layer, year);
     $("state-name").textContent =
       `${states[state]} · ${labels[layer]} · Plan year ${year}`;
     $("metric").textContent = metric(r);
@@ -575,7 +637,7 @@
       if (id !== serial) return;
       wanted = current
         ? { layer: current.layer, year: current.year, state: $("state").value }
-        : { ...defaults, state: "TX" };
+        : { ...defaults, state: ALL_STATES };
       $("year").value = wanted.year;
       if (current) remember();
       $("message").textContent =

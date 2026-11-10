@@ -5,7 +5,7 @@
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>OpenHRA · Open tools for health benefits · Public preview</title>
-<meta name="description" content="OpenHRA builds self-hosted tools for health benefits, starting with OpenPlans. Query the Texas and Florida health-plan catalog and quotes by age and ZIP for 2026–2027. MCP Public preview.">
+<meta name="description" content="OpenHRA builds self-hosted tools for health benefits, starting with OpenPlans. OpenPlans serves health-plan catalogs and filed rates from public CMS files for 48 states and DC. MCP Public preview.">
 <link rel="stylesheet" href="/style.css">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <script src="/contact.js" defer></script>
@@ -34,9 +34,9 @@
   <h1>Open tools.<br><span>For health benefits.</span></h1>
   <p class="lede">Individual coverage HRAs let employers fund health plans that people choose themselves. We build open-source tools for that work. OpenPlans, our first project, makes public health-plan data queryable.</p>
 
-  <p class="hero-preview" data-mcp-preview><strong>MCP · Public preview</strong> OpenPlans connects agents to the public plan catalog and quotes by age and ZIP. 12 read-only tools for Texas and Florida, 2026–2027. Household quotes need self-hosting.</p>
+  <p class="hero-preview" data-mcp-preview><strong>MCP · Public preview</strong> OpenPlans connects agents to the plan catalog, quotes by age and ZIP and household quotes with subsidy estimates. The hosted preview covers Texas and Florida for 2026 and 2027 through 15 read-only tools. Run your own copy to load other states.</p>
   <div class="actions"><a class="button" href="https://github.com/openhra">Open on GitHub <span aria-hidden="true">↗</span></a><a class="text-link" href="#projects">See OpenPlans <span aria-hidden="true">↓</span></a></div>
-  <p class="repo-status">OpenPlans · Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.2.0">v0.2.0</a></p>
+  <p class="repo-status">OpenPlans · Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.0">v0.3.0</a></p>
   </div>
   <figure class="brand-figure" aria-label="OpenHRA on GitHub">
     <div class="figure-top"><span class="eyebrow">github.com / openhra</span><span aria-hidden="true">↗</span></div>
@@ -65,15 +65,15 @@
       <div>
         <div class="project-top"><img src="/brand/mark-openplans.svg" width="32" height="32" alt=""><span class="eyebrow">First project</span></div>
         <h3><a href="https://github.com/openhra/openplans">OpenPlans <span aria-hidden="true">↗</span></a></h3>
-        <p>OpenPlans reads CMS, Census, NPPES, RxNorm and insurer files. Its API serves plans, quotes by age and ZIP, providers and drugs. Household quotes with subsidy estimates need self-hosting. Answers keep their source evidence.</p>
+        <p>OpenPlans reads CMS, Census, NPPES, RxNorm and insurer files. Its API serves plans, quotes by age and ZIP, household quotes with subsidy estimates, providers and drugs. Answers keep their source evidence.</p>
         <div class="actions"><a class="button" href="https://github.com/openhra/openplans">Open on GitHub <span aria-hidden="true">↗</span></a><a class="text-link" href="https://plans.openhra.com/">Project website <span aria-hidden="true">↗</span></a></div>
         <p class="note">Source available · Apache-2.0</p>
-        <p class="repo-status">Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.2.0">v0.2.0</a></p>
+        <p class="repo-status">Source available · <a href="https://github.com/openhra/openplans/releases/tag/v0.3.0">v0.3.0</a></p>
         <ul class="repo-directory">
           <li><a href="https://github.com/openhra/openplans"><span>Code</span><span>Source and containers ↗</span></a></li>
           <li><a href="https://github.com/openhra/openplans#readme"><span>Docs</span><span>Setup and API guides ↗</span></a></li>
           <li><a href="https://github.com/openhra/openplans/issues"><span>Issues</span><span>Follow development ↗</span></a></li>
-          <li><a href="https://github.com/openhra/openplans/releases/tag/v0.2.0"><span>Releases</span><span>v0.2.0</span></a></li>
+          <li><a href="https://github.com/openhra/openplans/releases/tag/v0.3.0"><span>Releases</span><span>v0.3.0</span></a></li>
         </ul>
       </div>
       <div>
@@ -100,7 +100,7 @@
       <h3>OpenPlans supplies the plan data</h3>
       <p>Comparing plans under a CHOICE Arrangement means looking at the individual market. OpenPlans provides that plan catalog and premiums as filed. It also returns provider and drug evidence from public sources.</p>
       <p>Missing provider or drug evidence stays <code>unknown</code>. It does not mean "not covered".</p>
-      <p class="development-note"><strong>Public preview.</strong> Texas and Florida, for 2026 and 2027. Coverage is limited.</p>
+      <p class="development-note"><strong>Public preview.</strong> Self-hosted OpenPlans loads catalogs and filed rates for 30 federal-platform states and 19 state exchanges from the 2026 files. The hosted preview holds Texas and Florida. Provider and drug evidence has been measured in three states so far. It is <code>unknown</code> elsewhere.</p>
       <a class="text-link" href="https://plans.openhra.com/">Explore OpenPlans <span aria-hidden="true">↗</span></a>
     </div>
   </div>
@@ -113,7 +113,7 @@
       <h2 id="agents-heading">Public files.<br>Agent access.</h2>
       <p>OpenPlans has a live Model Context Protocol endpoint for the public plan catalog. Agents can search plans, quote them by age and ZIP, and look up provider and drug evidence.</p>
       <p>Read-only tools. Stateless Streamable HTTP. Answers include provenance. Provider and drug results may be <code>unknown</code>. Unknown never means "not covered".</p>
-      <p class="development-note"><strong>Public preview.</strong> Coverage is limited. An outside acceptance run is still pending. OpenPlans v0.2.0 is available. The source is on <a href="https://github.com/openhra/openplans">GitHub</a>.</p>
+      <p class="development-note"><strong>Public preview.</strong> Coverage is limited. An outside acceptance run is still pending. OpenPlans v0.3.0 is available. The source is on <a href="https://github.com/openhra/openplans">GitHub</a>.</p>
       <div class="actions"><a class="button" href="https://github.com/openhra/openplans">Follow on GitHub <span aria-hidden="true">↗</span></a><a class="text-link" href="https://plans.openhra.com/#connect">Connect your agent <span aria-hidden="true">↗</span></a></div>
     </div>
     <div class="agent-route" data-mcp-preview>
@@ -123,15 +123,15 @@
         <h3>Public preview endpoint</h3>
         <div class="endpoint-address"><code id="mcp-endpoint">https://openplans.openhra.com/mcp</code><button type="button" class="copy-endpoint" data-copy-endpoint="mcp-endpoint" hidden>Copy URL</button></div>
         <p class="copy-feedback" role="status" aria-live="polite" aria-atomic="true"></p>
-        <p class="endpoint-scope">Catalog and quotes by age and ZIP · Texas and Florida · 2026–2027 · 12 tools. Household quotes need self-hosting with credentials.</p>
+        <p class="endpoint-scope">Hosted preview · Texas and Florida · 2026 and 2027 · Catalog, quotes by age and ZIP and household quotes · 15 tools. Other states answer where their data is loaded.</p>
       </div>
-      <p class="self-host-note"><code>quote_premiums</code> is self-host only, with credentials. It is not offered on the public endpoint.</p>
+      <p class="endpoint-note"><code>quote_premiums</code> adds income and subsidy estimates to a quote. OpenPlans never logs income, ages or ZIP codes.</p>
       <ol>
         <li><span class="route-index" aria-hidden="true">01</span><div><h3>Your agent asks</h3><p>Search plans, quote them by age and ZIP, or check provider and drug evidence.</p></div></li>
         <li><span class="route-index" aria-hidden="true">02</span><div><h3>OpenPlans reads public data</h3><p>Imported files keep their source URLs, checksums and parser versions.</p></div></li>
         <li><span class="route-index" aria-hidden="true">03</span><div><h3>The answer keeps its evidence</h3><p>Results include provenance and gaps. Missing data never becomes a guessed answer.</p></div></li>
       </ol>
-      <a class="text-link" href="https://plans.openhra.com/#mcp">Explore the 12 public tools <span aria-hidden="true">↗</span></a>
+      <a class="text-link" href="https://plans.openhra.com/#mcp">Explore the 15 public tools <span aria-hidden="true">↗</span></a>
     </div>
   </div>
 </section>

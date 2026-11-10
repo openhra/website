@@ -147,6 +147,7 @@ fi
 python3 "$ROOT/tools/check-private-paths.py" "$ROOT"
 python3 "$ROOT/tools/check-neutral.py" "$ROOT"
 python3 "$ROOT/tools/check-mcp.py" "$ROOT"
+python3 "$ROOT/tools/hosted-preview/check.py"
 
 if [ "$FULL" -eq 1 ]; then
   (
@@ -177,6 +178,7 @@ fi
 
 if [ "$FULL" -eq 1 ]; then
   python3 "$ROOT/tools/check-mcp.py" "$ROOT" --selftest
+  python3 "$ROOT/tools/hosted-preview/check.py" --selftest
   "$ROOT/tools/gate-selftest.sh"
   python3 "$ROOT/tools/coverage-gate/selftest.py"
   python3 -m unittest discover -s "$ROOT/tools/coverage-scan/tests"
