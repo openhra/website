@@ -1,9 +1,8 @@
 """Check hosted-preview copy against plans/data/hosted-preview.json.
 
-Every block of page text that mentions the hosted preview must name each state
-the snapshot lists. A sentence about the hosted preview may name another state
-only to say the preview does not hold it. With --selftest, planted mutants must
-fail.
+Every hosted-preview block must give the year-specific scope counts. The snapshot
+lists each state separately by year, so a 2026 catalog never implies 2027 support.
+With --selftest, planted mutants must fail.
 """
 
 import html.parser
@@ -23,7 +22,6 @@ PAGES = (
     "plans/brand/openhra/index.html",
 )
 BLOCKS = {"p", "li", "dd", "td", "h1", "h2", "h3", "h4"}
-NEGATION = re.compile(r"\b(?:not|unknown|no)\b", re.IGNORECASE)
 PREVIEW = re.compile(r"hosted preview", re.IGNORECASE)
 
 
@@ -70,24 +68,35 @@ def require(condition, message):
 
 def check(root=ROOT):
     snapshot = json.loads((root / SNAPSHOT).read_text(encoding="utf-8"))
-    require(snapshot.get("schema_version") == 1, "unknown snapshot version")
+    require(snapshot.get("schema_version") == 2, "unknown snapshot version")
     names = parse(root / "plans/index.html").options
     require(len(names) == 51, "state names missing from the plans page")
-    held = {names[s] for s in snapshot["catalog_states"]}
-    require(held, "snapshot lists no hosted-preview states")
+    scopes = snapshot["catalog_states_by_year"]
+    require(set(scopes) == {"2026", "2027"}, "unexpected catalog years")
+    for year, states in scopes.items():
+        require(
+            states and len(set(states)) == len(states) and set(states) <= names.keys(),
+            f"invalid scopes for {year}",
+        )
+    counts = []
+    for year, states in scopes.items():
+        count = len(states) - ("DC" in states)
+        counts.append(
+            f"{count} states" + (" and DC" if "DC" in states else "") + f" for {year}"
+        )
+    summary = " and ".join(counts)
     for page in PAGES:
         blocks = [b for b in parse(root / page).blocks if PREVIEW.search(b)]
         require(blocks, f"{page}: no hosted-preview statement")
         for block in blocks:
-            missing = sorted(n for n in held if n not in block)
-            require(not missing, f"{page}: hosted preview omits {missing}: {block}")
-            for sentence in re.split(r"(?<=[.!?])\s+", block):
-                if not PREVIEW.search(sentence) or NEGATION.search(sentence):
-                    continue
-                extra = sorted(
-                    n for n in names.values() if n in sentence and n not in held
-                )
-                require(not extra, f"{page}: hosted preview claims {extra}")
+            require(
+                summary in block,
+                f"{page}: hosted preview omits year-specific scopes: {block}",
+            )
+            require(
+                not re.search(r"\b(?:all states|every state)\b", block, re.IGNORECASE),
+                f"{page}: hosted preview claims every state",
+            )
     evidence = (
         snapshot["provider_evidence_states"] + snapshot["formulary_evidence_states"]
     )
@@ -99,21 +108,47 @@ def check(root=ROOT):
 
 
 def selftest():
+    from reduce import reduce as reduce_availability
+
+    # Synthetic availability rows: one year must never authorize another.
+    rows = [
+        {
+            "state": state,
+            "plan_year": year,
+            "catalog_status": status,
+            "provider_status": "unknown",
+            "formulary_status": "unknown",
+        }
+        for state, year, status in [
+            ("CA", 2026, "available"),
+            ("TX", 2026, "available"),
+            ("TX", 2027, "available"),
+            ("GA", 2027, "quarantined"),
+        ]
+    ]
+    reduced = reduce_availability(rows, "2026-11-10")
+    require(
+        reduced["catalog_states_by_year"] == {"2026": ["CA", "TX"], "2027": ["TX"]},
+        "availability reducer crossed state/year boundaries",
+    )
+    require(
+        reduced["schema_version"] == 2 and reduced["status"] == "observed",
+        "reducer metadata missing",
+    )
     mutants = (
-        (SNAPSHOT, lambda s: s.replace('"FL",', '"FL",\n    "GA",'), "omits"),
+        (SNAPSHOT, lambda s: s.replace('"AK",', "", 1), "omits"),
         (
             "plans/index.html",
             lambda s: s.replace(
-                "holds only Texas and Florida, not Georgia.",
-                "holds Texas, Florida and Georgia.",
+                "Georgia is available for 2026;",
+                "The hosted preview covers every state. Georgia is available for 2026;",
             ),
             "claims",
         ),
         (
             "openhra/index.html",
             lambda s: s.replace(
-                "The hosted preview covers Texas and Florida",
-                "The hosted preview covers Texas",
+                "48 states and DC for 2026", "47 states and DC for 2026"
             ),
             "omits",
         ),

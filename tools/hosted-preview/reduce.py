@@ -18,7 +18,7 @@ KNOWN = {"available", "unsupported", "unknown", "quarantined", "not_applicable"}
 def reduce(rows, as_of):
     if not isinstance(rows, list) or not rows:
         raise ValueError("expected a non-empty list of availability rows")
-    catalog, years, providers, formularies = set(), set(), set(), set()
+    catalog, providers, formularies = {}, set(), set()
     for row in rows:
         state, year = row.get("state"), row.get("plan_year")
         if not (isinstance(state, str) and re.fullmatch("[A-Z]{2}", state)):
@@ -29,19 +29,20 @@ def reduce(rows, as_of):
             if row.get(key) not in KNOWN:
                 raise ValueError(f"unexpected {key}: {row.get(key)!r}")
         if row["catalog_status"] == "available":
-            catalog.add(state)
-            years.add(year)
+            catalog.setdefault(str(year), set()).add(state)
         # Anything other than unknown counts as evidence the copy must mention.
         if row["provider_status"] != "unknown":
             providers.add(state)
         if row["formulary_status"] != "unknown":
             formularies.add(state)
     return {
-        "schema_version": 1,
+        "schema_version": 2,
+        "status": "observed",
         "source": SOURCE,
         "as_of": as_of,
-        "catalog_states": sorted(catalog),
-        "catalog_years": sorted(years),
+        "catalog_states_by_year": {
+            year: sorted(states) for year, states in sorted(catalog.items())
+        },
         "provider_evidence_states": sorted(providers),
         "formulary_evidence_states": sorted(formularies),
     }

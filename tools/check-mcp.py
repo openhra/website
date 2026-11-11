@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-RELEASE = "v0.3.6"
+RELEASE = "v0.3.7"
 RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 # The banned words are split so they never appear whole in this public file.
@@ -161,8 +161,8 @@ def check_app(root):
                 "anonymous",
                 "quotes by age and zip",
                 "post /v1/quotes",
-                "texas and florida",
-                "2026 and 2027",
+                "48 states and dc for 2026",
+                "29 states for 2027",
                 "status: unknown",
                 "no account or api key",
                 "post /v1/premium-quotes",
@@ -256,7 +256,7 @@ def check_page(source, site):
     )
     require(
         RELEASE.lower() in claims,
-        "v0.3.6 release status missing",
+        "v0.3.7 release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -303,7 +303,7 @@ def check_page(source, site):
                     and visible(n)
                 )
             ),
-            "release status must link to v0.3.6",
+            "release status must link to v0.3.7",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -348,8 +348,8 @@ def check_page(source, site):
                 "quotes by age and zip",
                 "household quotes",
                 "hosted preview",
-                "texas and florida",
-                "2026 and 2027",
+                "48 states and dc for 2026",
+                "29 states for 2027",
                 f"{PUBLIC_TOOL_COUNT} tools",
                 "where their data is loaded",
             ]
@@ -546,7 +546,7 @@ def run(root):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.3.6 release link, no comparison text, Public preview, live catalog and quote endpoint, 15 public tools with household quotes, no restriction labels, GitHub-first, handoff copies identical)"
+        "mcp: PASS (v0.3.7 release link, no comparison text, Public preview, live catalog and quote endpoint, 15 public tools with household quotes, no restriction labels, GitHub-first, handoff copies identical)"
     )
 
 
@@ -596,13 +596,13 @@ def selftest(root):
                 (
                     site,
                     "wrong states",
-                    lambda s: s.replace("Texas and Florida", "All states"),
+                    lambda s: s.replace("48 states and DC", "All states"),
                     "catalog scope",
                 ),
                 (
                     site,
                     "wrong years",
-                    lambda s: s.replace("2026 and 2027 ·", "2025 and 2027 ·"),
+                    lambda s: s.replace("29 states for 2027 ·", "29 states for 2025 ·"),
                     "catalog scope",
                 ),
                 (
@@ -643,15 +643,15 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "v0.3.6 link removed",
+                    "v0.3.7 link removed",
                     lambda s: s.replace(RELEASE_URL, REPO),
-                    "release status must link to v0.3.6",
+                    "release status must link to v0.3.7",
                 ),
                 (
                     site,
-                    "v0.3.6 status text removed",
+                    "v0.3.7 status text removed",
                     lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
-                    "release status must link to v0.3.6",
+                    "release status must link to v0.3.7",
                 ),
                 (
                     site,
@@ -660,7 +660,7 @@ def selftest(root):
                         '<a href="' + RELEASE_URL + '">' + RELEASE,
                         '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "release status must link to v0.3.6",
+                    "release status must link to v0.3.7",
                 ),
                 (
                     site,
@@ -917,7 +917,7 @@ def selftest(root):
                 "plans",
                 "app public scope removed",
                 lambda s: s.replace(
-                    "The public preview offers the catalog, quotes by age and ZIP and household quotes",
+                    "It offers the catalog, quotes by age and ZIP and household quotes.",
                     "The public preview is unrestricted",
                 ),
                 "app scope",
