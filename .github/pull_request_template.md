@@ -5,7 +5,7 @@ visible changes, with private data removed.
 
 ## Checklist
 
-- [ ] This pull request targets `develop` and follows [AGENTS.md](https://github.com/openhra/website/blob/main/AGENTS.md) and [DEVELOPMENT.md](https://github.com/openhra/website/blob/main/DEVELOPMENT.md).
+- [ ] This pull request targets `develop` and follows [CONTRIBUTING.md](https://github.com/openhra/website/blob/main/CONTRIBUTING.md), [AGENTS.md](https://github.com/openhra/website/blob/main/AGENTS.md) and [DEVELOPMENT.md](https://github.com/openhra/website/blob/main/DEVELOPMENT.md).
 - [ ] I ran `scripts/ci.sh` and it printed `PASS`. This runs `tools/gate.sh --full` and the exporter tests with a synthetic policy. Publication still requires the external policy.
 - [ ] I ran `npm run format:check` and `npm run lint`, which also run in the full gate.
 - [ ] I added or updated checks where needed, including negative controls for new checks, and reported any checks I skipped.

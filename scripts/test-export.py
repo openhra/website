@@ -353,6 +353,7 @@ def main():
 
         community_files = (
             "CODE_OF_CONDUCT.md",
+            "CONTRIBUTING.md",
             "SECURITY.md",
             ".github/ISSUE_TEMPLATE/site_problem.yml",
             ".github/ISSUE_TEMPLATE/content_correction.yml",

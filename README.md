@@ -24,8 +24,8 @@ The contact form needs the serverless function and shows "not available" locally
 
 ## Contributing
 
-Read [AGENTS.md](AGENTS.md) and [DEVELOPMENT.md](DEVELOPMENT.md) before making a
-change. Open pull requests against `develop` and run `scripts/ci.sh` before submitting.
+Read [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md) and
+[DEVELOPMENT.md](DEVELOPMENT.md) before making a change. Open pull requests against `develop` and run `scripts/ci.sh` before submitting.
 Follow the [Code of Conduct](CODE_OF_CONDUCT.md) in issues, pull requests and other
 community spaces. Report security problems through [SECURITY.md](SECURITY.md).
 
