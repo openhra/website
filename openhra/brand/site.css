@@ -877,12 +877,12 @@ nav li a:has(small) {
 .integration-directory a:hover {
   text-decoration: underline;
 }
-.repo-directory a span:first-child,
-.integration-directory a span:first-child {
+.repo-directory a > span:first-child,
+.integration-directory a > span:first-child {
   font-weight: 600;
 }
-.repo-directory a span:last-child,
-.integration-directory a span:last-child {
+.repo-directory a > span:last-child,
+.integration-directory a > span:last-child {
   color: var(--muted);
   font-size: 12px;
   text-align: right;
@@ -1181,8 +1181,8 @@ h4 {
     flex-wrap: wrap;
     gap: 4px 12px;
   }
-  .repo-directory a span:last-child,
-  .integration-directory a span:last-child {
+  .repo-directory a > span:last-child,
+  .integration-directory a > span:last-child {
     text-align: left;
   }
   .connection-panel pre,

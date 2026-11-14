@@ -344,6 +344,12 @@ def check(root):
         assert before and after and figures(before[0]) == figures(after[0]), (
             "protected page block changed: " + evidence
         )
+        # The one approved contact edit: the captcha wrapper gains a group role
+        # so its aria-label is valid. The rest of each block stays byte-identical.
+        captcha_role = lambda block: block.replace(
+            '<div id="contact-captcha" aria-label=',
+            '<div id="contact-captcha" role="group" aria-label=',
+        )
         protected_sections = (
             r'<section class="band" id="publishers">.*?</section>',
             r'<section class="band alt" id="contact">.*?</section>',
@@ -353,7 +359,7 @@ def check(root):
         for pattern in protected_sections:
             before = re.search(pattern, baseline_page, re.DOTALL)
             after = re.search(pattern, page, re.DOTALL)
-            assert before and after and before[0] == after[0], (
+            assert before and after and captcha_role(before[0]) == after[0], (
                 "protected page block changed: " + pattern
             )
         check_scripts(page, baseline_page)
@@ -364,9 +370,8 @@ def check(root):
             r'<section class="band alt" id="contact">.*?</section>',
             r"<footer>.*?</footer>",
         ):
-            assert (
-                re.search(pattern, organisation, re.DOTALL)[0]
-                == re.search(pattern, original_organisation, re.DOTALL)[0]
+            assert re.search(pattern, organisation, re.DOTALL)[0] == captcha_role(
+                re.search(pattern, original_organisation, re.DOTALL)[0]
             ), "organisation protected block changed"
         check_scripts(
             organisation, original_organisation, "organisation scripts changed"

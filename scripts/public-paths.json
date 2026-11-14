@@ -110,6 +110,7 @@
     "tests/edge_acceptance_test.py",
     "tests/reference/map.svg",
     "tests/test_alert_sender.py",
+    "tools/a11y-check/check.py",
     "tools/alerts/send.py",
     "tools/check-mcp.py",
     "tools/check-neutral.py",
