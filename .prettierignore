@@ -45,7 +45,6 @@ CODE_OF_CONDUCT.md
 plans/index.html
 plans/availability.html
 openhra/index.html
-plans/brand/openhra/index.html
 
 # Existing UI byte guards freeze contact, headers and brand tokens.
 plans/contact.js

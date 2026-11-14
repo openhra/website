@@ -123,6 +123,47 @@
         }
       ]
     },
+    "browser": {
+      "name": "website-browser",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 15,
+      "continue-on-error": true,
+      "env": {
+        "CHROME_VERSION": "150.0.7871.124",
+        "CHROME_SHA256": "ccb11556d5946fcf15f09d175c34d8e4b4293a8ef2eb7c4efc28cb60ac4d12fd"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "with": {
+            "node-version-file": ".node-version"
+          }
+        },
+        {
+          "uses": "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "with": {
+            "python-version-file": ".python-version"
+          }
+        },
+        {
+          "name": "Install pinned Chrome for Testing",
+          "run": "set -eu\nzip=\"$RUNNER_TEMP/chrome-linux64.zip\"\ncurl -sSfL -o \"$zip\" \"https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VERSION/linux64/chrome-linux64.zip\"\nprintf '%s  %s\\n' \"$CHROME_SHA256\" \"$zip\" | sha256sum -c -\nunzip -q \"$zip\" -d \"$RUNNER_TEMP\"\nprintf 'COVERAGE_CHROME=%s\\n' \"$RUNNER_TEMP/chrome-linux64/chrome\" >> \"$GITHUB_ENV\"\n"
+        },
+        {
+          "name": "Real-browser coverage checks",
+          "run": "# Advisory for now: continue-on-error keeps this job out of website-required.\n# After about a week without flaky runs, gate.sh --full runs it and it joins the required jobs.\ntools/coverage-ui-check/browser-gate.sh\n",
+          "env": {
+            "COVERAGE_CHROME_NO_SANDBOX": "1"
+          }
+        }
+      ]
+    },
     "required": {
       "name": "website-required",
       "runs-on": "ubuntu-24.04",

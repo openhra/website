@@ -151,12 +151,12 @@ Illustrations explain real relationships. The OpenPlans diagram shows public sou
 
 `tokens.css` owns colour, type families, spacing and radii. `site.css` owns shared components. Each site's root `style.css` imports those two files, then applies its own layout rules. All requests stay local except the existing contact verification script and frame. The local `mcp-copy.js` handles endpoint copying on both pages and makes no network requests. There is no frontend build step, new dependency, font request or tracking.
 
-For the sister-site handoff, copy these files into that site's existing checkout:
+The organisation site has its own root, `openhra/`, which is the only source of its page. The plans site does not carry a copy. To set up the organisation site in another checkout, copy from the website tree:
 
-1. `brand/openhra/index.html` → root `index.html`.
-2. `brand/openhra/style.css` → root `style.css`.
-3. `brand/tokens.css`, `brand/site.css` and all `brand/*.svg` → the same paths under `brand/`.
-4. `brand/openhra/favicon.svg` → root `favicon.svg` (the [H] favicon; the plans root favicon is [P]).
+1. `openhra/index.html` → root `index.html`.
+2. `openhra/style.css` → root `style.css`.
+3. `plans/brand/tokens.css`, `plans/brand/site.css` and all `plans/brand/*.svg` → the same paths under `brand/`.
+4. `openhra/favicon.svg` → root `favicon.svg` (the [H] favicon; the plans root favicon is [P]).
 5. `mcp-copy.js` → root `mcp-copy.js`.
 
-Keep the sister site's existing `contact.js`, `api/contact.js` and hosting configuration. The HTML uses root-relative asset paths for this handoff. Opening the nested HTML as a file does not reproduce the intended deployment. Preview it with the handoff files mapped to a local site root. The current page sources are `plans/index.html` and `openhra/index.html` in the website tree. Keep the handoff copies aligned with the organisation page and styles.
+Keep that checkout's existing `contact.js`, `api/contact.js` and hosting configuration. The page uses root-relative asset paths, so preview it from a local site root, not as a file. `plans/brand/favicon-openhra.svg` is a copy of the [H] favicon for the repository asset proof page.

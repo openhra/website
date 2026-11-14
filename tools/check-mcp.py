@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-RELEASE = "v0.4.6"
+RELEASE = "v0.4.7"
 RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 # The banned words are split so they never appear whole in this public file.
@@ -256,7 +256,7 @@ def check_page(source, site):
     )
     require(
         RELEASE.lower() in claims,
-        "v0.4.6 release status missing",
+        "v0.4.7 release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -303,7 +303,7 @@ def check_page(source, site):
                     and visible(n)
                 )
             ),
-            "release status must link to v0.4.6",
+            "release status must link to v0.4.7",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -534,19 +534,24 @@ def run(root):
         == (root / "plans/brand/site.css").read_bytes(),
         "shared site styles differ",
     )
-    for name in ["index.html", "style.css"]:
-        require(
-            (root / "openhra" / name).read_bytes()
-            == (root / "plans/brand/openhra" / name).read_bytes(),
-            "organisation handoff copy differs: " + name,
-        )
+    # openhra/ is the only source of the organisation page. A copy under the
+    # plans root would be served on the plans host with the wrong stylesheet.
+    require(
+        not (root / "plans/brand/openhra").exists(),
+        "organisation page copied into the plans site",
+    )
+    require(
+        (root / "openhra/favicon.svg").read_bytes()
+        == (root / "plans/brand/favicon-openhra.svg").read_bytes(),
+        "organisation favicon copy differs",
+    )
     require(
         (root / "openhra/mcp-copy.js").read_bytes()
         == (root / "plans/mcp-copy.js").read_bytes(),
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.4.6 release link, no comparison text, Public preview, live catalog and quote endpoint, 15 public tools with household quotes, no restriction labels, GitHub-first, handoff copies identical)"
+        "mcp: PASS (v0.4.7 release link, no comparison text, Public preview, live catalog and quote endpoint, 15 public tools with household quotes, no restriction labels, GitHub-first, no organisation page copy on the plans site)"
     )
 
 
@@ -643,15 +648,15 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "v0.4.6 link removed",
+                    "v0.4.7 link removed",
                     lambda s: s.replace(RELEASE_URL, REPO),
-                    "release status must link to v0.4.6",
+                    "release status must link to v0.4.7",
                 ),
                 (
                     site,
-                    "v0.4.6 status text removed",
+                    "v0.4.7 status text removed",
                     lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
-                    "release status must link to v0.4.6",
+                    "release status must link to v0.4.7",
                 ),
                 (
                     site,
@@ -660,7 +665,7 @@ def selftest(root):
                         '<a href="' + RELEASE_URL + '">' + RELEASE,
                         '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "release status must link to v0.4.6",
+                    "release status must link to v0.4.7",
                 ),
                 (
                     site,

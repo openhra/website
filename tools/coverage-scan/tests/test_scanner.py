@@ -2,6 +2,7 @@ import copy
 import csv
 import io
 import json
+import re
 import socket
 import subprocess
 import sys
@@ -16,7 +17,7 @@ sys.path.insert(0, str(TOOLS))
 from check import check_record, check_release, check_scope, schemas, validate
 from inputs import Bundle, inventory, relative_file, sbe_declaration
 from model import Invalid, encoded, loads, percentage, sha, timestamp
-from scan import publish, release
+from scan import publish, release, table
 
 FIXTURE = json.loads((Path(__file__).parent / "fixtures/scopes.json").read_text())
 AS_OF = FIXTURE["as_of"]
@@ -931,6 +932,16 @@ print('boundary: PASS')
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("boundary: PASS", result.stdout)
+
+
+class TableOrderTests(unittest.TestCase):
+    def test_rows_follow_display_name(self):
+        data = TOOLS.parents[1] / "plans/data/coverage/providers-2026.json"
+        fragment = table(loads(data.read_bytes())).decode()
+        rows = re.findall(r'<th scope="row">([^<]*)</th>', fragment)
+        self.assertEqual(len(rows), 51)
+        self.assertEqual(rows, sorted(rows))
+        self.assertLess(rows.index("Delaware"), rows.index("District of Columbia"))
 
 
 if __name__ == "__main__":

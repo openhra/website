@@ -165,9 +165,17 @@ def check(root):
                 page,
                 re.DOTALL,
             )
-            assert (
-                len(saved) == 1 and Markup(saved[0]).events == Markup(fragment).events
-            ), "saved table differs: " + name
+            assert len(saved) == 1, "saved table differs: " + name
+            # Checked before the fragment match so a reordered page names the cause.
+            rows = re.findall(
+                r"<th\s+scope=[\"']row[\"']>\s*([^<]*?)\s*</th>", saved[0]
+            )
+            assert len(rows) == 51 and rows == sorted(rows), (
+                "state rows not sorted by name: " + name
+            )
+            assert Markup(saved[0]).events == Markup(fragment).events, (
+                "saved table differs: " + name
+            )
             assert "Coverage for plan year 2026" in page, (
                 "missing default plan-year label"
             )
@@ -183,8 +191,24 @@ def check(root):
             ), "missing default state row"
     page = (root / "plans/index.html").read_text()
     full = (root / "plans/availability.html").read_text()
+    # This checker protects the contact block on plans/index.html only. The plans
+    # host would serve a contact block on any other page without that check.
+    contact_pages = sorted(
+        path.relative_to(root / "plans").as_posix()
+        for path in (root / "plans").rglob("*.html")
+        if re.search(r"\bid=[\"']contact[\"']", path.read_text())
+    )
+    assert contact_pages == ["index.html"], (
+        "unchecked contact page in plans site: " + ", ".join(contact_pages)
+    )
     for source in (page, full):
         markup = Markup(source)
+        names = re.findall(
+            r"<option\s+value=[\"'][A-Z]{2}[\"'][^>]*>([^<]*)</option>", source
+        )
+        assert len(names) == 51 and names == sorted(names), (
+            "state options not sorted by name"
+        )
         assert (
             sum(
                 tag == "script"
@@ -460,6 +484,42 @@ def negatives(root=ROOT):
                 ),
             ),
             (
+                "table sorted by code",
+                "plans/coverage.js",
+                lambda s: s.replace(
+                    '.sort((a, b) => a[1].localeCompare(b[1], "en"))', ""
+                ),
+            ),
+            (
+                "missing period before observation",
+                "plans/coverage.js",
+                lambda s: s.replace(
+                    '${notes(r, d).replace(/\\.?$/, ".")}', "${notes(r, d)}"
+                ),
+            ),
+            (
+                "saved rows by code",
+                "plans/coverage-table.html",
+                lambda s: re.sub(
+                    r"(<tr><th scope=\"row\">Alabama</th>.*?</tr>\n)(<tr><th scope=\"row\">Alaska</th>.*?</tr>\n)",
+                    r"\2\1",
+                    s,
+                ),
+            ),
+            (
+                "state options by code",
+                "plans/index.html",
+                lambda s: s.replace(
+                    '<option value="AL">Alabama</option><option value="AK">Alaska</option>',
+                    '<option value="AK">Alaska</option><option value="AL">Alabama</option>',
+                ),
+            ),
+            (
+                "organisation page copied into plans",
+                "plans/brand/openhra/index.html",
+                lambda s: (root / "openhra/index.html").read_text(),
+            ),
+            (
                 "availability missing from gate page list",
                 "tools/gate.sh",
                 lambda s: s.replace(', "plans/availability.html"', ""),
@@ -528,7 +588,9 @@ def negatives(root=ROOT):
                 )
             shutil.copy(root / "tools/gate.sh", dest / "tools/gate.sh")
             target = dest / filename
-            before = target.read_text()
+            # A mutant may add a page that the tree does not have.
+            target.parent.mkdir(parents=True, exist_ok=True)
+            before = target.read_text() if target.exists() else ""
             target.write_text(mutate(before))
             assert target.read_text() != before, "mutation was a no-op: " + name
             try:
@@ -540,6 +602,11 @@ def negatives(root=ROOT):
                     "clipboard confirmation absent": "clipboard confirmation absent",
                     "unknown rendered as measured": "unknown state rendered as measured",
                     "availability missing from gate page list": "availability missing from gate page list",
+                    "table sorted by code": "table rows not sorted by state name",
+                    "missing period before observation": "missing period before State observation",
+                    "saved rows by code": "state rows not sorted by name: coverage-table.html",
+                    "state options by code": "state options not sorted by name",
+                    "organisation page copied into plans": "unchecked contact page in plans site: brand/openhra/index.html, index.html",
                     "unsafe DOM insertion": "unsafe DOM interpolation",
                     "spaced eval": "unsafe DOM interpolation",
                     "wrong fetch origin": "unexpected fetch path",

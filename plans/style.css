@@ -117,3 +117,15 @@
 }
 
 .coverage-full-page .coverage-workspace h2 { font-size: 18px; line-height: 1.35; letter-spacing: -.02em; }
+
+/* Not-applicable legend entry: own swatch and row. */
+.coverage .coverage-na { background: repeating-linear-gradient(0deg, white 0 2px, var(--muted) 2px 3px, white 3px 6px); }
+.coverage .coverage-legend-na { flex-basis: 100%; }
+/* Phones: smaller map labels clear of each other; code scrolls, never breaks. */
+@media (max-width: 760px) {
+  .coverage .state-labels text { font-size: 22px; stroke-width: 4; }
+  .coverage [data-label="IL"] { transform: translateX(-6px); }
+  .coverage [data-label="OH"] { transform: translateX(5px); }
+  .plans-site pre { white-space: pre; overflow-wrap: normal; overflow-x: auto; }
+  .plans-site .endpoint-address code { flex-basis: 100%; white-space: nowrap; overflow-wrap: normal; overflow-x: auto; }
+}

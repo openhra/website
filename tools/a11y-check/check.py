@@ -3,7 +3,8 @@
 
 The rules cover page language, zoom, headings, image and SVG names, link and
 button names, decorative arrows in links, form labels, tab order, skip links,
-ID references, and the shared focus and reduced-motion styles. The check reads
+ID references, keyboard access to code blocks, and the shared focus and
+reduced-motion styles. The check reads
 committed sources only, so links inside a closed <details> are checked too. Browser checks live in tools/coverage-ui-check.
 --selftest breaks one rule at a time in a copy and expects each to fail.
 """
@@ -128,6 +129,13 @@ def page_problems(source):
             return True
         return bool(node.text(spoken=True))
 
+    # On plans pages, style.css lets code blocks scroll sideways on phones. Each
+    # must be a named, focusable region so keyboard users can scroll it.
+    body = next((n for n in nodes if n.tag == "body"), None)
+    scrolling_pre = (
+        body is not None and "plans-site" in body.attrs.get("class", "").split()
+    )
+
     html = next((n for n in nodes if n.tag == "html"), None)
     if html is None or not html.attrs.get("lang", "").strip():
         problems.append("missing page language")
@@ -159,6 +167,19 @@ def page_problems(source):
         tabindex = node.attrs.get("tabindex", "").strip()
         if tabindex.lstrip("-").isdigit() and int(tabindex) > 0:
             problems.append("positive tabindex on <" + node.tag + ">")
+
+        if (
+            node.tag == "pre"
+            and scrolling_pre
+            and not (
+                node.attrs.get("tabindex", "").strip() == "0"
+                and node.attrs.get("role") == "region"
+                and node.attrs.get("aria-label", "").strip()
+            )
+        ):
+            problems.append(
+                "scrollable <pre> needs tabindex=0, role=region and aria-label"
+            )
 
         if node.tag == "img" and "alt" not in node.attrs:
             problems.append("image without alt: " + node.attrs.get("src", "?"))
@@ -274,6 +295,24 @@ MUTANTS = (
         "></a></p></details>",
     ),
     ("positive tabindex", "plans/index.html", 'tabindex="0"', 'tabindex="3"'),
+    (
+        "scrollable <pre> needs tabindex=0",
+        "plans/index.html",
+        '<pre tabindex="0" role="region" aria-label="Local stdio command">',
+        '<pre role="region" aria-label="Local stdio command">',
+    ),
+    (
+        "scrollable <pre> needs tabindex=0",
+        "plans/index.html",
+        '<pre tabindex="0" role="region" aria-label="Commands to get the code">',
+        '<pre tabindex="0" role="region">',
+    ),
+    (
+        "scrollable <pre> needs tabindex=0",
+        "plans/index.html",
+        '<pre tabindex="0" role="region" aria-label="MCP HTTP request headers">',
+        '<pre tabindex="0" aria-label="MCP HTTP request headers">',
+    ),
     ("viewport blocks zoom", "plans/index.html", "initial-scale=1", "user-scalable=no"),
     ("form control without a label", "plans/index.html", "<main", "<input><main"),
     ("SVG needs role=img", "plans/index.html", 'role="img"', 'role="presentation"'),

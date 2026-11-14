@@ -21,7 +21,9 @@ Isolated mutants must fail their intended diagnostic. The five availability
 controls remove initial state restoration, drop share parameters, remove copy
 confirmation, render unknown as a number or remove the full page from the gate.
 
-For real-browser checks, start the local preview and shared headed browser:
+`tools/gate.sh --browser` runs these checks in a throwaway headless Chrome. See
+`DEVELOPMENT.md`. To watch them in the shared headed browser instead, start the
+local preview and the browser:
 
 ```sh
 python3 tools/coverage-ui-check/preview.py --port 8779
@@ -29,7 +31,8 @@ agent-browser --headed --profile "$HOME/agent-browser" open http://127.0.0.1:877
 node tools/coverage-ui-check/browser.mjs
 ```
 
-`COVERAGE_PREVIEW_URL` selects a loopback preview. `COVERAGE_CAPTURE_DIR` selects
+`COVERAGE_PREVIEW_URL` selects a loopback preview. `COVERAGE_CDP_URL` attaches to
+a loopback DevTools endpoint instead of agent-browser. `COVERAGE_CAPTURE_DIR` selects
 where to save screenshots and `browser-checks.json`. The preview honors the hosting config's existing `cleanUrls` setting, so both the
 preview and production serve `availability.html` at `/availability`. A normal
 Python static server does not provide that extensionless route.

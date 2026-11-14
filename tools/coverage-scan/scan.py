@@ -51,7 +51,8 @@ def table(dataset):
         '<thead><tr><th scope="col">State</th><th scope="col">Data and count</th><th scope="col">Status and limits</th></tr></thead>',
         "<tbody>",
     ]
-    for s, name in STATES.items():
+    # Rows follow the display name, so the reader can scan them alphabetically.
+    for s, name in sorted(STATES.items(), key=lambda item: item[1]):
         r = dataset["states"][s]
         n, d, p = (r[k] for k in ("numerator", "denominator", "percent_tenths"))
         value = (

@@ -20,7 +20,7 @@ List all 15 public tools, `quote_premiums` and `check_ichra_affordability` inclu
 
 Show the live URL as selectable text with a local copy button and an accessible "Copied" announcement. Include the live client configuration, HTTP headers and the stdio option for your own copy. Protocol 2026-07-28 and 2025-11-25 clients are served. Browser clients can connect through CORS from the allowed origin. Keep the detailed setup instructions in the repository.
 
-Coverage is limited and an outside acceptance run is pending. OpenPlans v0.4.6 is available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
+Coverage is limited and an outside acceptance run is pending. OpenPlans v0.4.7 is available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
 
 OpenHRA introduces the public preview, shows the endpoint and its limits, and links to OpenPlans for the full tool list and connection details.
 
@@ -46,6 +46,6 @@ See `repo/README.md` for the image snippet and upload guidance. The proof page i
 
 ## Site copies and checks
 
-The deployed page sources are `plans/index.html` and `openhra/index.html`. Keep shared tokens, `brand/site.css` and `mcp-copy.js` aligned between the sites. The nested `plans/brand/openhra/` files are handoff copies of the organisation page and styles, with its [H] favicon. They are not a third project site.
+The deployed page sources are `plans/index.html` and `openhra/index.html`. Keep shared tokens, `brand/site.css` and `mcp-copy.js` aligned between the sites. The organisation page has one source, `openhra/index.html`; the plans site carries no copy of it. `plans/brand/favicon-openhra.svg` is a copy of its [H] favicon for the asset proof page.
 
 Review both pages at desktop and phone widths, including 320px. Check repository action order, images, links, headings, visible focus, no horizontal page overflow and white ground under dark OS preference. Preserve protected content byte for byte. The November redesign captures and browser report live in `docs/redesign-2026-11/`. Publication remains a separate owner action.

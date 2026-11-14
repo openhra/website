@@ -4,10 +4,18 @@ export PYTHONDONTWRITEBYTECODE=1
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 FULL=0
-if [ "${1-}" = "--full" ]; then FULL=1; elif [ "$#" -ne 0 ]; then
-  printf 'FAIL: unknown argument: %s\n' "$1" >&2
-  exit 1
-fi
+BROWSER=0
+for arg in "$@"; do
+  case "$arg" in
+    --full) FULL=1 ;;
+    # Opt-in: real-browser checks in a disposable headless Chrome.
+    --browser) BROWSER=1 ;;
+    *)
+      printf 'FAIL: unknown argument: %s\n' "$arg" >&2
+      exit 1
+      ;;
+  esac
+done
 
 if [ "$FULL" -eq 1 ]; then
   if [ -z "${OPENPLANS_DENYLIST_FILE:-}" ]; then
@@ -185,5 +193,8 @@ if [ "$FULL" -eq 1 ]; then
   python3 "$ROOT/tools/coverage-gate/selftest.py"
   python3 -m unittest discover -s "$ROOT/tools/coverage-scan/tests"
   python3 "$ROOT/tools/coverage-ui-check/check.py" --selftest
+fi
+if [ "$BROWSER" -eq 1 ]; then
+  "$ROOT/tools/coverage-ui-check/browser-gate.sh"
 fi
 printf 'PASS\n'

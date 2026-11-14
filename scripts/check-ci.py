@@ -39,7 +39,11 @@ def check(workflow):
         "CI must cover pull requests and release branches without path filters",
     )
     jobs = workflow["jobs"]
-    require(set(jobs) == set(JOBS) | {"required"}, "missing or unexpected required job")
+    require(
+        set(jobs) == set(JOBS) | {"required", "browser"},
+        "missing or unexpected required job",
+    )
+    check_browser(jobs["browser"])
     for key, runner in JOBS.items():
         job = jobs[key]
         require(
@@ -115,6 +119,49 @@ def check(workflow):
         )
 
 
+def check_browser(job):
+    """The real-browser job is advisory: pinned Chrome, bounded, never required.
+
+    It stays out of website-required until it has run for about a week without
+    flaky failures; then gate.sh --full runs it and this contract changes.
+    """
+    require(
+        set(job)
+        == {"name", "runs-on", "timeout-minutes", "continue-on-error", "env", "steps"}
+        and job["name"] == "website-browser"
+        and job["runs-on"] == "ubuntu-24.04"
+        and job["continue-on-error"] is True
+        and 0 < job["timeout-minutes"] <= 15,
+        "browser job must be advisory, bounded and on ubuntu-24.04",
+    )
+    require(
+        re.fullmatch(r"\d+\.\d+\.\d+\.\d+", job["env"].get("CHROME_VERSION", ""))
+        is not None
+        and re.fullmatch(r"[0-9a-f]{64}", job["env"].get("CHROME_SHA256", ""))
+        is not None,
+        "browser job must pin an exact Chrome build and its SHA-256",
+    )
+    steps = job["steps"]
+    require(
+        len(steps) == 5
+        and steps[0]
+        == {"uses": ACTIONS["checkout"], "with": {"persist-credentials": False}}
+        and steps[1]
+        == {"uses": ACTIONS["node"], "with": {"node-version-file": ".node-version"}}
+        and steps[2]
+        == {
+            "uses": ACTIONS["python"],
+            "with": {"python-version-file": ".python-version"},
+        }
+        and "sha256sum -c" in steps[3].get("run", "")
+        and steps[4]
+        .get("run", "")
+        .rstrip()
+        .endswith("tools/coverage-ui-check/browser-gate.sh"),
+        "browser job must verify its Chrome download and run the browser wrapper",
+    )
+
+
 def results(needs):
     require(
         isinstance(needs, dict) and set(needs) == set(JOBS),
@@ -140,6 +187,30 @@ def selftest(workflow):
             pass
         else:
             raise ValueError("missing required job was accepted")
+    browser_mutants = (
+        ("continue-on-error", False),
+        ("timeout-minutes", 120),
+        ("env", {"CHROME_VERSION": "stable", "CHROME_SHA256": "0" * 64}),
+    )
+    for field, value in browser_mutants:
+        mutant = copy.deepcopy(workflow)
+        mutant["jobs"]["browser"][field] = value
+        try:
+            check(mutant)
+        except ValueError:
+            pass
+        else:
+            raise ValueError("unpinned or required browser job was accepted")
+    mutant = copy.deepcopy(workflow)
+    mutant["jobs"]["browser"]["steps"][3]["run"] = (
+        "npx @puppeteer/browsers install chrome@stable"
+    )
+    try:
+        check(mutant)
+    except ValueError:
+        pass
+    else:
+        raise ValueError("unverified Chrome download was accepted")
     good = {name: {"result": "success"} for name in JOBS}
     results(good)
     for name in JOBS:
@@ -171,7 +242,8 @@ def selftest(workflow):
         "CI must use hashed Python requirements",
     )
     print(
-        "CI contract selftest: PASS (required jobs, results and locked tool installs)"
+        "CI contract selftest: PASS (required jobs, results, locked tool installs"
+        " and advisory pinned browser job)"
     )
 
 

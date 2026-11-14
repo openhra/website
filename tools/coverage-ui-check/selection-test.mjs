@@ -14,6 +14,14 @@ const records = JSON.parse(
   fs.readFileSync(path.join(dataRoot, "premiums-2026.json")),
 );
 const codes = Object.keys(records.states);
+// Display names from the page, for the checks on table order and row text.
+const pageNames = Object.fromEntries(
+  [
+    ...fs
+      .readFileSync(path.join(root, "plans/index.html"), "utf8")
+      .matchAll(/<option value="([A-Z]{2})"[^>]*>([^<]*)<\/option>/g),
+  ].map((m) => [m[1], m[2]]),
+);
 const assert = (ok, message) => {
   if (!ok) throw Error(message);
 };
@@ -80,7 +88,7 @@ class Element {
     return this.title;
   }
 }
-async function fixture(search, native = false) {
+async function fixture(search, native = false, named = false) {
   const ids = Object.fromEntries(
     [
       "state",
@@ -108,10 +116,14 @@ async function fixture(search, native = false) {
       "share-message",
     ].map((id) => [id, new Element()]),
   );
-  // Like the page, the first option is the all-states summary. State names are codes here.
+  // Like the page, the first option is the all-states summary. State names are
+  // codes unless named; options stay in code order so the reader must sort.
   ids.state.options = [
     { value: "ALL", textContent: "All states" },
-    ...codes.map((code) => ({ value: code, textContent: code })),
+    ...codes.map((code) => ({
+      value: code,
+      textContent: named ? pageNames[code] : code,
+    })),
   ];
   const layers = ["providers", "prescriptions", "premiums"].map((layer) => {
     const e = new Element();
@@ -311,8 +323,29 @@ try {
         "Measured: FL, NC and TX. Quarantined: GA.",
     "summary must name the few measured and quarantined states",
   );
+  const named = await fixture("?layer=premiums&year=2026", false, true);
+  const rows = named.ids.table.childNodes[0].childNodes[2].childNodes;
+  const shown = rows.map((row) => row.childNodes[0].textContent);
+  assert(
+    shown.length === 51 &&
+      shown.join("|") ===
+        shown
+          .slice()
+          .sort((a, b) => a.localeCompare(b, "en"))
+          .join("|"),
+    "table rows not sorted by state name",
+  );
+  const notes = rows.map((row) => row.childNodes[2].textContent);
+  const run = notes.find((text) => /[^.] State observation:/.test(text));
+  assert(
+    !run &&
+      notes.some((text) =>
+        text.includes("statewide denominator unverified. State observation:"),
+      ),
+    "missing period before State observation: " + run,
+  );
   console.log(
-    "PASS: coverage selection URL load/replace/history, measured counts, native share, clipboard confirmation and unknown states",
+    "PASS: coverage selection URL load/replace/history, measured counts, native share, clipboard confirmation, unknown states, table order by name and row sentences",
   );
 } catch (error) {
   console.error("FAIL: coverage selection: " + error.message);

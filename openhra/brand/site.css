@@ -287,6 +287,10 @@ pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+/* Focused code blocks keep their 8px corners. */
+pre:focus-visible {
+  border-radius: var(--radius-md);
+}
 pre code {
   background: none;
   font-size: inherit;
@@ -1574,7 +1578,6 @@ header nav {
 }
 .verification th:last-child {
   width: 112px;
-  white-space: nowrap;
 }
 #self-host .setup-grid {
   margin-top: 40px;

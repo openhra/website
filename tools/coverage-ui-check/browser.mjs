@@ -1,4 +1,7 @@
-// Drive the local page in the shared headed agent-browser session; no dependencies.
+// Drive the local page over the Chrome DevTools Protocol; no dependencies.
+// COVERAGE_CDP_URL names a loopback browser endpoint (browser-gate.sh starts a
+// disposable headless Chrome). Without it, attach to the shared headed
+// agent-browser session.
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
@@ -13,31 +16,41 @@ if (!["127.0.0.1", "localhost"].includes(new URL(url).hostname))
   throw Error("Local preview only");
 const out = process.env.COVERAGE_CAPTURE_DIR || "/tmp/openplans-coverage-ui";
 await fs.mkdir(out, { recursive: true });
-const endpoint = execFileSync(
-  "agent-browser",
-  [
-    "--headed",
-    "--profile",
-    path.join(os.homedir(), "agent-browser"),
-    "get",
-    "cdp-url",
-  ],
-  { encoding: "utf8" },
-).trim();
+const endpoint =
+  process.env.COVERAGE_CDP_URL ||
+  execFileSync(
+    "agent-browser",
+    [
+      "--headed",
+      "--profile",
+      path.join(os.homedir(), "agent-browser"),
+      "get",
+      "cdp-url",
+    ],
+    { encoding: "utf8" },
+  ).trim();
+if (!["127.0.0.1", "localhost"].includes(new URL(endpoint).hostname))
+  throw Error("Local browser only");
 const origin = endpoint.replace(/^ws/, "http").replace(/\/devtools\/.*$/, "");
 const tabs = await (await fetch(origin + "/json/list")).json();
 const target = tabs.find(
   (t) => t.type === "page" && t.url.startsWith(new URL(url).origin),
 );
-if (!target) throw Error("Open the local preview in agent-browser first");
+if (!target) throw Error("Open the local preview in the browser first");
 const ws = new WebSocket(target.webSocketDebuggerUrl);
 await new Promise((r) => ws.addEventListener("open", r, { once: true }));
-let sequence = 0;
+let sequence = 0,
+  historyThrottleWarnings = 0;
 const pending = new Map(),
   requests = [],
   loaded = new Set();
 ws.addEventListener("message", (e) => {
   const msg = JSON.parse(e.data);
+  if (
+    msg.method === "Log.entryAdded" &&
+    msg.params.entry.text.includes("Throttling navigation")
+  )
+    historyThrottleWarnings++;
   if (msg.method === "Page.lifecycleEvent" && msg.params.name === "load")
     loaded.add(msg.params.loaderId);
   if (pending.has(msg.id)) {
@@ -107,6 +120,19 @@ const click = async (layer) => {
     `document.querySelector('#coverage-download').getAttribute('href').endsWith('${layer}-'+document.querySelector('#coverage-year').value+'.json') && document.querySelector('[data-coverage-layer="${layer}"]').getAttribute('aria-pressed')==='true'`,
   );
 };
+// Chrome silently drops history updates after a burst of them (IPC flooding
+// protection) and logs "Throttling navigation". Retry only the URL update, with
+// backoff past the throttle window; every assertion still runs once.
+let historyRetries = 0;
+const updateHistory = async (apply, settled) => {
+  await evaluate(apply);
+  for (const delay of [2000, 4000, 8000]) {
+    if (await evaluate(settled)) return;
+    historyRetries++;
+    await pause(delay);
+    await evaluate(apply);
+  }
+};
 const reports = [];
 const pageFits = async () => {
   const size = await evaluate(
@@ -122,6 +148,7 @@ try {
   await call("Page.enable");
   await call("Page.setLifecycleEventsEnabled", { enabled: true });
   await call("Network.enable");
+  await call("Log.enable");
   await call("Emulation.setDeviceMetricsOverride", {
     width: 1440,
     height: 1000,
@@ -151,24 +178,31 @@ try {
     const d=${JSON.stringify(data)}, $=s=>document.querySelector('#coverage-'+s), rows=[...$('table').querySelectorAll('tbody tr')], codes=Object.keys(d.states), names=Object.fromEntries([...$('state').options].map(o=>[o.value,o.textContent]));
     const fail=m=>{throw Error(m)}, date=t=>new Date(t).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'});
     if(rows.length!==51||!$('title').textContent.includes(d.year)||!$('legend-title').textContent.includes(d.year)||!$('table').querySelector('caption').textContent.includes('Plan year '+d.year)||!$('date').textContent.includes(date(d.as_of)))fail('year/date consistency');
-    for(const [i,s]of codes.entries()){
-     const r=d.states[s];$('state').value=s;$('state').dispatchEvent(new Event('change'));
+    for(const s of codes){
+     // Rows are sorted by state name, not code.
+     const r=d.states[s],row=rows.find(x=>x.cells[0].textContent===names[s])||fail(s+' table');$('state').value=s;$('state').dispatchEvent(new Event('change'));
      const metric=r.status==='measured'?(r.percent_tenths/10).toFixed(1)+'%':({unknown:'Unknown, not yet measured',quarantined:'Quarantined',not_applicable:'Not applicable'})[r.status];
      if($('metric').textContent!==metric||!$('state-name').textContent.includes(names[s])||!$('state-name').textContent.includes(d.year))fail(s+' detail');
-     if(rows[i].cells[0].textContent!==names[s]||!rows[i].cells[1].textContent.startsWith(metric+';'))fail(s+' table');
-     if(r.denominator!==null&&!rows[i].cells[1].textContent.includes((r.numerator===null?'Unknown':r.numerator)+' / '+r.denominator+' '))fail(s+' fraction');
-     if(r.observed_at&&!rows[i].cells[2].textContent.includes(date(r.observed_at)))fail(s+' observation');
+     if(row.cells[0].textContent!==names[s]||!row.cells[1].textContent.startsWith(metric+';'))fail(s+' table');
+     if(r.denominator!==null&&!row.cells[1].textContent.includes((r.numerator===null?'Unknown':r.numerator)+' / '+r.denominator+' '))fail(s+' fraction');
+     if(r.observed_at&&!row.cells[2].textContent.includes(date(r.observed_at)))fail(s+' observation');
      for(const [key,value]of Object.entries(r.counts||{})){
       const label={active_complete:'active complete',active_partial:'active with limits',quarantined:'quarantined',unknown:'unknown',not_imported:'not imported',verified:'verified'}[key];
-      if(!rows[i].cells[2].textContent.includes(value+' '+label)||!$('breakdown').textContent.includes(value+' '+label))fail(s+' '+key);
+      if(!row.cells[2].textContent.includes(value+' '+label)||!$('breakdown').textContent.includes(value+' '+label))fail(s+' '+key);
      }
      const fill=document.querySelector('[data-state="'+s+'"]').getAttribute('fill');
      if(r.status==='unknown'&&fill!=='url(#coverage-unknown)'||r.status==='quarantined'&&fill!=='url(#coverage-quarantine)'||r.status==='measured'&&fill.startsWith('url'))fail(s+' fill');
      if(!$('message').textContent.includes(names[s])||!$('message').textContent.includes(d.year))fail('announcement');
     }
-    if(new URL(location.href).searchParams.get('year')!==String(d.year)||new URL(location.href).searchParams.get('layer')!==d.layer)fail('share URL');
     return codes.length;
    })()`);
+      // The last selection's replaceState may be throttled; repeat only that update.
+      const sharedURL = `(()=>{const p=new URL(location.href).searchParams,v=document.querySelector('#coverage-state').value;return p.get('year')==='${year}'&&p.get('layer')==='${layer}'&&p.get('state')===(v==='ALL'?null:v)})()`;
+      await updateHistory(
+        `document.querySelector('#coverage-state').dispatchEvent(new Event('change'))`,
+        sharedURL,
+      );
+      assert(await evaluate(sharedURL), "share URL");
       // Keep exhaustive synthetic state changes below Chrome history IPC throttling.
       await pause(3500);
     }
@@ -463,8 +497,9 @@ try {
       ),
       "URL state ignored on " + page,
     );
-    await evaluate(
+    await updateHistory(
       `{history.pushState(null,'','?layer=premiums&year=2027&state=FL');dispatchEvent(new PopStateEvent('popstate'))}`,
+      `new URL(location.href).searchParams.get('state')==='FL'`,
     );
     await wait(
       `document.querySelector('#coverage-state-name').textContent==='Florida · Premiums · Plan year 2027'`,
@@ -759,6 +794,7 @@ try {
     coverageRequests: uniqueRequests,
     coverageRequestsSameOrigin: true,
   });
+  reports.push({ historyThrottleWarnings, historyRetries });
   await fs.writeFile(
     path.join(out, "browser-checks.json"),
     JSON.stringify(reports, null, 2) + "\n",

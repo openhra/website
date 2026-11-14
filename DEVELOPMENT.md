@@ -64,8 +64,7 @@ reason to skip its contents.
 
 Coverage JSON, generated table fragments, canonical maps and imported SVGs are
 excluded. Legal documents and mixed pages remain excluded in full, including
-`plans/index.html`, `plans/availability.html`, `openhra/index.html` and the brand
-copy of that page. No legal text has been formatted or style-edited.
+`plans/index.html`, `plans/availability.html` and `openhra/index.html`. No legal text has been formatted or style-edited.
 
 The UI checker also freezes contact scripts and handlers, hosting headers and
 brand tokens. Their exact paths are listed in `.prettierignore`. The whole
@@ -81,11 +80,14 @@ Measured with default Prettier 3.9.10:
 
 | Contract                            | Current bytes | Formatted bytes | Existing limit |
 | ----------------------------------- | ------------: | --------------: | -------------: |
-| `plans/coverage.js`                 |        21,863 |          21,863 |         24,576 |
-| Coverage block in `plans/style.css` |         6,771 |           7,252 |          8,192 |
+| `plans/coverage.js`                 |        22,519 |          22,519 |         24,576 |
+| Coverage block in `plans/style.css` |         7,509 |           8,068 |          8,192 |
 
 The budget command formats in memory. Both results fit the existing limits; no
-limit changed. Coverage JavaScript remains selected for the mechanical pass.
+limit changed. The coverage map design set the 24 KiB reader limit to keep one
+small hand-written script with no framework or build step.
+`tools/coverage-ui-check/check.py` and `scripts/format-budgets.mjs` enforce it.
+Coverage JavaScript remains selected for the mechanical pass.
 HTML table comparisons parse tags, attributes and text, while the generator's
 own output still matches its saved fragment exactly. Fetch and DOM guards accept
 quote and whitespace changes and still reject unsafe insertion and other origins.
@@ -121,3 +123,21 @@ release ledger before updating the public revision list.
 Every new public file must be added to `scripts/public-paths.json`. Source audits
 read that selection even with tools installed. Artifact audits reject unexpected
 files and directories, including a private note hidden under `node_modules`.
+
+## Real-browser checks
+
+`tools/gate.sh --browser` runs the usual gate, then
+`tools/coverage-ui-check/browser-gate.sh`. The wrapper starts the loopback
+preview and a headless Chrome with a new temporary profile. It runs
+`browser.mjs` against them. On every exit, failures included, it stops the
+preview and Chrome and deletes the profile. A run that passes 600 seconds is
+killed and fails. Set `COVERAGE_BROWSER_TIMEOUT` to change that limit. Set `COVERAGE_CHROME` to choose the binary. CI pins Chrome for Testing
+150.0.7871.124 and checks its SHA-256. The checks take about a minute.
+
+```sh
+COVERAGE_CHROME=/path/to/chrome tools/gate.sh --browser
+```
+
+The default gate and `--full` start no browser. The CI job `website-browser` can
+fail without failing the run. After about a week without flaky runs it moves
+into `--full`.

@@ -19,7 +19,6 @@ PAGES = (
     "plans/index.html",
     "plans/availability.html",
     "openhra/index.html",
-    "plans/brand/openhra/index.html",
 )
 BLOCKS = {"p", "li", "dd", "td", "h1", "h2", "h3", "h4"}
 PREVIEW = re.compile(r"hosted preview", re.IGNORECASE)
