@@ -20,7 +20,7 @@ List all 15 public tools, `quote_premiums` and `check_ichra_affordability` inclu
 
 Show the live URL as selectable text with a local copy button and an accessible "Copied" announcement. Include the live client configuration, HTTP headers and the stdio option for your own copy. Protocol 2026-07-28 and 2025-11-25 clients are served. Browser clients can connect through CORS from the allowed origin. Keep the detailed setup instructions in the repository.
 
-Coverage is limited and an outside acceptance run is pending. OpenPlans v0.4.7 is available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
+Coverage is limited and an outside acceptance run is pending. OpenPlans v0.4.8 is available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
 
 OpenHRA introduces the public preview, shows the endpoint and its limits, and links to OpenPlans for the full tool list and connection details.
 
@@ -28,7 +28,7 @@ OpenHRA introduces the public preview, shows the endpoint and its limits, and li
 
 Keep the purpose, current status, public sources, coverage limits and unknown-data rule. Give the native and compatibility APIs a short explanation. Show the public clone command and a run command copied from the README, with prerequisites and a link to the complete setup steps. A source bootstrap command does not establish a release or hosted MCP availability.
 
-OpenPlans preserves the Verification section and dated table, the coverage section and saved data, the publisher section and exact User-Agent, NLM and GeoNames attribution, Contact and footer notices. Preserve the contact IDs, scripts, handlers and verification behavior on both pages. Publisher and Contact links stay in navigation.
+OpenPlans preserves the Verification section and dated table, the coverage section and saved data, the publisher section and exact User-Agent, NLM attribution, Contact and footer notices. Preserve the contact IDs, scripts, handlers and verification behavior on both pages. Publisher and Contact links stay in navigation.
 
 OpenHRA keeps an explanation of individual coverage HRAs, the repository directory, working principles and Contact. Avoid duplicating the full project manual.
 

@@ -8,7 +8,7 @@ Each project's public repository is its main page. Websites introduce the work a
 
 ## Name
 
-Write OpenPlans with a capital O and capital P in page copy, headings, metadata, accessible labels and artwork. Keep technical identifiers exactly as supplied: `openhra/openplans`, repository URLs, package/CLI names, filenames and `OPENPLANS_*` variables. The publisher User-Agent remains `openplans/0.1 (public health-plan source discovery; +https://plans.openhra.com/)` verbatim. A repository path printed in artwork is still a technical identifier.
+Write OpenPlans with a capital O and capital P in page copy, headings, metadata, accessible labels and artwork. Keep technical identifiers exactly as supplied: `openhra/openplans`, repository URLs, package/CLI names, filenames and `OPENPLANS_*` variables. The publisher User-Agent is `openplans/<version> (public health-plan source discovery; +https://plans.openhra.com/)`, where `<version>` is the OpenPlans release number. Print it verbatim. A repository path printed in artwork is still a technical identifier.
 
 ## Character and voice
 

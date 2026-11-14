@@ -368,12 +368,42 @@ def check(root):
         assert before and after and figures(before[0]) == figures(after[0]), (
             "protected page block changed: " + evidence
         )
-        # The one approved contact edit: the captcha wrapper gains a group role
-        # so its aria-label is valid. The rest of each block stays byte-identical.
-        captcha_role = lambda block: block.replace(
-            '<div id="contact-captcha" aria-label=',
-            '<div id="contact-captcha" role="group" aria-label=',
+        # The approved edits to protected blocks, each an exact replacement. The
+        # rest of each block stays byte-identical to the published page.
+        # 1. The captcha wrapper gains a group role so its aria-label is valid.
+        # 2. The publisher User-Agent names its real format, openplans/<version>,
+        #    instead of the 0.1 token the fetcher stopped sending in 0.2.0.
+        # 3. The GeoNames credit goes: the hosted instance holds no GeoNames data.
+        old_agent = (
+            "It identifies itself as:</p>\n"
+            '    <code class="ua">openplans/0.1 (public health-plan source'
+            " discovery; +https://plans.openhra.com/)</code>"
         )
+        new_agent = (
+            "It identifies itself as follows, where <code>&lt;version&gt;</code>"
+            " is the OpenPlans release number:</p>\n"
+            '    <code class="ua">openplans/&lt;version&gt; (public health-plan'
+            " source discovery; +https://plans.openhra.com/)</code>"
+        )
+        old_postal_credit = (
+            ' Postal-code data from <a href="https://www.geonames.org/">GeoNames'
+            '</a> is licensed under <a href="https://creativecommons.org/licenses'
+            '/by/4.0/">CC BY 4.0</a>.</p>'
+        )
+        approved_edits = (
+            (
+                '<div id="contact-captcha" aria-label=',
+                '<div id="contact-captcha" role="group" aria-label=',
+            ),
+            (old_agent, new_agent),
+            (old_postal_credit, "</p>"),
+        )
+
+        def allow_edits(block):
+            for before_text, after_text in approved_edits:
+                block = block.replace(before_text, after_text)
+            return block
+
         protected_sections = (
             r'<section class="band" id="publishers">.*?</section>',
             r'<section class="band alt" id="contact">.*?</section>',
@@ -383,7 +413,7 @@ def check(root):
         for pattern in protected_sections:
             before = re.search(pattern, baseline_page, re.DOTALL)
             after = re.search(pattern, page, re.DOTALL)
-            assert before and after and captcha_role(before[0]) == after[0], (
+            assert before and after and allow_edits(before[0]) == after[0], (
                 "protected page block changed: " + pattern
             )
         check_scripts(page, baseline_page)
@@ -394,7 +424,7 @@ def check(root):
             r'<section class="band alt" id="contact">.*?</section>',
             r"<footer>.*?</footer>",
         ):
-            assert re.search(pattern, organisation, re.DOTALL)[0] == captcha_role(
+            assert re.search(pattern, organisation, re.DOTALL)[0] == allow_edits(
                 re.search(pattern, original_organisation, re.DOTALL)[0]
             ), "organisation protected block changed"
         check_scripts(

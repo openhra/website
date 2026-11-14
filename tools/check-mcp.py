@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-RELEASE = "v0.4.7"
+RELEASE = "v0.4.8"
 RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 # The banned words are split so they never appear whole in this public file.
@@ -256,7 +256,7 @@ def check_page(source, site):
     )
     require(
         RELEASE.lower() in claims,
-        "v0.4.7 release status missing",
+        "v0.4.8 release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -303,7 +303,7 @@ def check_page(source, site):
                     and visible(n)
                 )
             ),
-            "release status must link to v0.4.7",
+            "release status must link to v0.4.8",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -551,7 +551,7 @@ def run(root):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.4.7 release link, no comparison text, Public preview, live catalog and quote endpoint, 15 public tools with household quotes, no restriction labels, GitHub-first, no organisation page copy on the plans site)"
+        "mcp: PASS (v0.4.8 release link, no comparison text, Public preview, live catalog and quote endpoint, 15 public tools with household quotes, no restriction labels, GitHub-first, no organisation page copy on the plans site)"
     )
 
 
@@ -648,15 +648,15 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "v0.4.7 link removed",
+                    "v0.4.8 link removed",
                     lambda s: s.replace(RELEASE_URL, REPO),
-                    "release status must link to v0.4.7",
+                    "release status must link to v0.4.8",
                 ),
                 (
                     site,
-                    "v0.4.7 status text removed",
+                    "v0.4.8 status text removed",
                     lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
-                    "release status must link to v0.4.7",
+                    "release status must link to v0.4.8",
                 ),
                 (
                     site,
@@ -665,7 +665,7 @@ def selftest(root):
                         '<a href="' + RELEASE_URL + '">' + RELEASE,
                         '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "release status must link to v0.4.7",
+                    "release status must link to v0.4.8",
                 ),
                 (
                     site,
