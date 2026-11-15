@@ -15,10 +15,48 @@
     "contents": "read"
   },
   "jobs": {
+    "dedupe": {
+      "name": "website-same-commit",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 60,
+      "permissions": {
+        "actions": "read",
+        "contents": "read"
+      },
+      "outputs": {
+        "full": "${{ steps.decide.outputs.full }}",
+        "source_run": "${{ steps.decide.outputs.source_run }}"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "with": {
+            "python-version-file": ".python-version"
+          }
+        },
+        {
+          "id": "decide",
+          "env": {
+            "GH_TOKEN": "${{ github.token }}"
+          },
+          "run": "python3 scripts/check-ci.py --same-commit"
+        }
+      ]
+    },
     "linux": {
       "name": "website-linux",
       "runs-on": "ubuntu-24.04",
       "timeout-minutes": 20,
+      "needs": [
+        "dedupe"
+      ],
+      "if": "${{ needs.dedupe.outputs.full == 'true' }}",
       "steps": [
         {
           "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
@@ -55,6 +93,10 @@
       "name": "website-macos",
       "runs-on": "macos-15-intel",
       "timeout-minutes": 45,
+      "needs": [
+        "dedupe"
+      ],
+      "if": "${{ needs.dedupe.outputs.full == 'true' }}",
       "steps": [
         {
           "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
@@ -91,6 +133,10 @@
       "name": "website-python39",
       "runs-on": "ubuntu-24.04",
       "timeout-minutes": 20,
+      "needs": [
+        "dedupe"
+      ],
+      "if": "${{ needs.dedupe.outputs.full == 'true' }}",
       "steps": [
         {
           "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
@@ -169,6 +215,7 @@
       "runs-on": "ubuntu-24.04",
       "timeout-minutes": 5,
       "needs": [
+        "dedupe",
         "linux",
         "macos",
         "python39"

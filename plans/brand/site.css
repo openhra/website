@@ -1116,7 +1116,7 @@ h4 {
   .feature-intro,
   .connection-grid,
   .setup-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .plans-site .repo-hero {
     padding-block: 44px 48px;
@@ -1696,5 +1696,38 @@ footer .footer-identity {
   }
   .connection-panel .integration-directory a {
     display: grid;
+  }
+}
+
+/* Narrow phones, down to 280px wide with a desktop scrollbar. Wide fonts
+   such as DejaVu Sans must not push the page sideways. */
+.brand {
+  max-width: 100%;
+}
+.brand img {
+  max-width: 100%;
+}
+.repo-hero > * {
+  min-width: 0;
+}
+.repo-home h2 a,
+.rules a {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .repo-home {
+    container-type: inline-size;
+  }
+  .project-home h2 {
+    font-size: min(38px, 13cqi);
+  }
+  .repo-home h2 a span {
+    font-size: min(30px, 10.25cqi);
+  }
+}
+@media (max-width: 319px) {
+  /* The verification widget is 304px wide; scale it to fit. */
+  #contact-captcha {
+    zoom: 0.87;
   }
 }

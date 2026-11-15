@@ -413,8 +413,23 @@ def server(mode="good"):
 class AcceptanceTests(unittest.TestCase):
     def test_catalog_tool_set_accepts_public_tools_and_rejects_removed_tool(self):
         names = probe.expected_catalog_tools()
-        self.assertEqual(len(names), 15)
+        manifest = json.loads(
+            (
+                Path(__file__).resolve().parents[1] / "plans/data/mcp-tools.json"
+            ).read_text()
+        )
+        self.assertEqual(
+            names,
+            {
+                tool["name"]
+                for tool in manifest["tools"]
+                if tool["listed"] == "always"
+                or tool.get("plugin") == "@openplans/plugin-status"
+            },
+        )
         self.assertIn("quote_premiums", names)
+        self.assertIn("get_status", names)
+        self.assertNotIn("estimate_medicare_drug_costs", names)
         probe.check_catalog_tools(names)
         with self.assertRaisesRegex(probe.CheckFailed, "removed tool advertised"):
             probe.check_catalog_tools(names | {"estimate_premiums"})

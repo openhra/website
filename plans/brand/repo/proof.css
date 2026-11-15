@@ -61,10 +61,15 @@
 }
 @media (max-width: 760px) {
   .mark-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .mark-sizes {
+    flex-wrap: wrap;
     gap: 24px;
+  }
+  .lockup-proof img {
+    max-width: 100%;
+    height: auto;
   }
 }
 .mark-sizes img[width="16"] {

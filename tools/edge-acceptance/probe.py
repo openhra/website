@@ -42,13 +42,13 @@ class CheckFailed(Exception):
 
 
 def expected_catalog_tools():
-    """Load the public catalog maintained by the website MCP checker."""
+    """The hosted catalog from the tool manifest the website MCP checker reads."""
     checker = Path(__file__).resolve().parents[1] / "check-mcp.py"
     spec = importlib.util.spec_from_file_location("website_check_mcp", checker)
     require(spec is not None and spec.loader is not None, "catalog checker unavailable")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return set(module.TOOLS)
+    return module.hosted_tool_names()
 
 
 def list_catalog_tools(fetch_page):

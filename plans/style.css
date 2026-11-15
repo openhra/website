@@ -129,3 +129,8 @@
   .plans-site pre { white-space: pre; overflow-wrap: normal; overflow-x: auto; }
   .plans-site .endpoint-address code { flex-basis: 100%; white-space: nowrap; overflow-wrap: normal; overflow-x: auto; }
 }
+/* Phones: WV and VA labels clear of each other. */
+@media (max-width: 760px) {
+  .coverage [data-label="WV"] { transform: translateX(-1px); }
+  .coverage [data-label="VA"] { transform: translateX(11px); }
+}

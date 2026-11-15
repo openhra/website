@@ -47,10 +47,18 @@ an external policy. Private release validation must supply the private policy.
 
 The extracted-root workflow at `.github/workflows/ci.yml` runs on pull requests,
 pushes to `develop`, `main` and `release/**`, and manual dispatch. Required checks
-are `website-linux`, `website-macos`, `website-python39` and `website-required`.
-The final job runs even if a dependency fails or skips, and accepts only a
-successful result for every required platform job. Configure branch protection
-to require these checks. Hosted results belong to the tested commit.
+are `website-same-commit`, `website-linux`, `website-macos`, `website-python39` and
+`website-required`. The final job runs even if a dependency fails or skips. Configure
+branch protection to require these checks. Hosted results belong to the tested commit.
+
+Each commit gets one full run. A release pushes the same commit to `develop` and `main`.
+On a push to `main`, `website-same-commit` looks for the `develop` push run of that
+commit. It waits up to three minutes for the run to appear and up to 55 minutes for it to
+finish. If that run passed every check, the platform jobs on `main` are skipped and the
+job summary links the develop run. If it failed, the `main` run fails. If no develop run
+appears, `main` runs every check itself. Pull requests, manual dispatches and every other
+push run every check. `website-required` accepts skipped platform jobs only when the
+same-commit job succeeded and named a passing run.
 
 `.node-version` and `.python-version` pin the primary runtimes. Python 3.9.25 is
 also tested on Linux to retain compatibility with existing tooling. The workflow
@@ -62,6 +70,8 @@ The workflow uses JSON syntax, which YAML accepts. This lets the standard-librar
 checker `python3 scripts/check-ci.py --selftest` verify commands, runtime inputs,
 action pins and required jobs without installing a YAML parser. Its negative
 controls reject missing jobs and failed, skipped, pending or canceled results.
+Planted mutants of the same-commit logic must fail its checks, including one that skips
+without a passing same-commit run and one that skips on a ref other than `main`.
 
 ## Export committed source
 

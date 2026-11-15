@@ -222,7 +222,9 @@ try {
     unpublishedStatesRemainUnknown: true,
   });
   // Responsive/appearance checks include the entire existing page, not just the map.
-  for (const width of [320, 360, 390, 768, 1280, 1440]) {
+  // 305 and 280 leave room for a 15px desktop scrollbar below a 320px phone, so
+  // wide fonts such as DejaVu Sans on Linux cannot hide overflow that macOS fits.
+  for (const width of [280, 305, 320, 360, 390, 768, 1280, 1440]) {
     await call("Emulation.setDeviceMetricsOverride", {
       width,
       height: 1000,
@@ -237,8 +239,9 @@ try {
     result.contactWidget = await evaluate(
       `(()=>{const r=document.querySelector('#contact-captcha').getBoundingClientRect();return {width:r.width,left:r.left,right:r.right}})()`,
     );
+    // Below 320px the stylesheet scales the 304px widget down; it is never cropped.
     assert(
-      result.contactWidget.width >= 304 &&
+      (width < 320 || result.contactWidget.width >= 304) &&
         result.contactWidget.left >= 0 &&
         result.contactWidget.right <= result.client,
       "contact widget cropped or shrunk " + width,
@@ -261,6 +264,14 @@ try {
       "white/controls " + width,
     );
     if (width < 760) assert(result.gutter === 16, "phone gutter");
+    // No two state labels on the map may overlap. WV and VA used to touch.
+    result.labelOverlaps = await evaluate(
+      `(()=>{const t=[...document.querySelectorAll('.coverage .state-labels text')].map(e=>[e.dataset.label,e.getBoundingClientRect()]),o=[];for(let i=0;i<t.length;i++)for(let j=i+1;j<t.length;j++){const a=t[i][1],b=t[j][1];if(Math.min(a.right,b.right)>Math.max(a.left,b.left)&&Math.min(a.bottom,b.bottom)>Math.max(a.top,b.top))o.push(t[i][0]+'/'+t[j][0])}return o})()`,
+    );
+    assert(
+      result.labelOverlaps.length === 0,
+      "map labels overlap " + width + ": " + result.labelOverlaps.join(" "),
+    );
     reports.push(result);
   }
   for (const features of [
@@ -301,7 +312,7 @@ try {
   reports.push({ zoom200: { physicalWidth: 1440, cssWidth: 720, pass: true } });
   // The same assertion must reject planted page overflow at the smallest width.
   await call("Emulation.setDeviceMetricsOverride", {
-    width: 320,
+    width: 280,
     height: 1000,
     deviceScaleFactor: 1,
     mobile: false,
@@ -323,7 +334,7 @@ try {
   assert(overflowRejected, "wide element was accepted");
   await pageFits();
   reports.push({
-    negative: "planted wide element at 320px",
+    negative: "planted wide element at 280px",
     rejected: overflowRejected,
   });
   // Tab order and native closed-select type-ahead: no synthetic change events.
@@ -746,7 +757,7 @@ try {
   );
   reports.push({ snapshotAgeOver7DaysLabelled: true });
   for (const page of ["", "availability"])
-    for (const width of [1280, 390, 320]) {
+    for (const width of [1280, 390, 320, 305, 280]) {
       const height = width === 1280 ? 1200 : 1800;
       await call("Emulation.setDeviceMetricsOverride", {
         width,
@@ -776,6 +787,26 @@ try {
         capture: name + ".png",
       });
     }
+  // The brand proof page shares the stylesheet and must fit narrow phones too.
+  for (const width of [305, 280]) {
+    await call("Emulation.setDeviceMetricsOverride", {
+      width,
+      height: 1800,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+    await navigate("brand/repo/");
+    await pageFits();
+    reports.push({ page: "brand/repo", width, noOverflow: true });
+  }
+  await call("Emulation.setDeviceMetricsOverride", {
+    width: 320,
+    height: 1800,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await navigate("availability");
+  await ready();
   await evaluate(`document.querySelector('#coverage-table').scrollIntoView()`);
   const tableShot = await call("Page.captureScreenshot", {
     format: "png",

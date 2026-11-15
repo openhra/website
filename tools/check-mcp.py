@@ -2,6 +2,7 @@
 """Keep the public MCP preview honest and repository actions first."""
 
 import argparse
+import hashlib
 import json
 import re
 import shlex
@@ -11,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-RELEASE = "v0.4.8"
+RELEASE = "v0.4.10"
 RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 # The banned words are split so they never appear whole in this public file.
@@ -19,24 +20,11 @@ FORBIDDEN_COMPARISON = re.compile(
     r"com" + r"mercial[\s_-]+reference|reference[\s_-]+" + r"api\b|par" + r"ity\s+with",
     re.IGNORECASE,
 )
-TOOLS = {
-    "search",
-    "fetch",
-    "search_plans",
-    "get_plan",
-    "search_providers",
-    "check_provider_network",
-    "search_drugs",
-    "check_drug_coverage",
-    "lookup_geography",
-    "list_carriers_networks",
-    "get_data_status",
-    "quote_plans",
-    "quote_premiums",
-    "check_ichra_affordability",
-    "search_medicare_plans",
-}
-PUBLIC_TOOL_COUNT = 15
+# The tool list comes from OpenPlans: docs/mcp-tools.json, generated from its code, copied
+# byte for byte to plans/data/mcp-tools.json. No tool name is written here.
+MANIFEST = "plans/data/mcp-tools.json"
+# The plugin the hosted preview loads; its tools count toward the hosted total.
+HOSTED_PLUGINS = {"@openplans/plugin-status"}
 # Owner, 2026-11-09: every tool is available by default, household quotes included.
 HOUSEHOLD_TOOL = "quote_premiums"
 # Restriction labels the owner removed; no page may show them again.
@@ -48,6 +36,84 @@ RESTRICTION_LABEL = re.compile(
 REMOVED_NAMES = ("estimate_premiums", "premium-estimates")
 # Income and subsidies belong to household quotes, never to quote_plans.
 HOUSEHOLD_TERMS = re.compile(r"household|income|subsid")
+
+
+class Tools:
+    """The MCP tools named in the manifest, split the way the pages describe them."""
+
+    def __init__(self, text):
+        data = json.loads(text)
+        require(
+            isinstance(data, dict) and data.get("schema_version") == 1,
+            "tool manifest schema_version must be 1",
+        )
+        tools = data.get("tools")
+        require(isinstance(tools, list) and tools, "tool manifest lists no tools")
+        names = []
+        for tool in tools:
+            require(
+                isinstance(tool, dict)
+                and all(
+                    isinstance(tool.get(key), str) and tool[key].strip()
+                    for key in ("name", "title", "description")
+                )
+                and "\n" not in tool["description"]
+                and (tool.get("kind"), tool.get("listed"))
+                in {("core", "always"), ("core", "switched"), ("plugin", "plugin")}
+                and (tool["kind"] == "plugin") == isinstance(tool.get("plugin"), str),
+                "tool manifest entry malformed: " + str(tool.get("name")),
+            )
+            names.append(tool["name"])
+        require(len(names) == len(set(names)), "tool manifest repeats a tool")
+        # Core tools every server lists; the hosted preview adds its plugins' tools.
+        self.core = {t["name"] for t in tools if t["listed"] == "always"}
+        self.plugin = {
+            t["name"]
+            for t in tools
+            if t["kind"] == "plugin" and t["plugin"] in HOSTED_PLUGINS
+        }
+        self.switched = {t["name"] for t in tools if t["listed"] == "switched"}
+        self.hosted = len(self.core) + len(self.plugin)
+
+
+def read_tools(root):
+    return Tools((root / MANIFEST).read_text(encoding="utf-8"))
+
+
+def hosted_tool_names(root=ROOT):
+    """Every tool the hosted preview lists: the core tools and its plugins' tools."""
+    tools = read_tools(root)
+    return tools.core | tools.plugin
+
+
+def check_source(copy, source):
+    """The website copy must be byte-identical to the OpenPlans manifest."""
+    have = hashlib.sha256(copy).hexdigest()
+    want = hashlib.sha256(source).hexdigest()
+    require(
+        have == want,
+        f"{MANIFEST} is stale: sha256 {have[:12]}, OpenPlans has {want[:12]};"
+        " copy openplans/docs/mcp-tools.json",
+    )
+
+
+# "15 core tools", "15 read-only core tools", "15 tools and get_status" count the core tools.
+# Any other "N tools" or "N read-only tools" counts everything the hosted preview lists.
+TOOL_COUNT = re.compile(r"\b(\d+) (read-only )?(core )?tools?\b( and ([a-z_]+))?")
+
+
+def check_counts(text, tools):
+    for match in TOOL_COUNT.finditer(text):
+        count = int(match[1])
+        if match[3] or (match[5] and match[5] in tools.plugin):
+            expected, what = len(tools.core), "core"
+        else:
+            expected, what = tools.hosted, "hosted"
+        require(
+            count == expected,
+            f"tool count claim '{match[0]}' differs from the manifest:"
+            f" {expected} {what} tools",
+        )
 
 
 class Node:
@@ -208,7 +274,7 @@ def check_app(root):
     )
 
 
-def check_page(source, site):
+def check_page(source, site, tools):
     require(
         not FORBIDDEN_COMPARISON.search(source),
         "forbidden comparison text",
@@ -250,13 +316,26 @@ def check_page(source, site):
     mcp = root.find(lambda n: n.attrs.get("id") in {"mcp", "agents"})
     require(len(mcp) == 1, "MCP section missing")
     claims = all_text + " " + normalized(metadata[0].attrs["content"])
+    if site == "plans":
+        # The plans page names each tool the hosted preview adds through a plugin.
+        for name in sorted(tools.plugin):
+            require(
+                any(
+                    visible(n)
+                    for n in mcp[0].find(
+                        lambda n, name=name: n.tag == "code" and n.text() == name
+                    )
+                ),
+                "hosted plugin tool missing: " + name,
+            )
+    check_counts(claims, tools)
     require(
         not re.search(r"\b(?:stable|production(?:[ -]ready)?)\b", claims),
         "unsupported release claim",
     )
     require(
         RELEASE.lower() in claims,
-        "v0.4.8 release status missing",
+        "v0.4.10 release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -303,7 +382,7 @@ def check_page(source, site):
                     and visible(n)
                 )
             ),
-            "release status must link to v0.4.8",
+            "release status must link to v0.4.10",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -350,7 +429,7 @@ def check_page(source, site):
                 "hosted preview",
                 "48 states and dc for 2026",
                 "29 states for 2027",
-                f"{PUBLIC_TOOL_COUNT} tools",
+                f"{len(tools.core)} tools",
                 "where their data is loaded",
             ]
         ),
@@ -467,8 +546,15 @@ def check_page(source, site):
                     "quote_premiums row must state income and the checked scope",
                 )
         require(
-            len(public) == PUBLIC_TOOL_COUNT and set(public) == TOOLS,
-            "tool inventory must contain exactly 15 public tools",
+            len(public) == len(tools.core) and set(public) == tools.core,
+            f"tool inventory must contain exactly the {len(tools.core)} core tools"
+            f" in {MANIFEST}",
+        )
+        require(
+            mcp[0].find(
+                lambda n: n.tag == "a" and n.attrs.get("href") == "/" + MANIFEST[6:]
+            ),
+            "link to the tool manifest missing",
         )
         example = root.find(lambda n: classed(n, "agent-example"))[0].text().lower()
         require(
@@ -526,9 +612,12 @@ def check_page(source, site):
         )
 
 
-def run(root):
+def run(root, source=None):
+    tools = read_tools(root)
+    if source is not None:
+        check_source((root / MANIFEST).read_bytes(), source.read_bytes())
     for site in ["openhra", "plans"]:
-        check_page((root / site / "index.html").read_text(), site)
+        check_page((root / site / "index.html").read_text(), site, tools)
     require(
         (root / "openhra/brand/site.css").read_bytes()
         == (root / "plans/brand/site.css").read_bytes(),
@@ -551,11 +640,16 @@ def run(root):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.4.8 release link, no comparison text, Public preview, live catalog and quote endpoint, 15 public tools with household quotes, no restriction labels, GitHub-first, no organisation page copy on the plans site)"
+        "mcp: PASS (v0.4.10 release link, no comparison text, Public preview, live catalog and quote endpoint,"
+        f" {len(tools.core)} core tools and {len(tools.plugin)} plugin tool(s) from {MANIFEST}"
+        + (", copy matches OpenPlans" if source is not None else "")
+        + ", household quotes, no restriction labels, GitHub-first, no organisation page copy on the plans site)"
     )
 
 
 def selftest(root):
+    tools = read_tools(root)
+    manifest = (root / MANIFEST).read_text(encoding="utf-8")
     sources = {
         site: (root / site / "index.html").read_text() for site in ["openhra", "plans"]
     }
@@ -614,7 +708,21 @@ def selftest(root):
                     site,
                     "wrong public tool count",
                     lambda s: s.replace("15 tools", "12 tools"),
-                    "catalog scope",
+                    "tool count claim",
+                ),
+                (
+                    site,
+                    "hero counts only the core tools",
+                    lambda s: s.replace(
+                        "through 16 read-only tools", "through 15 read-only tools"
+                    ),
+                    "tool count claim",
+                ),
+                (
+                    site,
+                    "wrong core tool count",
+                    lambda s: s.replace("15 core tools", "14 core tools"),
+                    "tool count claim",
                 ),
                 (
                     site,
@@ -648,15 +756,15 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "v0.4.8 link removed",
+                    "v0.4.10 link removed",
                     lambda s: s.replace(RELEASE_URL, REPO),
-                    "release status must link to v0.4.8",
+                    "release status must link to v0.4.10",
                 ),
                 (
                     site,
-                    "v0.4.8 status text removed",
+                    "v0.4.10 status text removed",
                     lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
-                    "release status must link to v0.4.8",
+                    "release status must link to v0.4.10",
                 ),
                 (
                     site,
@@ -665,7 +773,7 @@ def selftest(root):
                         '<a href="' + RELEASE_URL + '">' + RELEASE,
                         '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "release status must link to v0.4.8",
+                    "release status must link to v0.4.10",
                 ),
                 (
                     site,
@@ -786,6 +894,27 @@ def selftest(root):
                     "<code>get_plan</code>", "<code hidden>get_plan</code>"
                 ),
                 "inventory hidden",
+            ),
+            (
+                "plans",
+                "hosted plugin tool unnamed",
+                lambda s: (
+                    s.replace(
+                        '<p class="endpoint-note"><code>get_status</code>',
+                        '<p class="endpoint-note">The status tool',
+                    )
+                    .replace(
+                        "The public instance also offers <code>get_status</code>.", ""
+                    )
+                    .replace("15 tools and <code>get_status</code>", "15 core tools")
+                ),
+                "hosted plugin tool missing",
+            ),
+            (
+                "plans",
+                "manifest link removed",
+                lambda s: s.replace('href="/data/mcp-tools.json"', 'href="#mcp"'),
+                "link to the tool manifest",
             ),
             (
                 "plans",
@@ -945,7 +1074,7 @@ def selftest(root):
         mutated = mutate(sources[site])
         require(mutated != sources[site], "mutant is a no-op: " + name)
         try:
-            check_page(mutated, site)
+            check_page(mutated, site, tools)
         except (ValueError, AssertionError) as exc:
             require(
                 diagnostic in str(exc),
@@ -955,14 +1084,103 @@ def selftest(root):
         else:
             raise ValueError("mutant accepted: " + name)
 
+    manifest_selftest(sources, manifest)
+
+
+def with_tool(manifest, **fields):
+    data = json.loads(manifest)
+    data["tools"].append({**data["tools"][0], **fields})
+    return json.dumps(data)
+
+
+def manifest_selftest(sources, manifest):
+    """The pages stay as they are; a changed manifest must make them fail."""
+    data = json.loads(manifest)
+    without_plugin = json.dumps(
+        {**data, "tools": [t for t in data["tools"] if t["kind"] != "plugin"]}
+    )
+    mutants = [
+        (
+            "extra core tool",
+            with_tool(manifest, name="planted_extra_tool"),
+            "tool count claim",
+        ),
+        ("hosted plugin tool removed", without_plugin, "tool count claim"),
+        (
+            "plugin tool without its plugin",
+            with_tool(manifest, name="planted_plugin_tool", kind="plugin"),
+            "malformed",
+        ),
+        (
+            "unknown listing",
+            with_tool(manifest, name="planted_tool", listed="sometimes"),
+            "malformed",
+        ),
+        (
+            "repeated tool",
+            with_tool(manifest),
+            "repeats a tool",
+        ),
+        (
+            "multi-line description",
+            with_tool(manifest, name="x", description="a\nb"),
+            "malformed",
+        ),
+    ]
+    for name, text, diagnostic in mutants:
+        try:
+            tools = Tools(text)
+            for site in ["openhra", "plans"]:
+                check_page(sources[site], site, tools)
+        except (ValueError, KeyError) as exc:
+            require(
+                diagnostic in str(exc),
+                "unexpected manifest mutant diagnostic: " + name + ": " + str(exc),
+            )
+            print("mcp manifest negative: PASS (" + name + ")")
+        else:
+            raise ValueError("manifest mutant accepted: " + name)
+    # Counts updated for a new core tool, directory not: the inventory check must fail.
+    tools = Tools(with_tool(manifest, name="planted_extra_tool"))
+    core, hosted = len(tools.core), tools.hosted
+    page = sources["plans"]
+    for before, after in (
+        (f"{hosted - 1} read-only tools", f"{hosted} read-only tools"),
+        (f"{core - 1} read-only core tools", f"{core} read-only core tools"),
+        (f"{core - 1} core tools", f"{core} core tools"),
+        (f"{core - 1} tools and", f"{core} tools and"),
+    ):
+        page = page.replace(before, after)
+    try:
+        check_page(page, "plans", tools)
+    except ValueError as exc:
+        require(
+            "tool inventory" in str(exc), "unexpected directory diagnostic: " + str(exc)
+        )
+        print("mcp manifest negative: PASS (directory without the new tool)")
+    else:
+        raise ValueError("manifest mutant accepted: directory without the new tool")
+    try:
+        check_source(manifest.encode(), with_tool(manifest).encode())
+    except ValueError as exc:
+        require("is stale" in str(exc), "unexpected stale-copy diagnostic")
+        print("mcp manifest negative: PASS (copy differs from OpenPlans)")
+    else:
+        raise ValueError("manifest mutant accepted: copy differs from OpenPlans")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("root", nargs="?", type=Path, default=ROOT)
     parser.add_argument("--selftest", action="store_true")
+    parser.add_argument(
+        "--source",
+        type=Path,
+        help="OpenPlans docs/mcp-tools.json; the website copy must match it byte for byte",
+    )
     args = parser.parse_args()
     try:
-        run(args.root)
+        run(args.root, args.source)
         if args.selftest:
             selftest(args.root)
     except (ValueError, KeyError, IndexError) as exc:

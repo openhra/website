@@ -154,7 +154,14 @@ fi
 
 python3 "$ROOT/tools/check-private-paths.py" "$ROOT"
 python3 "$ROOT/tools/check-neutral.py" "$ROOT"
-python3 "$ROOT/tools/check-mcp.py" "$ROOT"
+# The tool list is plans/data/mcp-tools.json, copied from OpenPlans docs/mcp-tools.json. Where
+# an OpenPlans checkout sits beside the website, the copy must match it byte for byte.
+OPENPLANS_TOOLS="$ROOT/../openplans/docs/mcp-tools.json"
+if [ -f "$OPENPLANS_TOOLS" ]; then
+  python3 "$ROOT/tools/check-mcp.py" "$ROOT" --source "$OPENPLANS_TOOLS"
+else
+  python3 "$ROOT/tools/check-mcp.py" "$ROOT"
+fi
 python3 "$ROOT/tools/hosted-preview/check.py"
 python3 "$ROOT/tools/a11y-check/check.py"
 

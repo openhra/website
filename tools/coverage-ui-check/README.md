@@ -48,10 +48,15 @@ for both years and AK, DC, HI and TX. Focus stays on the control, focus indicato
 remain visible and the accessibility tree exposes polite live status. The suite
 does not record actual screen-reader speech.
 
-Layout checks cover 320, 360, 390, 768, 1280 and 1440 CSS pixels, desktop scrollbars,
-200% desktop equivalent, dark OS preference, reduced motion and forced colors.
-Both pages have 1280, 390 and 320 captures. A separate 320 capture shows the full
-page table. Captures are review evidence, not production artwork.
+Layout checks cover 280, 305, 320, 360, 390, 768, 1280 and 1440 CSS pixels,
+desktop scrollbars, 200% desktop equivalent, dark OS preference, reduced motion and
+forced colors. The 305 and 280 widths stand in for a 320 phone with a 15px
+scrollbar. They catch wide fonts, such as DejaVu Sans on Linux, that macOS fonts
+hide. Below 320 the stylesheet scales the 304px contact widget to fit. No two
+state labels on the map may overlap at any width, and the brand proof page at
+/brand/repo/ must fit at 305 and 280. Both pages have 1280, 390, 320, 305 and 280 captures. A
+separate 320 capture shows the full page table. Captures are review evidence, not
+production artwork.
 
 Document-start response mutants test malformed data, unsupported versions, wrong
 years, corrupt hashes, absent states, HTML strings, unknown values changed to zero
