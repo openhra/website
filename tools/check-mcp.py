@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-RELEASE = "v0.4.10"
+RELEASE = "v0.4.11"
 RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 # The banned words are split so they never appear whole in this public file.
@@ -20,9 +20,12 @@ FORBIDDEN_COMPARISON = re.compile(
     r"com" + r"mercial[\s_-]+reference|reference[\s_-]+" + r"api\b|par" + r"ity\s+with",
     re.IGNORECASE,
 )
-# The tool list comes from OpenPlans: docs/mcp-tools.json, generated from its code, copied
-# byte for byte to plans/data/mcp-tools.json. No tool name is written here.
+# The tool list comes from OpenPlans: docs/mcp-tools.json, generated from its code. Each
+# release copies it, from the release commit, to plans/data/mcp-tools.json with
+# scripts/pin-mcp-tools.py, which records the release and the copy's SHA-256 in PIN.
+# No tool name is written here.
 MANIFEST = "plans/data/mcp-tools.json"
+PIN = "tools/mcp-tools-pin.json"
 # The plugin the hosted preview loads; its tools count toward the hosted total.
 HOSTED_PLUGINS = {"@openplans/plugin-status"}
 # Owner, 2026-11-09: every tool is available by default, household quotes included.
@@ -86,14 +89,41 @@ def hosted_tool_names(root=ROOT):
     return tools.core | tools.plugin
 
 
-def check_source(copy, source):
-    """The website copy must be byte-identical to the OpenPlans manifest."""
-    have = hashlib.sha256(copy).hexdigest()
-    want = hashlib.sha256(source).hexdigest()
+def check_pin(copy, pin_text):
+    """The copy is the one the last release pinned, for the release the pages link."""
+    try:
+        pin = json.loads(pin_text)
+    except ValueError:
+        pin = None
     require(
-        have == want,
-        f"{MANIFEST} is stale: sha256 {have[:12]}, OpenPlans has {want[:12]};"
-        " copy openplans/docs/mcp-tools.json",
+        isinstance(pin, dict)
+        and pin.get("schema_version") == 1
+        and isinstance(pin.get("release"), str)
+        and isinstance(pin.get("sha256"), str),
+        f"{PIN} malformed",
+    )
+    require(
+        pin["release"] == RELEASE,
+        f"{MANIFEST} is pinned for {pin['release']}, but the pages link {RELEASE};"
+        " run scripts/pin-mcp-tools.py with the release commit",
+    )
+    have = hashlib.sha256(copy).hexdigest()
+    require(
+        have == pin["sha256"],
+        f"{MANIFEST} differs from the copy pinned for {RELEASE}"
+        f" (sha256 {have[:12]}, pinned {pin['sha256'][:12]}); it changes only in a"
+        " release, through scripts/pin-mcp-tools.py",
+    )
+
+
+def source_note(copy, source):
+    """OpenPlans development may be ahead of the release; the site keeps the release's list."""
+    if copy == source:
+        return None
+    return (
+        f"mcp: note: OpenPlans docs/mcp-tools.json (sha256"
+        f" {hashlib.sha256(source).hexdigest()[:12]}) differs from the {RELEASE} copy."
+        " The site lists the released tools; the next release pins the new list."
     )
 
 
@@ -244,7 +274,8 @@ def check_app(root):
         commands[0].text() == "https://openplans.openhra.com/v1",
         "app base path differs",
     )
-    # Hosted-preview examples must name ZIPs the preview serves: Texas and Florida.
+    # Hosted-preview examples must name ZIPs the preview serves: a Texas ZIP for 2026 and a
+    # Florida ZIP for 2027, both listed for those years in plans/data/hosted-preview.json.
     for command, zip_code, year in (
         (commands[1], "77002", "2026"),
         (commands[2], "33101", "2027"),
@@ -335,7 +366,7 @@ def check_page(source, site, tools):
     )
     require(
         RELEASE.lower() in claims,
-        "v0.4.10 release status missing",
+        "v0.4.11 release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -382,7 +413,7 @@ def check_page(source, site, tools):
                     and visible(n)
                 )
             ),
-            "release status must link to v0.4.10",
+            "release status must link to v0.4.11",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -614,8 +645,11 @@ def check_page(source, site, tools):
 
 def run(root, source=None):
     tools = read_tools(root)
-    if source is not None:
-        check_source((root / MANIFEST).read_bytes(), source.read_bytes())
+    copy = (root / MANIFEST).read_bytes()
+    check_pin(copy, (root / PIN).read_text(encoding="utf-8"))
+    note = None if source is None else source_note(copy, source.read_bytes())
+    if note:
+        print(note)
     for site in ["openhra", "plans"]:
         check_page((root / site / "index.html").read_text(), site, tools)
     require(
@@ -640,9 +674,10 @@ def run(root, source=None):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.4.10 release link, no comparison text, Public preview, live catalog and quote endpoint,"
+        "mcp: PASS (v0.4.11 release link, no comparison text, Public preview, live catalog and quote endpoint,"
         f" {len(tools.core)} core tools and {len(tools.plugin)} plugin tool(s) from {MANIFEST}"
-        + (", copy matches OpenPlans" if source is not None else "")
+        + f", copy pinned for {RELEASE}"
+        + (", same as OpenPlans" if source is not None and not note else "")
         + ", household quotes, no restriction labels, GitHub-first, no organisation page copy on the plans site)"
     )
 
@@ -756,15 +791,15 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "v0.4.10 link removed",
+                    "v0.4.11 link removed",
                     lambda s: s.replace(RELEASE_URL, REPO),
-                    "release status must link to v0.4.10",
+                    "release status must link to v0.4.11",
                 ),
                 (
                     site,
-                    "v0.4.10 status text removed",
+                    "v0.4.11 status text removed",
                     lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
-                    "release status must link to v0.4.10",
+                    "release status must link to v0.4.11",
                 ),
                 (
                     site,
@@ -773,7 +808,7 @@ def selftest(root):
                         '<a href="' + RELEASE_URL + '">' + RELEASE,
                         '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "release status must link to v0.4.10",
+                    "release status must link to v0.4.11",
                 ),
                 (
                     site,
@@ -1085,6 +1120,7 @@ def selftest(root):
             raise ValueError("mutant accepted: " + name)
 
     manifest_selftest(sources, manifest)
+    pin_selftest(root)
 
 
 def with_tool(manifest, **fields):
@@ -1160,13 +1196,42 @@ def manifest_selftest(sources, manifest):
         print("mcp manifest negative: PASS (directory without the new tool)")
     else:
         raise ValueError("manifest mutant accepted: directory without the new tool")
-    try:
-        check_source(manifest.encode(), with_tool(manifest).encode())
-    except ValueError as exc:
-        require("is stale" in str(exc), "unexpected stale-copy diagnostic")
-        print("mcp manifest negative: PASS (copy differs from OpenPlans)")
-    else:
-        raise ValueError("manifest mutant accepted: copy differs from OpenPlans")
+
+
+def pin_selftest(root):
+    """A copy changed outside a release, or a pin for another release, must fail."""
+    copy = (root / MANIFEST).read_bytes()
+    pin_text = (root / PIN).read_text(encoding="utf-8")
+    pin = json.loads(pin_text)
+    check_pin(copy, pin_text)
+    ahead = with_tool(copy.decode(), name="planted_develop_tool").encode()
+    require(
+        source_note(copy, copy) is None and "differs" in source_note(copy, ahead),
+        "OpenPlans ahead of the release must be a note",
+    )
+    print("mcp pin: PASS (OpenPlans ahead of the release is a note, not a failure)")
+    mutants = [
+        ("copy taken from OpenPlans development", ahead, pin_text, "differs from"),
+        (
+            "pin for an older release",
+            copy,
+            json.dumps({**pin, "release": "v0.0.1"}),
+            "pinned for v0.0.1",
+        ),
+        ("pin without a hash", copy, json.dumps({**pin, "sha256": None}), "malformed"),
+        ("pin not JSON", copy, "{", "malformed"),
+    ]
+    for name, data, text, diagnostic in mutants:
+        try:
+            check_pin(data, text)
+        except ValueError as exc:
+            require(
+                diagnostic in str(exc),
+                "unexpected pin mutant diagnostic: " + name + ": " + str(exc),
+            )
+            print("mcp pin negative: PASS (" + name + ")")
+        else:
+            raise ValueError("pin mutant accepted: " + name)
 
 
 if __name__ == "__main__":
@@ -1176,7 +1241,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--source",
         type=Path,
-        help="OpenPlans docs/mcp-tools.json; the website copy must match it byte for byte",
+        help="OpenPlans docs/mcp-tools.json; a difference from the pinned release copy"
+        " is reported as a note",
     )
     args = parser.parse_args()
     try:

@@ -101,14 +101,17 @@
     "scripts/install-tools.sh",
     "scripts/lint-selftest.mjs",
     "scripts/lint-setup-selftest.mjs",
+    "scripts/pin-mcp-tools.py",
     "scripts/public-blame-ignore-revs",
     "scripts/public-paths.json",
     "scripts/public_paths.py",
     "scripts/test-export.py",
+    "scripts/unittest_shards.py",
     "tests/alerts.test.mjs",
     "tests/edge_acceptance_test.py",
     "tests/reference/map.svg",
     "tests/test_alert_sender.py",
+    "tests/test_pin_mcp_tools.py",
     "tools/a11y-check/check.py",
     "tools/alerts/send.py",
     "tools/check-mcp.py",
@@ -141,6 +144,7 @@
     "tools/gate-selftest.sh",
     "tools/gate.sh",
     "tools/hosted-preview/check.py",
-    "tools/hosted-preview/reduce.py"
+    "tools/hosted-preview/reduce.py",
+    "tools/mcp-tools-pin.json"
   ]
 }

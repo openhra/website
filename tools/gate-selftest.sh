@@ -2,7 +2,16 @@
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 TMP=$(mktemp -d "${TMPDIR:-/tmp}/openhra-gate.XXXXXX")
-trap 'rm -rf "$TMP"' EXIT HUP INT TERM
+CLEAN=""
+cleanup() {
+  if [ -n "$CLEAN" ]; then
+    kill "$CLEAN" 2>/dev/null || :
+    wait "$CLEAN" 2>/dev/null || :
+  fi
+  rm -rf "$TMP"
+}
+trap cleanup EXIT
+trap 'exit 1' HUP INT TERM
 
 python3 - "$ROOT" "$TMP/repo" <<'PY'
 import shutil
@@ -44,6 +53,12 @@ check_pass() {
   grep -q '^PASS$' "$TMP/output" || { cat "$TMP/output"; exit 1; }
 }
 
+# The clean-copy run takes most of this self-test's time and the negatives below change only
+# their own copy, so the clean run gets a second, untouched copy and runs beside them.
+cp -R "$TMP/repo" "$TMP/clean"
+"$TMP/clean/tools/gate.sh" >"$TMP/clean-output" 2>&1 &
+CLEAN=$!
+
 if env -u OPENPLANS_DENYLIST_FILE "$TMP/repo/tools/gate.sh" --full >"$TMP/output" 2>&1; then
   cat "$TMP/output"
   printf 'FAIL: self-test expected --full to require a publication denylist\n' >&2
@@ -52,8 +67,6 @@ fi
 grep -Fq 'FAIL: OPENPLANS_DENYLIST_FILE is required for --full' "$TMP/output" || { cat "$TMP/output"; exit 1; }
 printf 'selftest negative: PASS (full gate requires denylist)\n'
 
-check_pass
-printf 'selftest: clean copy PASS\n'
 printf 'fixture %s\n' '/'"Users"'/fixture' >> "$TMP/repo/README.md"
 check_fail private-path 'FAIL: private absolute path found in README.md'
 cp "$ROOT/README.md" "$TMP/repo/README.md"
@@ -90,4 +103,13 @@ mv "$TMP/repo/plans/api/contact.js" "$TMP/contact-handler.js"
 check_fail missing-contact 'FAIL: missing contact handler: plans/api/contact.js'
 mv "$TMP/contact-handler.js" "$TMP/repo/plans/api/contact.js"
 check_pass
+if ! wait "$CLEAN"; then
+  CLEAN=""
+  cat "$TMP/clean-output"
+  printf 'FAIL: self-test clean copy was rejected\n' >&2
+  exit 1
+fi
+CLEAN=""
+grep -q '^PASS$' "$TMP/clean-output" || { cat "$TMP/clean-output"; exit 1; }
+printf 'selftest: clean copy PASS\n'
 printf 'selftest: PASS (clean and restored copies; 8 diagnostic-checked negative controls)\n'

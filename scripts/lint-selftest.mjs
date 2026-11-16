@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -40,6 +41,12 @@ async function selftest() {
       recursive: true,
       verbatimSymlinks: true,
     });
+    // Without the pinned Ruff wheel, the scratch copy's install-tools.sh takes its online
+    // fallback on every run. With it, the scratch install stays offline like the checkout's.
+    const wheels = join(packageRoot, ".cache/ruff-wheels");
+    if (existsSync(wheels)) {
+      await cp(wheels, join(root, ".cache/ruff-wheels"), { recursive: true });
+    }
     const before = await inventory(root);
     const formatted = spawnSync(
       process.execPath,
