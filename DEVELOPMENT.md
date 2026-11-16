@@ -141,3 +141,31 @@ COVERAGE_CHROME=/path/to/chrome tools/gate.sh --browser
 The default gate and `--full` start no browser. The CI job `website-browser` can
 fail without failing the run. After about a week without flaky runs it moves
 into `--full`.
+
+## MCP tool list
+
+The plans site lists the MCP tools of the released OpenPlans version. A tool added on
+OpenPlans' development branch appears on the site with the release that ships it.
+
+`plans/data/mcp-tools.json` is OpenPlans `docs/mcp-tools.json` at the release commit,
+byte for byte. `tools/mcp-tools-pin.json` records the release and the copy's SHA-256.
+Both change only in a release, through this command:
+
+```sh
+python3 scripts/pin-mcp-tools.py --release v0.4.9 --ref RELEASE_COMMIT \
+  --openplans ../openplans
+```
+
+It reads both files from the commit, not from the working tree. It refuses when the
+commit's `package.json` version differs from `--release` or the manifest does not
+parse. In the same release, set `RELEASE` in `tools/check-mcp.py` and update the pages'
+tool counts and lists.
+
+`tools/check-mcp.py` fails when the copy's hash differs from the pin, or the pin names
+a release other than `RELEASE`. With `--source` pointing at a newer OpenPlans manifest,
+it prints a note and still passes. The site keeps the released list until the next
+release pins the new one. `tools/gate.sh` passes `--source` when an OpenPlans checkout
+sits beside the website. `tests/test_pin_mcp_tools.py` runs the command against a
+throwaway repository with a release commit and a newer development commit. It also
+plants three mutants in the command: reading the working tree, skipping the version
+check and pinning the wrong hash. Each must fail the test.

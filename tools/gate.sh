@@ -154,8 +154,10 @@ fi
 
 python3 "$ROOT/tools/check-private-paths.py" "$ROOT"
 python3 "$ROOT/tools/check-neutral.py" "$ROOT"
-# The tool list is plans/data/mcp-tools.json, copied from OpenPlans docs/mcp-tools.json. Where
-# an OpenPlans checkout sits beside the website, the copy must match it byte for byte.
+# The tool list is plans/data/mcp-tools.json, copied from OpenPlans docs/mcp-tools.json at the
+# release commit by scripts/pin-mcp-tools.py; check-mcp.py fails if it no longer matches
+# tools/mcp-tools-pin.json. Where an OpenPlans checkout sits beside the website, a newer
+# development manifest there prints a note and does not fail.
 OPENPLANS_TOOLS="$ROOT/../openplans/docs/mcp-tools.json"
 if [ -f "$OPENPLANS_TOOLS" ]; then
   python3 "$ROOT/tools/check-mcp.py" "$ROOT" --source "$OPENPLANS_TOOLS"
@@ -165,6 +167,7 @@ fi
 python3 "$ROOT/tools/hosted-preview/check.py"
 python3 "$ROOT/tools/a11y-check/check.py"
 
+BACKGROUND=""
 if [ "$FULL" -eq 1 ]; then
   (
     cd "$ROOT"
@@ -176,31 +179,66 @@ if [ "$FULL" -eq 1 ]; then
     export PATH
     npm run format:check
     npm run lint
-    node scripts/lint-selftest.mjs
   )
+  # The two longest self-tests each run the gate on scratch copies of the site. They read the
+  # checkout and write only to their own temporary folders, so they run beside the steps below.
+  # The gate prints their output after those steps, and a failure in either fails the gate.
+  BACKGROUND=$(mktemp -d "${TMPDIR:-/tmp}/website-gate.XXXXXX")
+  trap 'rm -rf "$BACKGROUND"' EXIT
+  trap 'exit 1' HUP INT TERM
+  (cd "$ROOT" && PATH="$ROOT/.venv/bin:$PATH" node scripts/lint-selftest.mjs) >"$BACKGROUND/lint-selftest.log" 2>&1 &
+  LINT_SELFTEST=$!
+  "$ROOT/tools/gate-selftest.sh" >"$BACKGROUND/gate-selftest.log" 2>&1 &
+  GATE_SELFTEST=$!
 fi
 
-node --test "$ROOT/tests/alerts.test.mjs"
-python3 -m unittest discover -s "$ROOT/tests" -p 'test_alert_sender.py'
-python3 -m unittest discover -s "$ROOT/tests" -p 'edge_acceptance*.py'
+set +e
+(
+  set -e
+  node --test "$ROOT/tests/alerts.test.mjs"
+  python3 -m unittest discover -s "$ROOT/tests" -p 'test_alert_sender.py'
+  python3 -m unittest discover -s "$ROOT/tests" -p 'test_pin_mcp_tools.py'
+  # These tests mostly wait on loopback servers; the runner splits them across a few processes and
+  # fails unless they run exactly the tests one discover loads.
+  python3 "$ROOT/scripts/unittest_shards.py" "$ROOT/tests" 'edge_acceptance*.py'
 
-python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"
-if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
-  python3 "$ROOT/tools/coverage-gate/check.py" --previous-ref HEAD
-else
-  # Isolated self-test copies are deliberately unborn repositories.
-  python3 "$ROOT/tools/coverage-gate/check.py"
-fi
+  python3 "$ROOT/tools/coverage-scan/check.py" "$ROOT/plans/data/coverage"
+  if git -C "$ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
+    python3 "$ROOT/tools/coverage-gate/check.py" --previous-ref HEAD
+  else
+    # Isolated self-test copies are deliberately unborn repositories.
+    python3 "$ROOT/tools/coverage-gate/check.py"
+  fi
 
-if [ "$FULL" -eq 1 ]; then
-  python3 "$ROOT/tools/check-mcp.py" "$ROOT" --selftest
-  python3 "$ROOT/tools/hosted-preview/check.py" --selftest
-  python3 "$ROOT/tools/a11y-check/check.py" --selftest
-  "$ROOT/tools/gate-selftest.sh"
-  python3 "$ROOT/tools/coverage-gate/selftest.py"
-  python3 -m unittest discover -s "$ROOT/tools/coverage-scan/tests"
-  python3 "$ROOT/tools/coverage-ui-check/check.py" --selftest
+  if [ "$FULL" -eq 1 ]; then
+    python3 "$ROOT/tools/check-mcp.py" "$ROOT" --selftest
+    python3 "$ROOT/tools/hosted-preview/check.py" --selftest
+    python3 "$ROOT/tools/a11y-check/check.py" --selftest
+    python3 "$ROOT/tools/coverage-gate/selftest.py"
+    python3 -m unittest discover -s "$ROOT/tools/coverage-scan/tests"
+    python3 "$ROOT/tools/coverage-ui-check/check.py" --selftest
+  fi
+)
+STATUS=$?
+if [ -n "$BACKGROUND" ]; then
+  # Wait for both even when a step above failed, so no self-test outlives the gate.
+  wait "$LINT_SELFTEST"
+  LINT_STATUS=$?
+  wait "$GATE_SELFTEST"
+  SELFTEST_STATUS=$?
+  cat "$BACKGROUND/lint-selftest.log"
+  cat "$BACKGROUND/gate-selftest.log"
+  if [ "$LINT_STATUS" -ne 0 ]; then
+    printf 'FAIL: scripts/lint-selftest.mjs exited %s\n' "$LINT_STATUS" >&2
+    STATUS=1
+  fi
+  if [ "$SELFTEST_STATUS" -ne 0 ]; then
+    printf 'FAIL: tools/gate-selftest.sh exited %s\n' "$SELFTEST_STATUS" >&2
+    STATUS=1
+  fi
 fi
+[ "$STATUS" -eq 0 ] || exit "$STATUS"
+set -e
 if [ "$BROWSER" -eq 1 ]; then
   "$ROOT/tools/coverage-ui-check/browser-gate.sh"
 fi
