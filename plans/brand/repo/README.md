@@ -9,17 +9,17 @@ Copy `readme-header-light.svg` into `brand/repo/` in the source repository, then
 ```html
 <img
   src="brand/repo/readme-header-light.svg"
-  alt="OpenPlans by OpenHRA — US health plan data. On your server."
+  alt="OpenPlans by OpenHRA. US health plan data. On your server."
   width="960"
   height="280"
 />
 ```
 
-The existing filename is retained for handoff compatibility. The dark header is retired; use this one white image without a theme-selecting picture element. Keep the aspect ratio, and keep a normal text project heading and description below the artwork so the README remains useful when images do not load. Development status and coverage limits belong in that text, not in a badge or an image that can become stale.
+Use the white header in every theme. Keep the aspect ratio, and keep a normal text project heading and description below the artwork so the README remains useful when images do not load. Development status and coverage limits belong in that text, not in a badge or an image that can become stale.
 
 ## Social preview
 
-Upload `social-preview.png` as the repository’s social preview when preparing the public repository. It is exactly 1280 × 640 pixels, with a fixed white background and 64 px outer margins. `social-preview.svg` is its editable source. Nothing has been uploaded by this lane.
+Upload `social-preview.png` as the repository's social preview when preparing the public repository. It is exactly 1280 × 640 pixels, with a fixed white background and 64 px outer margins. `social-preview.svg` is its editable source.
 
 The PNG is rendered directly from the SVG in a browser at its intrinsic dimensions. If the SVG changes, regenerate the PNG at 1280 × 640 with device scale 1 and compare the result with the source. Do not resize a proof-page screenshot. No site build step is required.
 

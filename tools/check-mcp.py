@@ -12,7 +12,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://openplans.openhra.com/mcp"
 REPO = "https://github.com/openhra/openplans"
-RELEASE = "v0.4.11"
+RELEASE = json.loads((ROOT / "tools/mcp-tools-pin.json").read_text(encoding="utf-8"))[
+    "release"
+]
 RELEASE_URL = REPO + "/releases/tag/" + RELEASE
 # Owner rule: public pages never compare OpenPlans with another service.
 # The banned words are split so they never appear whole in this public file.
@@ -330,6 +332,11 @@ def check_page(source, site, tools):
         "data-tool-access" not in source,
         "removed restriction label: tool access groups are gone",
     )
+    versions = re.findall(r"\bOpenPlans\s+(v\d+\.\d+\.\d+)\b", source, re.IGNORECASE)
+    require(
+        all(version == RELEASE for version in versions),
+        "stale OpenPlans version in copy",
+    )
     root = Page(source).root
     all_text = normalized(root.text())
     metadata = root.find(
@@ -366,7 +373,7 @@ def check_page(source, site, tools):
     )
     require(
         RELEASE.lower() in claims,
-        "v0.4.11 release status missing",
+        f"{RELEASE} release status missing",
     )
     presentation = normalized(
         mcp[0].text() + " " + titles[0].text() + " " + metadata[0].attrs["content"]
@@ -413,7 +420,7 @@ def check_page(source, site, tools):
                     and visible(n)
                 )
             ),
-            "release status must link to v0.4.11",
+            f"release status must link to {RELEASE}",
         )
     require(
         "outside acceptance run is still pending" in presentation
@@ -674,7 +681,7 @@ def run(root, source=None):
         "clipboard scripts differ",
     )
     print(
-        "mcp: PASS (v0.4.11 release link, no comparison text, Public preview, live catalog and quote endpoint,"
+        f"mcp: PASS ({RELEASE} release link, no comparison text, Public preview, live catalog and quote endpoint,"
         f" {len(tools.core)} core tools and {len(tools.plugin)} plugin tool(s) from {MANIFEST}"
         + f", copy pinned for {RELEASE}"
         + (", same as OpenPlans" if source is not None and not note else "")
@@ -791,15 +798,21 @@ def selftest(root):
                 ),
                 (
                     site,
-                    "v0.4.11 link removed",
+                    "release link removed",
                     lambda s: s.replace(RELEASE_URL, REPO),
-                    "release status must link to v0.4.11",
+                    f"release status must link to {RELEASE}",
                 ),
                 (
                     site,
-                    "v0.4.11 status text removed",
+                    "stale version in prose",
+                    lambda s: s.replace("OpenPlans " + RELEASE, "OpenPlans v99.99.99"),
+                    "stale OpenPlans version in copy",
+                ),
+                (
+                    site,
+                    "release status text removed",
                     lambda s: s.replace(RELEASE + "</a>", "Release</a>"),
-                    "release status must link to v0.4.11",
+                    f"release status must link to {RELEASE}",
                 ),
                 (
                     site,
@@ -808,7 +821,7 @@ def selftest(root):
                         '<a href="' + RELEASE_URL + '">' + RELEASE,
                         '<a href="https://example.invalid/">' + RELEASE,
                     ),
-                    "release status must link to v0.4.11",
+                    f"release status must link to {RELEASE}",
                 ),
                 (
                     site,

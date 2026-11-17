@@ -20,7 +20,7 @@ The tool list comes from `plans/data/mcp-tools.json`, a byte-for-byte copy of Op
 
 Show the live URL as selectable text with a local copy button and an accessible "Copied" announcement. Include the live client configuration, HTTP headers and the stdio option for your own copy. Protocol 2026-07-28 and 2025-11-25 clients are served. Browser clients can connect through CORS from the allowed origin. Keep the detailed setup instructions in the repository.
 
-Coverage is limited and an outside acceptance run is pending. Name the current OpenPlans release, the one `RELEASE` in `tools/check-mcp.py` names, as available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
+Coverage is limited and an outside acceptance run is pending. Name the current OpenPlans release, the one `tools/mcp-tools-pin.json` pins, as available. The public MCP endpoint remains a Public preview. The agent exchange remains an illustrative example, with no live request or invented result. Never invent a price, coverage result, user, client endorsement or usage count.
 
 OpenHRA introduces the public preview, shows the endpoint and its limits, and links to OpenPlans for the full tool list and connection details.
 

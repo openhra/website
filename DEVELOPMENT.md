@@ -2,9 +2,10 @@
 
 The root npm package contains development tools only. It has no `type` field,
 runtime dependencies or build script. Deploy the existing `openhra/` and `plans/`
-roots as before. Installing root tools does not add packages to either site.
+roots. Installing root tools does not add packages to either site.
 
-Use the Node patch in `.node-version` and npm 10.9.10. From this directory:
+Use the Node version in `.node-version` and the npm version in `package.json`
+under `packageManager`. From this directory:
 
 ```sh
 scripts/install-tools.sh
@@ -15,18 +16,19 @@ npm run format:check
 npm run lint
 ```
 
-Prettier 3.9.10 uses `{}` and the shared `.prettierignore`. ESLint 9.39.5 starts
+`package.json` pins the JavaScript tools. Prettier uses `{}` and the shared
+`.prettierignore`. ESLint starts
 with the JavaScript recommended rules, adds `no-nested-ternary`, and applies
 `eslint-config-prettier` last. Browser `.js` files retain script parsing and
 browser globals. API handlers use ESM and Node globals; `.mjs` tools use ESM and
 Node builtins. Test globals must be imported. Inline ESLint configuration is
 disabled, and warnings fail lint.
 
-Ruff 0.17.4 uses its stable default rules and formatter settings, with the Python
+`requirements-dev.txt` pins Ruff. It uses its stable default rules and formatter settings, with the Python
 target set to 3.9. The requirements file permits the published macOS and Linux
 wheels for arm64 and x86_64. It pins their SHA-256 hashes. Run through the activated
-environment so `python3 -m ruff` finds the same pinned installation. The offline
-gate never installs tools.
+environment so `python3 -m ruff` finds the same pinned installation. The full gate
+calls `scripts/install-tools.sh` before formatting and lint checks.
 
 `npm run format` writes permitted files with Prettier, then formats Python with
 Ruff. The full gate runs Prettier check, Ruff format check, ESLint and Ruff check
@@ -131,8 +133,7 @@ files and directories, including a private note hidden under `node_modules`.
 preview and a headless Chrome with a new temporary profile. It runs
 `browser.mjs` against them. On every exit, failures included, it stops the
 preview and Chrome and deletes the profile. A run that passes 600 seconds is
-killed and fails. Set `COVERAGE_BROWSER_TIMEOUT` to change that limit. Set `COVERAGE_CHROME` to choose the binary. CI pins Chrome for Testing
-150.0.7871.124 and checks its SHA-256. The checks take about a minute.
+killed and fails. Set `COVERAGE_BROWSER_TIMEOUT` to change that limit. Set `COVERAGE_CHROME` to choose the binary. The CI workflow pins the Chrome for Testing version and checks its SHA-256. The checks take about a minute.
 
 ```sh
 COVERAGE_CHROME=/path/to/chrome tools/gate.sh --browser
@@ -149,20 +150,21 @@ OpenPlans' development branch appears on the site with the release that ships it
 
 `plans/data/mcp-tools.json` is OpenPlans `docs/mcp-tools.json` at the release commit,
 byte for byte. `tools/mcp-tools-pin.json` records the release and the copy's SHA-256.
-Both change only in a release, through this command:
+Both change only in a release. Set `RELEASE_TAG` and `RELEASE_COMMIT` to its tag
+and commit, then run:
 
 ```sh
-python3 scripts/pin-mcp-tools.py --release v0.4.9 --ref RELEASE_COMMIT \
+python3 scripts/pin-mcp-tools.py --release "$RELEASE_TAG" --ref "$RELEASE_COMMIT" \
   --openplans ../openplans
 ```
 
 It reads both files from the commit, not from the working tree. It refuses when the
 commit's `package.json` version differs from `--release` or the manifest does not
-parse. In the same release, set `RELEASE` in `tools/check-mcp.py` and update the pages'
-tool counts and lists.
+parse. Update the pages' release labels, tool counts and lists to match the pin.
+The checker reads the release from `tools/mcp-tools-pin.json`.
 
-`tools/check-mcp.py` fails when the copy's hash differs from the pin, or the pin names
-a release other than `RELEASE`. With `--source` pointing at a newer OpenPlans manifest,
+`tools/check-mcp.py` rejects a changed manifest hash or page versions, links and
+tool counts that disagree with the pin. With `--source` pointing at a newer OpenPlans manifest,
 it prints a note and still passes. The site keeps the released list until the next
 release pins the new one. `tools/gate.sh` passes `--source` when an OpenPlans checkout
 sits beside the website. `tests/test_pin_mcp_tools.py` runs the command against a

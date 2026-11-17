@@ -1,0 +1,41 @@
+.lowest-lookup {
+  max-width: 900px;
+}
+.lowest-lookup h1 {
+  font-size: clamp(2.25rem, 8vw, 4rem);
+  max-width: 16ch;
+}
+.lowest-lookup section {
+  padding-block: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.lowest-lookup form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 20px;
+  align-items: start;
+  margin-block: 24px;
+}
+.lowest-lookup form p {
+  margin: 0;
+}
+.lowest-lookup input:not([type="hidden"]),
+.lowest-lookup select {
+  min-height: 44px;
+  width: 100%;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--ink);
+  font: inherit;
+}
+.lowest-lookup button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.lowest-lookup :focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}

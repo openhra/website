@@ -1,14 +1,13 @@
 """The release step copies the MCP tool manifest from the release commit, not from development.
 
 Each test builds a throwaway Git repository with an OpenPlans folder: a release commit at the
-version RELEASE in tools/check-mcp.py names, then a development commit that adds a tool. Planted mutants of the pin script must
+version tools/mcp-tools-pin.json pins, then a development commit that adds a tool. Planted mutants of the pin script must
 fail the same checks.
 """
 
 import hashlib
 import importlib.util
 import json
-import re
 import shutil
 import subprocess
 import sys
@@ -22,11 +21,7 @@ CHECKER = "tools/check-mcp.py"
 MANIFEST = "plans/data/mcp-tools.json"
 PIN = "tools/mcp-tools-pin.json"
 # The checker only accepts a pin for the release the pages link, so the fixture uses that one.
-RELEASE = re.search(
-    r'^RELEASE = "(v[^"]+)"$',
-    (ROOT / CHECKER).read_text(encoding="utf-8"),
-    re.MULTILINE,
-).group(1)
+RELEASE = json.loads((ROOT / PIN).read_text(encoding="utf-8"))["release"]
 VERSION = RELEASE[1:]
 
 
@@ -72,6 +67,7 @@ class Fixture:
             (self.website / name).parent.mkdir(parents=True, exist_ok=True)
         (self.website / SCRIPT).write_text(script_source, encoding="utf-8")
         shutil.copy2(ROOT / CHECKER, self.website / CHECKER)
+        shutil.copy2(ROOT / PIN, self.website / PIN)
         (self.website / MANIFEST).parent.mkdir(parents=True)
         self.repo = base / "repo"
         self.openplans = self.repo / prefix if prefix else self.repo
@@ -165,11 +161,13 @@ class PinMcpToolsTest(unittest.TestCase):
     def test_rejects_an_invalid_manifest(self):
         with tempfile.TemporaryDirectory() as tmp:
             fixture = Fixture(Path(tmp), self.source)
+            before = (fixture.website / PIN).read_bytes()
             fixture.commit(b'{"schema_version": 1, "tools": []}\n', "0.5.0")
             result = fixture.pin("v0.5.0", "HEAD")
             self.assertEqual(result.returncode, 1)
             self.assertIn("not a valid manifest", result.stderr)
-            self.assertFalse((fixture.website / PIN).exists())
+            self.assertEqual((fixture.website / PIN).read_bytes(), before)
+            self.assertFalse((fixture.website / MANIFEST).exists())
 
     def test_rejects_a_malformed_release(self):
         with tempfile.TemporaryDirectory() as tmp:
