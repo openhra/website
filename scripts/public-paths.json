@@ -86,6 +86,8 @@
     "plans/data/mcp-tools.json",
     "plans/favicon.svg",
     "plans/index.html",
+    "plans/lowest-silver.css",
+    "plans/lowest-silver.html",
     "plans/mcp-copy.js",
     "plans/style.css",
     "plans/vercel.json",

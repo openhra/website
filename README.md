@@ -60,11 +60,11 @@ appears, `main` runs every check itself. Pull requests, manual dispatches and ev
 push run every check. `website-required` accepts skipped platform jobs only when the
 same-commit job succeeded and named a passing run.
 
-`.node-version` and `.python-version` pin the primary runtimes. Python 3.9.25 is
-also tested on Linux to retain compatibility with existing tooling. The workflow
-pins action revisions and uses hosted runners with read-only repository access.
-It needs Git and rsync, with no npm or Python package install and no site build.
-It uses no deployment credentials and does not deploy.
+`.node-version` and `.python-version` pin the primary runtimes. The workflow also pins
+the Linux compatibility job's Python version and action revisions. It uses hosted
+runners with read-only repository access.
+It needs Git and rsync and installs the pinned formatting and lint tools. The static
+sites need no build. CI uses no deployment credentials and does not deploy.
 
 The workflow uses JSON syntax, which YAML accepts. This lets the standard-library
 checker `python3 scripts/check-ci.py --selftest` verify commands, runtime inputs,

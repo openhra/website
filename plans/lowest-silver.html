@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Lowest Silver by ZIP · OpenPlans</title>
+    <meta
+      name="description"
+      content="Prepare a gross, non-tobacco Silver premium lookup with an explicit ZIP, county, age and plan year."
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/lowest-silver.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="plans-site">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="wrap">
+      <nav aria-label="Main">
+        <a class="brand" href="/" aria-label="OpenPlans home"
+          ><img
+            src="/brand/logo-openplans.svg"
+            width="358"
+            height="48"
+            alt="OpenPlans by OpenHRA" /></a
+        ><a href="/#connect-app">API guide</a>
+      </nav>
+    </header>
+    <main class="wrap lowest-lookup" id="main">
+      <section class="hero-copy">
+        <p class="status">PREPARED FOR ACTIVATION</p>
+        <h1>Lowest Silver by ZIP</h1>
+        <p class="lede">
+          Find the lowest gross monthly Silver premium for one person. Choose
+          the plan year and age explicitly. This lookup uses non-tobacco rates
+          for January 1 coverage.
+        </p>
+        <p>
+          The hosted lookup is awaiting operator activation. Until then, the
+          minimum route may return an unavailable response. These forms open the
+          API result as inspectable JSON. They do not calculate or save a quote
+          in this page.
+        </p>
+      </section>
+      <section aria-labelledby="county-heading">
+        <h2 id="county-heading">1. Look up the county</h2>
+        <p>
+          A ZIP can cross county lines. Open the county choices, then copy the
+          matching five-digit county code into the second form. Choose the
+          county where the person lives.
+        </p>
+        <form
+          action="https://openplans.openhra.com/v1/zip-counties"
+          method="get"
+          target="_blank"
+          rel="noopener"
+        >
+          <p>
+            <label for="county-zip">ZIP code</label><br /><input
+              id="county-zip"
+              name="zip"
+              inputmode="numeric"
+              pattern="[0-9]{5}"
+              maxlength="5"
+              required
+              autocomplete="postal-code"
+            />
+          </p>
+          <button class="button" type="submit">Open county choices</button>
+        </form>
+      </section>
+      <section aria-labelledby="minimum-heading">
+        <h2 id="minimum-heading">2. Request the minimum</h2>
+        <form
+          action="https://openplans.openhra.com/v1/lowest-premiums"
+          method="get"
+          target="_blank"
+          rel="noopener"
+        >
+          <p>
+            <label for="minimum-zip">ZIP code</label><br /><input
+              id="minimum-zip"
+              name="zip"
+              inputmode="numeric"
+              pattern="[0-9]{5}"
+              maxlength="5"
+              required
+              autocomplete="postal-code"
+            />
+          </p>
+          <p>
+            <label for="county">County code from step 1</label><br /><input
+              id="county"
+              name="county"
+              inputmode="numeric"
+              pattern="[0-9]{5}"
+              maxlength="5"
+              required
+              aria-describedby="county-help"
+            /><br /><small id="county-help"
+              >Use the county FIPS code, including any leading zero.</small
+            >
+          </p>
+          <p>
+            <label for="year">Plan year</label><br /><select
+              id="year"
+              name="year"
+              required
+            >
+              <option value="">Choose a year</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+            </select>
+          </p>
+          <p>
+            <label for="age">Age in the selected plan year</label><br /><input
+              id="age"
+              name="age"
+              type="number"
+              min="0"
+              max="120"
+              step="1"
+              required
+            />
+          </p>
+          <input name="metal" type="hidden" value="silver" /><input
+            name="tobacco"
+            type="hidden"
+            value="false"
+          />
+          <button class="button" type="submit">
+            Inspect lowest Silver result
+          </button>
+        </form>
+      </section>
+      <section aria-labelledby="result-heading">
+        <h2 id="result-heading">Read the result</h2>
+        <p>
+          Use an amount only when <code>status</code> is
+          <code>calculated</code>. The monthly price is
+          <code>lowest.monthly_cents</code> divided by 100. Check
+          <code>candidate_count</code>, the tied-plan count and
+          <code>provenance.snapshots</code> for source retrieval dates and
+          hashes. The JSON result keeps the source and rate-row evidence.
+        </p>
+        <p>
+          A filed zero is a price. A null amount is unknown. Missing pricing for
+          a potentially cheaper eligible plan makes the minimum unknown. An
+          ambiguous ZIP needs a county choice. A scope with no loaded catalog
+          cannot supply a minimum.
+        </p>
+        <p>
+          The amount excludes subsidies and is not a bindable quote. It differs
+          from the second-lowest-cost Silver benchmark, which applies EHB and
+          pediatric dental adjustments.
+        </p>
+        <p>
+          Public CMS and state files differ by year and geography. Check
+          <a href="https://openplans.openhra.com/v1/data-availability"
+            >current data availability</a
+          >
+          for the served scopes. A state coverage count alone does not certify
+          every ZIP minimum.
+        </p>
+        <p>
+          <a
+            href="https://github.com/openhra/openplans/blob/main/docs/lowest-silver.md"
+            >Self-hosting and household request guide</a
+          >
+          · <a href="/">Back to OpenPlans</a>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
