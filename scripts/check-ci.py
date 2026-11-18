@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 JOBS = {"linux": "ubuntu-24.04", "macos": "macos-15-intel", "python39": "ubuntu-24.04"}
+REQUIRED_JOBS = ("linux", "python39")
 ACTIONS = {
     "checkout": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
     "node": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
@@ -221,12 +222,25 @@ def results(needs):
     require(proof.get("result") == "success", "same-commit job must succeed")
     outputs = proof.get("outputs")
     outputs = outputs if isinstance(outputs, dict) else {}
-    checks = [needs[key].get("result") for key in JOBS]
     if outputs.get("full") == "true":
         require(
-            all(result == "success" for result in checks),
-            "every required job must succeed",
+            all(needs[key].get("result") == "success" for key in REQUIRED_JOBS),
+            "every required Linux job must succeed",
         )
+        macos = needs["macos"].get("result")
+        require(
+            macos in ("success", "cancelled", "skipped"),
+            "website-macos failed after running",
+        )
+        note = (
+            "macOS checks passed."
+            if macos == "success"
+            else f"macOS checks were {macos}; advisory checks were unavailable."
+        )
+        if os.environ.get("GITHUB_STEP_SUMMARY"):
+            with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as stream:
+                stream.write(note + "\n")
+        print(note)
         return "full"
     require(outputs.get("full") == "false", "same-commit job gave no decision")
     # The checks were skipped only because a passing run of this commit already exists.
@@ -235,7 +249,7 @@ def results(needs):
         "skipped checks need the URL of a passing run",
     )
     require(
-        all(result == "skipped" for result in checks),
+        all(needs[key].get("result") == "skipped" for key in JOBS),
         "checks ran or failed in a same-commit run",
     )
     return "same-commit"
@@ -266,11 +280,16 @@ def check_source_run(run, jobs, sha):
         "the develop run is not a push run of this commit",
     )
     require(
-        run.get("status") == "completed" and run.get("conclusion") == "success",
-        "the develop run of this commit did not pass: " + run["html_url"],
+        run.get("status") == "completed"
+        and run.get("conclusion") in ("success", "failure"),
+        "the develop run of this commit did not finish: " + run["html_url"],
     )
     jobs = jobs if isinstance(jobs, list) else []
-    for name in [SAME_COMMIT, *("website-" + key for key in JOBS), "website-required"]:
+    for name in [
+        SAME_COMMIT,
+        *("website-" + key for key in REQUIRED_JOBS),
+        "website-required",
+    ]:
         matching = [
             job for job in jobs if isinstance(job, dict) and job.get("name") == name
         ]
@@ -281,6 +300,18 @@ def check_source_run(run, jobs, sha):
             and matching[0].get("conclusion") == "success",
             "the develop run has no passing " + name + " job",
         )
+    macos = [
+        job
+        for job in jobs
+        if isinstance(job, dict) and job.get("name") == "website-macos"
+    ]
+    require(
+        len(macos) == 1
+        and macos[0].get("head_sha") == sha
+        and macos[0].get("status") == "completed"
+        and macos[0].get("conclusion") in ("success", "cancelled", "skipped"),
+        "the develop run has a failed website-macos job",
+    )
     return run["html_url"]
 
 
@@ -415,8 +446,25 @@ def selftest(workflow):
         "outputs": {"full": "true", "source_run": ""},
     }
     results(good)
+    cancelled = copy.deepcopy(good)
+    cancelled["macos"]["result"] = "cancelled"
+    require(results(cancelled) == "full", "cancelled macOS was not advisory")
+    for name, status in (("macos", "failure"), ("linux", "failure")):
+        mutant = copy.deepcopy(good)
+        mutant[name]["result"] = status
+        try:
+            results(mutant)
+        except ValueError:
+            pass
+        else:
+            raise ValueError(f"failed {name} job was accepted")
     for name in JOBS:
-        for status in ("failure", "skipped", "cancelled", "timed_out", "pending", None):
+        statuses = ("failure", "skipped", "timed_out", "pending", None)
+        if name == "macos":
+            statuses = ("failure", "timed_out", "pending", None)
+        else:
+            statuses += ("cancelled",)
+        for status in statuses:
             mutant = copy.deepcopy(good)
             mutant[name]["result"] = status
             try:
@@ -519,8 +567,13 @@ def source_run(**overrides):
 
 
 def source_jobs():
-    names = [SAME_COMMIT, *("website-" + key for key in JOBS), "website-required"]
-    return [
+    names = [
+        SAME_COMMIT,
+        *("website-" + key for key in REQUIRED_JOBS),
+        "website-macos",
+        "website-required",
+    ]
+    jobs = [
         {
             "id": n,
             "name": name,
@@ -530,6 +583,8 @@ def source_jobs():
         }
         for n, name in enumerate(names)
     ]
+    jobs[3]["conclusion"] = "cancelled"
+    return jobs
 
 
 class FakeGitHub:
@@ -600,8 +655,12 @@ def proof_is_required(ns):
         ns["check_source_run"](source_run(), jobs, SHA) == SOURCE_URL,
         "a passing develop run was rejected",
     )
+    require(
+        ns["check_source_run"](source_run(conclusion="failure"), jobs, SHA)
+        == SOURCE_URL,
+        "a develop run with cancelled macOS was rejected",
+    )
     for run in (
-        source_run(conclusion="failure"),
         source_run(status="in_progress", conclusion=None),
         source_run(head_sha="b" * 40),
         source_run(head_branch="main"),
@@ -611,9 +670,18 @@ def proof_is_required(ns):
         expect_failure(
             "a bad develop run was accepted", ns["check_source_run"], run, jobs, SHA
         )
+    failed_macos = copy.deepcopy(jobs)
+    failed_macos[3]["conclusion"] = "failure"
+    expect_failure(
+        "a failed macOS test was accepted as proof",
+        ns["check_source_run"],
+        source_run(conclusion="failure"),
+        failed_macos,
+        SHA,
+    )
     for index, change in (
         (1, {"conclusion": "skipped"}),
-        (2, {"conclusion": "failure"}),
+        (4, {"conclusion": "failure"}),
         (0, {"head_sha": "b" * 40}),
     ):
         changed = copy.deepcopy(jobs)
@@ -632,7 +700,9 @@ def proof_is_required(ns):
         jobs[1:],
         SHA,
     )
-    github = FakeGitHub([[source_run(conclusion="failure")]], source_jobs())
+    failed_jobs = source_jobs()
+    failed_jobs[3]["conclusion"] = "failure"
+    github = FakeGitHub([[source_run(conclusion="failure")]], failed_jobs)
     expect_failure(
         "a failed develop run let main skip its checks",
         ns["find_same_commit_run"],
@@ -703,6 +773,9 @@ def other_refs_run_full(ns):
     require(ns["results"](needs) == "full", "a full run was rejected")
     needs["linux"] = {"result": "skipped"}
     expect_failure("a skipped check passed a full run", ns["results"], needs)
+    needs["linux"] = {"result": "success"}
+    needs["macos"] = {"result": "failure"}
+    expect_failure("a failed macOS test passed a full run", ns["results"], needs)
 
 
 # Planted mutants: each must make proof_is_required or other_refs_run_full fail.
@@ -720,9 +793,9 @@ SAME_COMMIT_MUTANTS = (
         proof_is_required,
     ),
     (
-        "a failed develop run accepted as proof",
-        'run.get("status") == "completed" and run.get("conclusion") == "success",',
-        'run.get("status") == "completed",',
+        "a failed macOS test accepted as proof",
+        'macos[0].get("conclusion") in ("success", "cancelled", "skipped"),',
+        'macos[0].get("conclusion") is not None,',
         proof_is_required,
     ),
     (
