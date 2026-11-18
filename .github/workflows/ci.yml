@@ -235,9 +235,9 @@
           }
         },
         {
-          "run": "python3 scripts/check-ci.py --results",
+        "run": "python3 scripts/check-ci.py --results",
           "env": {
-            "WEBSITE_JOB_RESULTS": "${{ toJSON(needs) }}"
+          "WEBSITE_JOB_RESULTS": "${{ toJSON(needs) }}"
           }
         }
       ]
