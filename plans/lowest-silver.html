@@ -144,16 +144,36 @@
           hashes. The JSON result keeps the source and rate-row evidence.
         </p>
         <p>
-          A filed zero is a price. A null amount is unknown. Missing pricing for
-          a potentially cheaper eligible plan makes the minimum unknown. An
-          ambiguous ZIP needs a county choice. A scope with no loaded catalog
-          cannot supply a minimum.
+          A null amount means the price is unknown. Only a filed zero is $0. The
+          gross premium is the price before subsidies, not the subsidy benchmark
+          or a bindable quote.
         </p>
-        <p>
-          The amount excludes subsidies and is not a bindable quote. It differs
-          from the second-lowest-cost Silver benchmark, which applies EHB and
-          pediatric dental adjustments.
-        </p>
+        <dl>
+          <dt><code>no_plans</code></dt>
+          <dd>
+            No matching plans were found in the loaded catalog for these inputs.
+          </dd>
+          <dt><code>ambiguous</code> / <code>location_ambiguous</code></dt>
+          <dd>
+            This ZIP spans counties. Choose the county where the person lives
+            from step 1.
+          </dd>
+          <dt><code>unknown</code></dt>
+          <dd>
+            We do not have enough evidence to price the lowest plan. Missing
+            data does not mean there are no plans.
+          </dd>
+          <dt><code>location_requires_zip</code></dt>
+          <dd>
+            This lookup cannot price this market, even with a ZIP. Some plans or
+            rates apply to only part of the county. The amount stays unknown.
+          </dd>
+          <dt><code>lowest_not_built</code></dt>
+          <dd>
+            The pricing result has not been published or has expired. No current
+            price is available. Try again after the next data update.
+          </dd>
+        </dl>
         <p>
           Public CMS and state files differ by year and geography. Check
           <a href="https://openplans.openhra.com/v1/data-availability"

@@ -195,6 +195,7 @@ fi
 set +e
 (
   set -e
+  python3 -m unittest discover -s "$ROOT/tests" -p 'test_launchcopy.py'
   node --test "$ROOT/tests/alerts.test.mjs"
   python3 -m unittest discover -s "$ROOT/tests" -p 'test_alert_sender.py'
   python3 -m unittest discover -s "$ROOT/tests" -p 'test_pin_mcp_tools.py'
