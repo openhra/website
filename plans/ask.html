@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>What you can ask today · OpenPlans</title>
+    <meta
+      name="description"
+      content="Counts of answered, partial, unsupported and unknown results for premiums, benefits, drugs and providers, by state and plan year."
+    />
+    <link rel="canonical" href="https://plans.openhra.com/ask" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What you can ask today · OpenPlans" />
+    <meta
+      property="og:description"
+      content="Counts of answered, partial, unsupported and unknown results by state and plan year."
+    />
+    <meta property="og:url" content="https://plans.openhra.com/ask" />
+    <meta
+      property="og:image"
+      content="https://plans.openhra.com/brand/repo/social-preview.png"
+    />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta
+      property="og:image:alt"
+      content="OpenPlans by OpenHRA. US health plan data. On your server."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image"
+      content="https://plans.openhra.com/brand/repo/social-preview.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="OpenPlans by OpenHRA. US health plan data. On your server."
+    />
+    <meta name="twitter:title" content="What you can ask today · OpenPlans" />
+    <meta
+      name="twitter:description"
+      content="Counts of answered, partial, unsupported and unknown results by state and plan year."
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/ask.js" defer></script>
+  </head>
+  <body class="plans-site availability-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="wrap">
+      <nav aria-label="Main">
+        <a class="brand" href="/" aria-label="OpenPlans home"
+          ><img
+            src="/brand/logo-openplans.svg"
+            width="358"
+            height="48"
+            alt="OpenPlans by OpenHRA"
+        /></a>
+        <ul>
+          <li><a href="/#availability">OpenPlans home</a></li>
+          <li><a href="https://github.com/openhra/openplans">Repository</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+      <section
+        class="band coverage coverage-full-page"
+        id="ask"
+        aria-labelledby="ask-heading"
+      >
+        <div class="wrap">
+          <p class="eyebrow section-label">OpenPlans / What you can ask</p>
+          <h1 id="ask-heading">What you can ask today</h1>
+          <p>
+            For each question OpenPlans can be asked, this page counts the
+            insurer entries by state and plan year. The counts come from the
+            data availability list that every OpenPlans server publishes.
+          </p>
+          <div class="coverage-controls" aria-label="Selection">
+            <label
+              >State
+              <select id="ask-state" disabled>
+                <option value="ALL">All states</option>
+              </select></label
+            >
+            <label
+              >Plan year
+              <select id="ask-year" disabled>
+                <option value="ALL">All plan years</option>
+              </select></label
+            >
+          </div>
+          <p id="ask-date" class="coverage-note"></p>
+          <p id="ask-message" role="status" aria-live="polite">
+            Loading the saved availability file.
+          </p>
+          <table id="ask-table">
+            <caption>
+              Insurer entries by question and result
+            </caption>
+          </table>
+          <div id="ask-detail"></div>
+          <div
+            class="coverage-methodology"
+            aria-labelledby="ask-method-heading"
+          >
+            <h2 id="ask-method-heading">How to read these counts</h2>
+            <p>
+              Each insurer entry counts once per question. Answered means the
+              source reports the data as available. Partial means the source
+              reports it as partial. Not in the public source means the source
+              reports it as unsupported. Unknown means the source reports it as
+              unknown, or has no value. Unknown is not zero.
+            </p>
+            <p>
+              The questions are premiums, benefits and plan catalog, drugs, and
+              providers. Medicare Part D plans are not in the availability list
+              yet, so this page does not count them.
+            </p>
+            <p>
+              This page reads one saved file. It does not call a live server.
+              The unknown counts list their reasons in plain words. A reason
+              without listed words is shown as its code.
+            </p>
+            <p>
+              <a class="text-link" href="/availability"
+                >State map and source counts</a
+              >
+              · <a class="text-link" href="/#availability">Back to OpenPlans</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

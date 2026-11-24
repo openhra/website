@@ -81,7 +81,7 @@ def fail(reason):
     print(f"FAIL: {reason}")
     sys.exit(1)
 
-required_pages = ("plans/index.html", "plans/availability.html", "plans/coverage-table.html")
+required_pages = ("plans/index.html", "plans/availability.html", "plans/coverage-table.html", "plans/ask.html")
 for name in required_pages:
     if not (root / name).is_file():
         fail("missing required page: " + name)
@@ -199,6 +199,7 @@ set +e
   node --test "$ROOT/tests/alerts.test.mjs"
   python3 -m unittest discover -s "$ROOT/tests" -p 'test_alert_sender.py'
   python3 -m unittest discover -s "$ROOT/tests" -p 'test_pin_mcp_tools.py'
+  python3 -m unittest discover -s "$ROOT/tests" -p 'test_ask_page.py'
   # These tests mostly wait on loopback servers; the runner splits them across a few processes and
   # fails unless they run exactly the tests one discover loads.
   python3 "$ROOT/scripts/unittest_shards.py" "$ROOT/tests" 'edge_acceptance*.py'
