@@ -1,0 +1,6108 @@
+{
+  "families": [
+    {
+      "id": "premiums",
+      "label": "Premiums"
+    },
+    {
+      "id": "benefits",
+      "label": "Benefits and plan catalog"
+    },
+    {
+      "id": "drugs",
+      "label": "Drugs"
+    },
+    {
+      "id": "providers",
+      "label": "Providers"
+    }
+  ],
+  "fetched_at": "2026-11-24T14:08:03Z",
+  "reason_words": {
+    "UNRESOLVED_RATING_AREA": "Rating areas could not be resolved",
+    "source_set_not_available": "No source files found"
+  },
+  "rows": [
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "available": 2,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2025
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "AK",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "available": 2,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "AK",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "available": 2,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2027
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "AK",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AK",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "available": 3,
+        "unsupported": 10
+      },
+      "unknown": 0,
+      "unsupported": 10,
+      "year": 2025
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "AL",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "available": 4,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2026
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "AL",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "available": 4,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2027
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "AL",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AL",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "available": 6,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2025
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "AR",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "available": 6,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2026
+    },
+    {
+      "answered": 8,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "available": 8
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 8
+      },
+      "state": "AR",
+      "statuses": {
+        "unknown": 8
+      },
+      "unknown": 8,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "unknown": 8
+      },
+      "unknown": 8,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "available": 4,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2027
+    },
+    {
+      "answered": 6,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "available": 6
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 6
+      },
+      "state": "AR",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AR",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 8,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "available": 8,
+        "unsupported": 11
+      },
+      "unknown": 0,
+      "unsupported": 11,
+      "year": 2025
+    },
+    {
+      "answered": 19,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "available": 19
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 19
+      },
+      "state": "AZ",
+      "statuses": {
+        "unknown": 19
+      },
+      "unknown": 19,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "unknown": 19
+      },
+      "unknown": 19,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "available": 7,
+        "unsupported": 10
+      },
+      "unknown": 0,
+      "unsupported": 10,
+      "year": 2026
+    },
+    {
+      "answered": 17,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "available": 17
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 17
+      },
+      "state": "AZ",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "available": 7,
+        "unsupported": 10
+      },
+      "unknown": 0,
+      "unsupported": 10,
+      "year": 2027
+    },
+    {
+      "answered": 17,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "available": 17
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 17
+      },
+      "state": "AZ",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "AZ",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "premiums",
+      "partial": 11,
+      "reasons": {
+        "COUNTY_SCOPED_ZIP3_CROSS_COUNTY_PREFIXES_AMBIGUOUS": 11,
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 7
+      },
+      "state": "CA",
+      "statuses": {
+        "partial": 11,
+        "unsupported": 7
+      },
+      "unknown": 0,
+      "unsupported": 7,
+      "year": 2026
+    },
+    {
+      "answered": 18,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "CA",
+      "statuses": {
+        "available": 18
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 18
+      },
+      "state": "CA",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 18
+      },
+      "state": "CA",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 5
+      },
+      "state": "CO",
+      "statuses": {
+        "available": 6,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2026
+    },
+    {
+      "answered": 11,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "CO",
+      "statuses": {
+        "available": 11
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 11
+      },
+      "state": "CO",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 11
+      },
+      "state": "CO",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 2
+      },
+      "state": "CT",
+      "statuses": {
+        "available": 3,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "CT",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 5
+      },
+      "state": "CT",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 5
+      },
+      "state": "CT",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 9
+      },
+      "state": "DC",
+      "statuses": {
+        "available": 3,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2026
+    },
+    {
+      "answered": 12,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "DC",
+      "statuses": {
+        "available": 12
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 12
+      },
+      "state": "DC",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 12
+      },
+      "state": "DC",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "available": 4,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "available": 6
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 6
+      },
+      "state": "DE",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "available": 3,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "DE",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "available": 2,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2027
+    },
+    {
+      "answered": 4,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "available": 4
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 4
+      },
+      "state": "DE",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "DE",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 15,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "available": 15,
+        "unsupported": 11
+      },
+      "unknown": 0,
+      "unsupported": 11,
+      "year": 2025
+    },
+    {
+      "answered": 26,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "available": 26
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 26
+      },
+      "state": "FL",
+      "statuses": {
+        "unknown": 26
+      },
+      "unknown": 26,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "unknown": 26
+      },
+      "unknown": 26,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 16,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "available": 16,
+        "unsupported": 11
+      },
+      "unknown": 0,
+      "unsupported": 11,
+      "year": 2026
+    },
+    {
+      "answered": 27,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "available": 27
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 27
+      },
+      "state": "FL",
+      "statuses": {
+        "unknown": 27
+      },
+      "unknown": 27,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "unknown": 27
+      },
+      "unknown": 27,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 12,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "available": 12,
+        "unsupported": 12
+      },
+      "unknown": 0,
+      "unsupported": 12,
+      "year": 2027
+    },
+    {
+      "answered": 24,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "available": 24
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 24
+      },
+      "state": "FL",
+      "statuses": {
+        "unknown": 24
+      },
+      "unknown": 24,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "FL",
+      "statuses": {
+        "unknown": 24
+      },
+      "unknown": 24,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 9,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 8
+      },
+      "state": "GA",
+      "statuses": {
+        "available": 9,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2026
+    },
+    {
+      "answered": 17,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "GA",
+      "statuses": {
+        "available": 17
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 17
+      },
+      "state": "GA",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 17
+      },
+      "state": "GA",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "available": 2,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2025
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "HI",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "available": 2,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "available": 6
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 6
+      },
+      "state": "HI",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "available": 2,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2027
+    },
+    {
+      "answered": 6,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "available": 6
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 6
+      },
+      "state": "HI",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "HI",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "available": 5,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2025
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "IA",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "available": 6,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "IA",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "available": 5,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2027
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "IA",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "IA",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 8,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 11
+      },
+      "state": "ID",
+      "statuses": {
+        "available": 8,
+        "unsupported": 11
+      },
+      "unknown": 0,
+      "unsupported": 11,
+      "year": 2026
+    },
+    {
+      "answered": 19,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "ID",
+      "statuses": {
+        "available": 19
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 19
+      },
+      "state": "ID",
+      "statuses": {
+        "unknown": 19
+      },
+      "unknown": 19,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 19
+      },
+      "state": "ID",
+      "statuses": {
+        "unknown": 19
+      },
+      "unknown": 19,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 11,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "IL",
+      "statuses": {
+        "available": 11,
+        "unsupported": 10
+      },
+      "unknown": 0,
+      "unsupported": 10,
+      "year": 2025
+    },
+    {
+      "answered": 21,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IL",
+      "statuses": {
+        "available": 21
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 21
+      },
+      "state": "IL",
+      "statuses": {
+        "unknown": 21
+      },
+      "unknown": 21,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "IL",
+      "statuses": {
+        "unknown": 21
+      },
+      "unknown": 21,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 8
+      },
+      "state": "IL",
+      "statuses": {
+        "available": 7,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2026
+    },
+    {
+      "answered": 15,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IL",
+      "statuses": {
+        "available": 15
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 15
+      },
+      "state": "IL",
+      "statuses": {
+        "unknown": 15
+      },
+      "unknown": 15,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 15
+      },
+      "state": "IL",
+      "statuses": {
+        "unknown": 15
+      },
+      "unknown": 15,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "available": 6,
+        "unsupported": 12
+      },
+      "unknown": 0,
+      "unsupported": 12,
+      "year": 2025
+    },
+    {
+      "answered": 18,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "available": 18
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 18
+      },
+      "state": "IN",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "available": 5,
+        "unsupported": 11
+      },
+      "unknown": 0,
+      "unsupported": 11,
+      "year": 2026
+    },
+    {
+      "answered": 16,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "available": 16
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 16
+      },
+      "state": "IN",
+      "statuses": {
+        "unknown": 16
+      },
+      "unknown": 16,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "unknown": 16
+      },
+      "unknown": 16,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "available": 4,
+        "unsupported": 10
+      },
+      "unknown": 0,
+      "unsupported": 10,
+      "year": 2027
+    },
+    {
+      "answered": 14,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "available": 14
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 14
+      },
+      "state": "IN",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "IN",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "available": 7,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2025
+    },
+    {
+      "answered": 12,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "available": 12
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 12
+      },
+      "state": "KS",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "available": 6,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2026
+    },
+    {
+      "answered": 11,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "available": 11
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 11
+      },
+      "state": "KS",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "available": 5,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2027
+    },
+    {
+      "answered": 10,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "available": 10
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 10
+      },
+      "state": "KS",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "KS",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 3
+      },
+      "state": "KY",
+      "statuses": {
+        "available": 3,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "KY",
+      "statuses": {
+        "available": 6
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 6
+      },
+      "state": "KY",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 6
+      },
+      "state": "KY",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "available": 5,
+        "unsupported": 7
+      },
+      "unknown": 0,
+      "unsupported": 7,
+      "year": 2025
+    },
+    {
+      "answered": 12,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "available": 12
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 12
+      },
+      "state": "LA",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "available": 6,
+        "unsupported": 7
+      },
+      "unknown": 0,
+      "unsupported": 7,
+      "year": 2026
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "LA",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "available": 6,
+        "unsupported": 7
+      },
+      "unknown": 0,
+      "unsupported": 7,
+      "year": 2027
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "LA",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "LA",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 8,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 15
+      },
+      "state": "MA",
+      "statuses": {
+        "available": 8,
+        "unsupported": 15
+      },
+      "unknown": 0,
+      "unsupported": 15,
+      "year": 2026
+    },
+    {
+      "answered": 23,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MA",
+      "statuses": {
+        "available": 23
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 23
+      },
+      "state": "MA",
+      "statuses": {
+        "unknown": 23
+      },
+      "unknown": 23,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 23
+      },
+      "state": "MA",
+      "statuses": {
+        "unknown": 23
+      },
+      "unknown": 23,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 11
+      },
+      "state": "MD",
+      "statuses": {
+        "available": 6,
+        "unsupported": 11
+      },
+      "unknown": 0,
+      "unsupported": 11,
+      "year": 2026
+    },
+    {
+      "answered": 17,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MD",
+      "statuses": {
+        "available": 17
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 17
+      },
+      "state": "MD",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 17
+      },
+      "state": "MD",
+      "statuses": {
+        "unknown": 17
+      },
+      "unknown": 17,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 2
+      },
+      "state": "ME",
+      "statuses": {
+        "available": 4,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "ME",
+      "statuses": {
+        "available": 6
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 6
+      },
+      "state": "ME",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 6
+      },
+      "state": "ME",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 10,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "available": 10,
+        "unsupported": 19
+      },
+      "unknown": 0,
+      "unsupported": 19,
+      "year": 2025
+    },
+    {
+      "answered": 29,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "available": 29
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 29
+      },
+      "state": "MI",
+      "statuses": {
+        "unknown": 29
+      },
+      "unknown": 29,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "unknown": 29
+      },
+      "unknown": 29,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "available": 7,
+        "unsupported": 18
+      },
+      "unknown": 0,
+      "unsupported": 18,
+      "year": 2026
+    },
+    {
+      "answered": 25,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "available": 25
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 25
+      },
+      "state": "MI",
+      "statuses": {
+        "unknown": 25
+      },
+      "unknown": 25,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "unknown": 25
+      },
+      "unknown": 25,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "available": 7,
+        "unsupported": 15
+      },
+      "unknown": 0,
+      "unsupported": 15,
+      "year": 2027
+    },
+    {
+      "answered": 22,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "available": 22
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 22
+      },
+      "state": "MI",
+      "statuses": {
+        "unknown": 22
+      },
+      "unknown": 22,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MI",
+      "statuses": {
+        "unknown": 22
+      },
+      "unknown": 22,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 5
+      },
+      "state": "MN",
+      "statuses": {
+        "available": 6,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2026
+    },
+    {
+      "answered": 11,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MN",
+      "statuses": {
+        "available": 11
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 11
+      },
+      "state": "MN",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 11
+      },
+      "state": "MN",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "available": 9,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2025
+    },
+    {
+      "answered": 18,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "available": 18
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 18
+      },
+      "state": "MO",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 8,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "available": 8,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2026
+    },
+    {
+      "answered": 16,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "available": 16
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 16
+      },
+      "state": "MO",
+      "statuses": {
+        "unknown": 16
+      },
+      "unknown": 16,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "unknown": 16
+      },
+      "unknown": 16,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "available": 6,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2027
+    },
+    {
+      "answered": 14,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "available": 14
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 14
+      },
+      "state": "MO",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MO",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "available": 5,
+        "unsupported": 6
+      },
+      "unknown": 0,
+      "unsupported": 6,
+      "year": 2025
+    },
+    {
+      "answered": 11,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "available": 11
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 11
+      },
+      "state": "MS",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "available": 5,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2026
+    },
+    {
+      "answered": 10,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "available": 10
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 10
+      },
+      "state": "MS",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "available": 3,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2027
+    },
+    {
+      "answered": 8,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "available": 8
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 8
+      },
+      "state": "MS",
+      "statuses": {
+        "unknown": 8
+      },
+      "unknown": 8,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MS",
+      "statuses": {
+        "unknown": 8
+      },
+      "unknown": 8,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "available": 3,
+        "unsupported": 6
+      },
+      "unknown": 0,
+      "unsupported": 6,
+      "year": 2025
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "MT",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "available": 3,
+        "unsupported": 6
+      },
+      "unknown": 0,
+      "unsupported": 6,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "MT",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "available": 2,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2027
+    },
+    {
+      "answered": 7,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "available": 7
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 7
+      },
+      "state": "MT",
+      "statuses": {
+        "unknown": 7
+      },
+      "unknown": 7,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "MT",
+      "statuses": {
+        "unknown": 7
+      },
+      "unknown": 7,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 9,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "available": 9,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2025
+    },
+    {
+      "answered": 18,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "available": 18
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 18
+      },
+      "state": "NC",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "unknown": 18
+      },
+      "unknown": 18,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "available": 6,
+        "unsupported": 7
+      },
+      "unknown": 0,
+      "unsupported": 7,
+      "year": 2026
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "NC",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "available": 5,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2027
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "NC",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NC",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "available": 3,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2025
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "ND",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "available": 3,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "ND",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "available": 3,
+        "unsupported": 2
+      },
+      "unknown": 0,
+      "unsupported": 2,
+      "year": 2027
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 5
+      },
+      "state": "ND",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "ND",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "available": 5,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2025
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "NE",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "available": 5,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "NE",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "available": 5,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2027
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "NE",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NE",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "available": 4,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2025
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "NH",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "available": 4,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "NH",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "available": 3,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2027
+    },
+    {
+      "answered": 8,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "available": 8
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 8
+      },
+      "state": "NH",
+      "statuses": {
+        "unknown": 8
+      },
+      "unknown": 8,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "NH",
+      "statuses": {
+        "unknown": 8
+      },
+      "unknown": 8,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 4
+      },
+      "state": "NJ",
+      "statuses": {
+        "available": 5,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NJ",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 9
+      },
+      "state": "NJ",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 9
+      },
+      "state": "NJ",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 4,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 1
+      },
+      "state": "NM",
+      "statuses": {
+        "available": 4,
+        "unsupported": 1
+      },
+      "unknown": 0,
+      "unsupported": 1,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NM",
+      "statuses": {
+        "available": 5
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 5
+      },
+      "state": "NM",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 5
+      },
+      "state": "NM",
+      "statuses": {
+        "unknown": 5
+      },
+      "unknown": 5,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 4
+      },
+      "state": "NV",
+      "statuses": {
+        "available": 9,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2026
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "NV",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 13
+      },
+      "state": "NV",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 13
+      },
+      "state": "NV",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 13,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "available": 13,
+        "unsupported": 18
+      },
+      "unknown": 0,
+      "unsupported": 18,
+      "year": 2025
+    },
+    {
+      "answered": 31,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "available": 31
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 31
+      },
+      "state": "OH",
+      "statuses": {
+        "unknown": 31
+      },
+      "unknown": 31,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "unknown": 31
+      },
+      "unknown": 31,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 11,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "available": 11,
+        "unsupported": 15
+      },
+      "unknown": 0,
+      "unsupported": 15,
+      "year": 2026
+    },
+    {
+      "answered": 26,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "available": 26
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 26
+      },
+      "state": "OH",
+      "statuses": {
+        "unknown": 26
+      },
+      "unknown": 26,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "unknown": 26
+      },
+      "unknown": 26,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 9,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "available": 9,
+        "unsupported": 15
+      },
+      "unknown": 0,
+      "unsupported": 15,
+      "year": 2027
+    },
+    {
+      "answered": 24,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "available": 24
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 24
+      },
+      "state": "OH",
+      "statuses": {
+        "unknown": 24
+      },
+      "unknown": 24,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OH",
+      "statuses": {
+        "unknown": 24
+      },
+      "unknown": 24,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "available": 7,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2025
+    },
+    {
+      "answered": 15,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "available": 15
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 15
+      },
+      "state": "OK",
+      "statuses": {
+        "unknown": 15
+      },
+      "unknown": 15,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "unknown": 15
+      },
+      "unknown": 15,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "available": 7,
+        "unsupported": 7
+      },
+      "unknown": 0,
+      "unsupported": 7,
+      "year": 2026
+    },
+    {
+      "answered": 14,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "available": 14
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 14
+      },
+      "state": "OK",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "available": 5,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2027
+    },
+    {
+      "answered": 10,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "available": 10
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 10
+      },
+      "state": "OK",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OK",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OR",
+      "statuses": {
+        "available": 6,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2025
+    },
+    {
+      "answered": 10,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OR",
+      "statuses": {
+        "available": 10
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 10
+      },
+      "state": "OR",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OR",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "OR",
+      "statuses": {
+        "available": 6,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2026
+    },
+    {
+      "answered": 10,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "OR",
+      "statuses": {
+        "available": 10
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 10
+      },
+      "state": "OR",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "OR",
+      "statuses": {
+        "unknown": 10
+      },
+      "unknown": 10,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 14,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 8
+      },
+      "state": "PA",
+      "statuses": {
+        "available": 14,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2026
+    },
+    {
+      "answered": 22,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "PA",
+      "statuses": {
+        "available": 22
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 22
+      },
+      "state": "PA",
+      "statuses": {
+        "unknown": 22
+      },
+      "unknown": 22,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 22
+      },
+      "state": "PA",
+      "statuses": {
+        "unknown": 22
+      },
+      "unknown": 22,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 4
+      },
+      "state": "RI",
+      "statuses": {
+        "available": 2,
+        "unsupported": 4
+      },
+      "unknown": 0,
+      "unsupported": 4,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "RI",
+      "statuses": {
+        "available": 6
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 6
+      },
+      "state": "RI",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 6
+      },
+      "state": "RI",
+      "statuses": {
+        "unknown": 6
+      },
+      "unknown": 6,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "available": 6,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2025
+    },
+    {
+      "answered": 11,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "available": 11
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 11
+      },
+      "state": "SC",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "available": 6,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2026
+    },
+    {
+      "answered": 11,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "available": 11
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 11
+      },
+      "state": "SC",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "unknown": 11
+      },
+      "unknown": 11,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "available": 6,
+        "unsupported": 6
+      },
+      "unknown": 0,
+      "unsupported": 6,
+      "year": 2027
+    },
+    {
+      "answered": 12,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "available": 12
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 12
+      },
+      "state": "SC",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "SC",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "UNRESOLVED_RATING_AREA": 3
+      },
+      "state": "SD",
+      "statuses": {
+        "unknown": 3,
+        "unsupported": 1
+      },
+      "unknown": 3,
+      "unsupported": 1,
+      "year": 2025
+    },
+    {
+      "answered": 4,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "available": 4
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 4
+      },
+      "state": "SD",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "available": 3,
+        "unsupported": 1
+      },
+      "unknown": 0,
+      "unsupported": 1,
+      "year": 2026
+    },
+    {
+      "answered": 4,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "available": 4
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 4
+      },
+      "state": "SD",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "available": 3,
+        "unsupported": 1
+      },
+      "unknown": 0,
+      "unsupported": 1,
+      "year": 2027
+    },
+    {
+      "answered": 4,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "available": 4
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 4
+      },
+      "state": "SD",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "SD",
+      "statuses": {
+        "unknown": 4
+      },
+      "unknown": 4,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "available": 6,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2025
+    },
+    {
+      "answered": 14,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "available": 14
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 14
+      },
+      "state": "TN",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "available": 6,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2026
+    },
+    {
+      "answered": 14,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "available": 14
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 14
+      },
+      "state": "TN",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "available": 5,
+        "unsupported": 7
+      },
+      "unknown": 0,
+      "unsupported": 7,
+      "year": 2027
+    },
+    {
+      "answered": 12,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "available": 12
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 12
+      },
+      "state": "TN",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "TN",
+      "statuses": {
+        "unknown": 12
+      },
+      "unknown": 12,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 17,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "available": 17,
+        "unsupported": 17
+      },
+      "unknown": 0,
+      "unsupported": 17,
+      "year": 2025
+    },
+    {
+      "answered": 34,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "available": 34
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 34
+      },
+      "state": "TX",
+      "statuses": {
+        "unknown": 34
+      },
+      "unknown": 34,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "unknown": 34
+      },
+      "unknown": 34,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 18,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "available": 18,
+        "unsupported": 17
+      },
+      "unknown": 0,
+      "unsupported": 17,
+      "year": 2026
+    },
+    {
+      "answered": 35,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "available": 35
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 35
+      },
+      "state": "TX",
+      "statuses": {
+        "unknown": 35
+      },
+      "unknown": 35,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "unknown": 35
+      },
+      "unknown": 35,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 16,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "available": 16,
+        "unsupported": 18
+      },
+      "unknown": 0,
+      "unsupported": 18,
+      "year": 2027
+    },
+    {
+      "answered": 34,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "available": 34
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 34
+      },
+      "state": "TX",
+      "statuses": {
+        "unknown": 34
+      },
+      "unknown": 34,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "TX",
+      "statuses": {
+        "unknown": 34
+      },
+      "unknown": 34,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 7,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "available": 7,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2025
+    },
+    {
+      "answered": 16,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "available": 16
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 16
+      },
+      "state": "UT",
+      "statuses": {
+        "unknown": 16
+      },
+      "unknown": 16,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "unknown": 16
+      },
+      "unknown": 16,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 6,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "available": 6,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2026
+    },
+    {
+      "answered": 14,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "available": 14
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 14
+      },
+      "state": "UT",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "unknown": 14
+      },
+      "unknown": 14,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 5,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "available": 5,
+        "unsupported": 8
+      },
+      "unknown": 0,
+      "unsupported": 8,
+      "year": 2027
+    },
+    {
+      "answered": 13,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "available": 13
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 13
+      },
+      "state": "UT",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "UT",
+      "statuses": {
+        "unknown": 13
+      },
+      "unknown": 13,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 8,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 11
+      },
+      "state": "VA",
+      "statuses": {
+        "available": 8,
+        "unsupported": 11
+      },
+      "unknown": 0,
+      "unsupported": 11,
+      "year": 2026
+    },
+    {
+      "answered": 19,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "VA",
+      "statuses": {
+        "available": 19
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 19
+      },
+      "state": "VA",
+      "statuses": {
+        "unknown": 19
+      },
+      "unknown": 19,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 19
+      },
+      "state": "VA",
+      "statuses": {
+        "unknown": 19
+      },
+      "unknown": 19,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 12,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {
+        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 3
+      },
+      "state": "WA",
+      "statuses": {
+        "available": 12,
+        "unsupported": 3
+      },
+      "unknown": 0,
+      "unsupported": 3,
+      "year": 2026
+    },
+    {
+      "answered": 15,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WA",
+      "statuses": {
+        "available": 15
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 15
+      },
+      "state": "WA",
+      "statuses": {
+        "unknown": 15
+      },
+      "unknown": 15,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {
+        "sbe_no_index_registry": 15
+      },
+      "state": "WA",
+      "statuses": {
+        "unknown": 15
+      },
+      "unknown": 15,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 14,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "available": 14,
+        "unsupported": 10
+      },
+      "unknown": 0,
+      "unsupported": 10,
+      "year": 2025
+    },
+    {
+      "answered": 24,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "available": 24
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 24
+      },
+      "state": "WI",
+      "statuses": {
+        "unknown": 24
+      },
+      "unknown": 24,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "unknown": 24
+      },
+      "unknown": 24,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 12,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "available": 12,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2026
+    },
+    {
+      "answered": 21,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "available": 21
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 21
+      },
+      "state": "WI",
+      "statuses": {
+        "unknown": 21
+      },
+      "unknown": 21,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "unknown": 21
+      },
+      "unknown": 21,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 12,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "available": 12,
+        "unsupported": 9
+      },
+      "unknown": 0,
+      "unsupported": 9,
+      "year": 2027
+    },
+    {
+      "answered": 21,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "available": 21
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 21
+      },
+      "state": "WI",
+      "statuses": {
+        "unknown": 21
+      },
+      "unknown": 21,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WI",
+      "statuses": {
+        "unknown": 21
+      },
+      "unknown": 21,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "available": 2,
+        "unsupported": 1
+      },
+      "unknown": 0,
+      "unsupported": 1,
+      "year": 2025
+    },
+    {
+      "answered": 3,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "available": 3
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 3
+      },
+      "state": "WV",
+      "statuses": {
+        "unknown": 3
+      },
+      "unknown": 3,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "unknown": 3
+      },
+      "unknown": 3,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "available": 2,
+        "unsupported": 1
+      },
+      "unknown": 0,
+      "unsupported": 1,
+      "year": 2026
+    },
+    {
+      "answered": 3,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "available": 3
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 3
+      },
+      "state": "WV",
+      "statuses": {
+        "unknown": 3
+      },
+      "unknown": 3,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "unknown": 3
+      },
+      "unknown": 3,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "available": 2,
+        "unsupported": 1
+      },
+      "unknown": 0,
+      "unsupported": 1,
+      "year": 2027
+    },
+    {
+      "answered": 3,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "available": 3
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 3
+      },
+      "state": "WV",
+      "statuses": {
+        "unknown": 3
+      },
+      "unknown": 3,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WV",
+      "statuses": {
+        "unknown": 3
+      },
+      "unknown": 3,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 3,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "available": 3,
+        "unsupported": 6
+      },
+      "unknown": 0,
+      "unsupported": 6,
+      "year": 2025
+    },
+    {
+      "answered": 9,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "available": 9
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 9
+      },
+      "state": "WY",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "unknown": 9
+      },
+      "unknown": 9,
+      "unsupported": 0,
+      "year": 2025
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "available": 2,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2026
+    },
+    {
+      "answered": 7,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "available": 7
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 7
+      },
+      "state": "WY",
+      "statuses": {
+        "unknown": 7
+      },
+      "unknown": 7,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "unknown": 7
+      },
+      "unknown": 7,
+      "unsupported": 0,
+      "year": 2026
+    },
+    {
+      "answered": 2,
+      "family": "premiums",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "available": 2,
+        "unsupported": 5
+      },
+      "unknown": 0,
+      "unsupported": 5,
+      "year": 2027
+    },
+    {
+      "answered": 7,
+      "family": "benefits",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "available": 7
+      },
+      "unknown": 0,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "drugs",
+      "partial": 0,
+      "reasons": {
+        "source_set_not_available": 7
+      },
+      "state": "WY",
+      "statuses": {
+        "unknown": 7
+      },
+      "unknown": 7,
+      "unsupported": 0,
+      "year": 2027
+    },
+    {
+      "answered": 0,
+      "family": "providers",
+      "partial": 0,
+      "reasons": {},
+      "state": "WY",
+      "statuses": {
+        "unknown": 7
+      },
+      "unknown": 7,
+      "unsupported": 0,
+      "year": 2027
+    }
+  ],
+  "schema_version": 1,
+  "source": "data-availability",
+  "source_url": "https://openplans.openhra.com/v1/data-availability",
+  "status_words": {
+    "unknown": "Unknown"
+  },
+  "synthetic": false
+}

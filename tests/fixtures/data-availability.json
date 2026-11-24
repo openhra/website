@@ -1,0 +1,427 @@
+[
+ {
+  "synthetic": true,
+  "state": "AL",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-01",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "available",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-01",
+  "drug_status": "complete",
+  "drug_coverage": {
+   "status": "complete",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "complete",
+   "reason": "ok"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "AL",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-02",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-02",
+  "drug_status": "partial",
+  "drug_coverage": {
+   "status": "partial",
+   "reason": "discovery_incomplete"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "AL",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-03",
+  "catalog_status": "available",
+  "premium_status": "unknown",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-03",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  },
+  "premium_reason": "UNRESOLVED_RATING_AREA"
+ },
+ {
+  "synthetic": true,
+  "state": "AL",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-04",
+  "catalog_status": "partial",
+  "premium_status": "unsupported",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-04",
+  "drug_status": "failed",
+  "drug_coverage": {
+   "status": "failed",
+   "reason": "discovery_incomplete"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "discovery_incomplete"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "TX",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-05",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-05",
+  "drug_status": "access_denied",
+  "drug_coverage": {
+   "status": "access_denied",
+   "reason": "source_access_denied"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_access_denied"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "TX",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-06",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "available",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-06",
+  "drug_status": "complete",
+  "drug_coverage": {
+   "status": "complete",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "complete",
+   "reason": "ok"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "TX",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-07",
+  "catalog_status": "stale",
+  "premium_status": "stale",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-07",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_active"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "TX",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-08",
+  "catalog_status": "conflicted",
+  "premium_status": "conflicted",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-08",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_available"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "TX",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-09",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "available",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-09",
+  "drug_status": "partial",
+  "drug_coverage": {
+   "status": "partial",
+   "reason": "discovery_incomplete"
+  },
+  "provider_coverage": {
+   "status": "complete",
+   "reason": "ok"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "FL",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-10",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "available",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-10",
+  "drug_status": "complete",
+  "drug_coverage": {
+   "status": "complete",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "complete",
+   "reason": "ok"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "FL",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-11",
+  "catalog_status": "unavailable",
+  "premium_status": "unavailable",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-11",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "made_up_code_for_test"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "FL",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-12",
+  "catalog_status": "not_yet_verified",
+  "premium_status": "not_yet_verified",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-12",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "FL",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-13",
+  "catalog_status": "available",
+  "premium_status": "partial",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-13",
+  "drug_status": "complete",
+  "drug_coverage": {
+   "status": "complete",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "NY",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-14",
+  "catalog_status": "available",
+  "premium_status": "unsupported",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-14",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_available"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "NY",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-15",
+  "catalog_status": "partial",
+  "premium_status": "unknown",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-15",
+  "drug_status": "partial",
+  "drug_coverage": {
+   "status": "partial",
+   "reason": "discovery_incomplete"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "NY",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-16",
+  "catalog_status": "unknown",
+  "premium_status": "unknown",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-16",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "VT",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-17",
+  "catalog_status": "available",
+  "premium_status": "unsupported",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-17",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "VT",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-18",
+  "catalog_status": "unknown",
+  "premium_status": "unknown",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-18",
+  "drug_status": "unknown",
+  "drug_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "source_set_not_validated"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "CA",
+  "plan_year": 2026,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-19",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "available",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-19",
+  "drug_status": "complete",
+  "drug_coverage": {
+   "status": "complete",
+   "reason": "source_set_not_validated"
+  },
+  "provider_coverage": {
+   "status": "complete",
+   "reason": "ok"
+  }
+ },
+ {
+  "synthetic": true,
+  "state": "CA",
+  "plan_year": 2027,
+  "market": "Individual",
+  "issuer_id": "SYNTHETIC-20",
+  "catalog_status": "available",
+  "premium_status": "available",
+  "provider_status": "unknown",
+  "formulary_status": "unknown",
+  "formulary_document_status": "unknown",
+  "snapshot_id": "synthetic-snapshot-20",
+  "drug_status": "failed",
+  "drug_coverage": {
+   "status": "failed",
+   "reason": "discovery_incomplete"
+  },
+  "provider_coverage": {
+   "status": "unknown",
+   "reason": "discovery_incomplete"
+  }
+ }
+]
