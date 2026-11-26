@@ -64,7 +64,7 @@
    "status": "unknown",
    "reason": "source_set_not_validated"
   },
-  "premium_reason": "UNRESOLVED_RATING_AREA"
+  "premium_reason": "unresolved_rating_area"
  },
  {
   "synthetic": true,
