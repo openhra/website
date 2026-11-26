@@ -19,7 +19,7 @@
   ],
   "fetched_at": "2026-11-24T14:08:03Z",
   "reason_words": {
-    "UNRESOLVED_RATING_AREA": "Rating areas could not be resolved",
+    "unresolved_rating_area": "Rating areas could not be resolved",
     "source_set_not_available": "No source files found"
   },
   "rows": [
@@ -688,8 +688,8 @@
       "family": "premiums",
       "partial": 11,
       "reasons": {
-        "COUNTY_SCOPED_ZIP3_CROSS_COUNTY_PREFIXES_AMBIGUOUS": 11,
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 7
+        "county_scoped_zip3_cross_county_prefixes_ambiguous": 11,
+        "state_or_filed_rating_method_unsupported": 7
       },
       "state": "CA",
       "statuses": {
@@ -748,7 +748,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 5
+        "state_or_filed_rating_method_unsupported": 5
       },
       "state": "CO",
       "statuses": {
@@ -807,7 +807,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 2
+        "state_or_filed_rating_method_unsupported": 2
       },
       "state": "CT",
       "statuses": {
@@ -866,7 +866,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 9
+        "state_or_filed_rating_method_unsupported": 9
       },
       "state": "DC",
       "statuses": {
@@ -1255,7 +1255,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 8
+        "state_or_filed_rating_method_unsupported": 8
       },
       "state": "GA",
       "statuses": {
@@ -1644,7 +1644,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 11
+        "state_or_filed_rating_method_unsupported": 11
       },
       "state": "ID",
       "statuses": {
@@ -1758,7 +1758,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 8
+        "state_or_filed_rating_method_unsupported": 8
       },
       "state": "IL",
       "statuses": {
@@ -2147,7 +2147,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 3
+        "state_or_filed_rating_method_unsupported": 3
       },
       "state": "KY",
       "statuses": {
@@ -2371,7 +2371,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 15
+        "state_or_filed_rating_method_unsupported": 15
       },
       "state": "MA",
       "statuses": {
@@ -2430,7 +2430,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 11
+        "state_or_filed_rating_method_unsupported": 11
       },
       "state": "MD",
       "statuses": {
@@ -2489,7 +2489,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 2
+        "state_or_filed_rating_method_unsupported": 2
       },
       "state": "ME",
       "statuses": {
@@ -2713,7 +2713,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 5
+        "state_or_filed_rating_method_unsupported": 5
       },
       "state": "MN",
       "statuses": {
@@ -3927,7 +3927,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 4
+        "state_or_filed_rating_method_unsupported": 4
       },
       "state": "NJ",
       "statuses": {
@@ -3986,7 +3986,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 1
+        "state_or_filed_rating_method_unsupported": 1
       },
       "state": "NM",
       "statuses": {
@@ -4045,7 +4045,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 4
+        "state_or_filed_rating_method_unsupported": 4
       },
       "state": "NV",
       "statuses": {
@@ -4544,7 +4544,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 8
+        "state_or_filed_rating_method_unsupported": 8
       },
       "state": "PA",
       "statuses": {
@@ -4603,7 +4603,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 4
+        "state_or_filed_rating_method_unsupported": 4
       },
       "state": "RI",
       "statuses": {
@@ -4827,7 +4827,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "UNRESOLVED_RATING_AREA": 3
+        "unresolved_rating_area": 3
       },
       "state": "SD",
       "statuses": {
@@ -5489,7 +5489,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 11
+        "state_or_filed_rating_method_unsupported": 11
       },
       "state": "VA",
       "statuses": {
@@ -5548,7 +5548,7 @@
       "family": "premiums",
       "partial": 0,
       "reasons": {
-        "STATE_OR_FILED_RATING_METHOD_UNSUPPORTED": 3
+        "state_or_filed_rating_method_unsupported": 3
       },
       "state": "WA",
       "statuses": {

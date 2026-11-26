@@ -43,7 +43,7 @@ REASON_WORDS = {
     "source_set_not_available": "No source files found",
     "discovery_incomplete": "Some source files could not be read",
     "source_access_denied": "Publisher restricts access",
-    "UNRESOLVED_RATING_AREA": "Rating areas could not be resolved",
+    "unresolved_rating_area": "Rating areas could not be resolved",
 }
 
 
